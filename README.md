@@ -21,5 +21,11 @@ A starter kit for BabylonJS.
     * `src/Game/` - all of your game logic belongs here.
     * `src/Framework/` - all of your generic engine stuff will belong here. Think of it as a collection of classes, helpers, managers, ... that you'll be able to reuse in your next game.
 
+## Credits
+
+* Ground - http://seamless-pixels.blogspot.si/p/free-seamless-ground-textures.html
+* Underwater ground - https://hhh316.deviantart.com/art/Seamless-Beach-Sand-Texture-271683282
+* Water - http://www.cadhatch.com/seamless-water-textures/4588167784
+
 ## License
 Babylon Starter Kit is licensed under the MIT license.
