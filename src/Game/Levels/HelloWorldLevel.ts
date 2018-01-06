@@ -9,7 +9,7 @@ export class HelloWorldLevel extends AbstractBaseScene {
 
         let camera = new BABYLON.UniversalCamera(
             "spectatorCamera",
-            new BABYLON.Vector3(0, 36, 0),
+            new BABYLON.Vector3(0, 8, 0),
             this.getScene()
         );
         camera.attachControl(
