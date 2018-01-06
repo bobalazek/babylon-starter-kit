@@ -1,9 +1,11 @@
 import { GameManager } from './GameManager';
+import { MeshManager } from './MeshManager';
 
 export class AbstractLevel {
 
     protected _scene: BABYLON.Scene;
     protected _assetsManager: BABYLON.AssetsManager;
+    protected _meshManager: MeshManager;
     protected _onLevelReadyIntervalTime: number = 100;
 
     public isLevelLoaded: boolean = false;
@@ -12,6 +14,7 @@ export class AbstractLevel {
     constructor() {
         this._scene = new BABYLON.Scene(GameManager.engine);
         this._assetsManager = new BABYLON.AssetsManager(this._scene);
+        this._meshManager = new MeshManager(this);
     }
 
     /********** User overwritable methods **********/
@@ -87,6 +90,10 @@ export class AbstractLevel {
 
     public getAssetsManager(): BABYLON.AssetsManager {
         return this._assetsManager;
+    }
+
+    public getMeshManager(): MeshManager {
+        return this._meshManager;
     }
 
 }

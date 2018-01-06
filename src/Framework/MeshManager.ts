@@ -2,47 +2,43 @@ import { AbstractLevel } from './AbstractLevel';
 
 export class MeshManager {
 
-    public level: AbstractLevel;
+    private _loading: { [key: string]: ((mesh: BABYLON.AbstractMesh) => void)[] };
+    private _loaded: { [key: string]: BABYLON.AbstractMesh };
 
-    private loading: { [key: string]: ((mesh: BABYLON.AbstractMesh) => void)[] };
-    private loaded: { [key: string]: BABYLON.AbstractMesh };
-
-    constructor(level: AbstractLevel) {
-        this.level = level;
-    }
+    constructor(private _level: AbstractLevel) {}
 
     public load(name: string, url: string, callback: (mesh: BABYLON.AbstractMesh) => void) {
         let self = this;
         const path = `${ url }${ name }`;
 
-        if (typeof this.loaded[path] !== 'undefined') {
+        if (typeof this._loaded[path] !== 'undefined') {
             callback(
-                this.loaded[path]
+                this._loaded[path]
             );
-        } else if (typeof this.loading[path] !== 'undefined') {
-            this.loading[path].push(callback);
+        } else if (typeof this._loading[path] !== 'undefined') {
+            this._loading[path].push(callback);
         } else {
-            let meshTask = this.level.getAssetsManager().addMeshTask(
+            let meshTask = this._level.getAssetsManager().addMeshTask(
                 "meshTask_" + path,
                 "",
                 url,
                 name
             );
             meshTask.onSuccess = (task: BABYLON.MeshAssetTask) => {
-                this.loaded[path] = <BABYLON.AbstractMesh>task.loadedMeshes[0];
-                this.loaded[path].isVisible = false;
+                this._loaded[path] = <BABYLON.AbstractMesh>task.loadedMeshes[0];
+                this._loaded[path].isVisible = false;
 
-                callback(this.loaded[path]);
+                callback(this._loaded[path]);
 
                 // Also emmit the mesh to all the waiting callbacks
-                for (let i = 0; i < this.loading[path].length; i++) {
-                    this.loading[path][i](this.loaded[path]);
+                for (let i = 0; i < this._loading[path].length; i++) {
+                    this._loading[path][i](this._loaded[path]);
                 }
 
                 // Cleanup
-                delete this.loading[path];
+                delete this._loading[path];
             };
-            this.loading[path] = [];
+            this._loading[path] = [];
         }
     }
 

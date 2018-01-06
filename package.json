@@ -10,7 +10,8 @@
     "babylonjs-loaders": "^3.2.0-alpha0",
     "babylonjs-materials": "^3.2.0-alpha0",
     "cannon": "^0.6.2",
-    "oimo": "^1.0.9"
+    "oimo": "^1.0.9",
+    "ts-keycode-enum": "^1.0.4"
   },
   "devDependencies": {
     "awesome-typescript-loader": "^3.3.0",
