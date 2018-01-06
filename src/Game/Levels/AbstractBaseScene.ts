@@ -71,15 +71,17 @@ export class AbstractBaseScene extends AbstractLevel {
             false
         );
         let waterMaterial = new BABYLON.WaterMaterial("waterMaterial", this.getScene());
-        let waterBumpTexture = new BABYLON.Texture("static/textures/water_bump.png", this.getScene());
+        let waterBumpTexture = new BABYLON.Texture("static/textures/water_bump.jpg", this.getScene());
 
         waterMaterial.bumpTexture = waterBumpTexture;
         waterMaterial.backFaceCulling = true;
-        waterMaterial.windForce = -10;
-        waterMaterial.waveHeight = 1.6;
-        waterMaterial.bumpHeight = 1;
-        waterMaterial.windDirection = new BABYLON.Vector2(1, 1);
+        waterMaterial.windForce = 1;
+        waterMaterial.waveHeight = 0.1;
+        waterMaterial.waveLength = 0.1;
+        waterMaterial.bumpHeight = 0.1;
+        waterMaterial.windDirection = new BABYLON.Vector2(-1, 1);
         waterMaterial.waterColor = new BABYLON.Color3(0, 0, 221 / 255);
+        waterMaterial.colorBlendFactor = 0.1;
         waterMaterial.addToRenderList(this.skybox);
         waterMaterial.addToRenderList(underwaterGround);
 
@@ -94,7 +96,7 @@ export class AbstractBaseScene extends AbstractLevel {
             2,
             this.getScene()
         );
-        ground.position.y = 16;
+        ground.position.y = 1;
 
         let groundMaterial = new BABYLON.StandardMaterial("groundMaterial", this.getScene());
         let groundTexture = new BABYLON.Texture("static/textures/ground_diffuse.jpg", this.getScene());

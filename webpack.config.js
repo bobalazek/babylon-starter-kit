@@ -50,7 +50,7 @@ module.exports = (function(options) {
           from: 'src/static',
           to: 'static',
           ignore: [
-            'src/index.html',
+            'index.html',
           ],
         },
       ], {

@@ -9,6 +9,11 @@ export class GameManager {
     public static activeLevel: AbstractLevel;
 
     public static boot(config: ConfigInterface) {
+        if (!BABYLON.Engine.isSupported()) {
+            alert('Sorry, but your device is unable to run this game :(');
+            return false;
+        }
+
         this.canvas = document.getElementById("game") as HTMLCanvasElement;
         this.engine = new BABYLON.Engine(this.canvas, true);
         this.activeLevel = new (<any>config.startupLevel)();
