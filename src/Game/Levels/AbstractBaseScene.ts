@@ -55,7 +55,7 @@ export class AbstractBaseScene extends AbstractLevel {
         let underwaterGroundMaterial = new BABYLON.StandardMaterial("underwaterGroundMaterial", this.getScene());
         let underwaterGroundTexture = new BABYLON.Texture("static/textures/underwater_ground_diffuse.jpg", this.getScene());
 
-        underwaterGroundTexture.uScale = underwaterGroundTexture.vScale = 16;
+        underwaterGroundTexture.uScale = underwaterGroundTexture.vScale = size / 64;
 
         underwaterGroundMaterial.diffuseTexture = underwaterGroundTexture;
 
@@ -101,7 +101,7 @@ export class AbstractBaseScene extends AbstractLevel {
         let groundMaterial = new BABYLON.StandardMaterial("groundMaterial", this.getScene());
         let groundTexture = new BABYLON.Texture("static/textures/ground_diffuse.jpg", this.getScene());
 
-        groundTexture.uScale = groundTexture.vScale = 16;
+        groundTexture.uScale = groundTexture.vScale = size / 8;
 
         groundMaterial.diffuseTexture = groundTexture;
 
