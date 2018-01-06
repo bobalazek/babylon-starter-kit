@@ -1,5 +1,3 @@
-import * as BABYLON from 'babylonjs';
-
 import { GameManager } from "../../Framework/GameManager";
 import { AbstractBaseScene } from './AbstractBaseScene';
 
@@ -10,7 +8,7 @@ export class HelloWorldLevel extends AbstractBaseScene {
         super.start();
 
         let camera = new BABYLON.UniversalCamera(
-            "firstPersonCamera",
+            "spectatorCamera",
             new BABYLON.Vector3(0, 36, 0),
             this.getScene()
         );

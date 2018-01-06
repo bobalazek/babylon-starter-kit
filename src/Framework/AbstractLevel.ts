@@ -1,5 +1,3 @@
-import * as BABYLON from 'babylonjs';
-
 import { GameManager } from './GameManager';
 
 export class AbstractLevel {
@@ -65,8 +63,7 @@ export class AbstractLevel {
         this._assetsManager.onProgress = this.onLevelAssetsProgress;
         this._assetsManager.onFinish = this.onLevelAssetsFinish;
 
-        // TODO: fix the issue when no asset is being loaded
-        this.isLevelAssetsLoaded = true;
+        this.isLevelAssetsLoaded = true; // TODO: fix in babylon
 
         // Interval
         let interval = setInterval(() => {

@@ -24,6 +24,13 @@ export class GameManager {
         });
     }
 
+    public static switchLevel(level: any /* AbstractLevel; // TODO: fix; not working ATM*/) {
+        let newActiveLevel = new (<any>level)();
+        newActiveLevel.onLevelReady(() => {
+            this.activeLevel = newActiveLevel;
+        });
+    }
+
 }
 
 export interface ConfigInterface {

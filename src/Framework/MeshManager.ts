@@ -1,5 +1,3 @@
-import * as BABYLON from 'babylonjs';
-
 import { AbstractLevel } from './AbstractLevel';
 
 export class MeshManager {

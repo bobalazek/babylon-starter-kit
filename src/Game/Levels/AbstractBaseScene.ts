@@ -1,4 +1,3 @@
-import * as BABYLON from 'babylonjs';
 import 'babylonjs-materials';
 
 import { AbstractLevel } from '../../Framework/AbstractLevel';
