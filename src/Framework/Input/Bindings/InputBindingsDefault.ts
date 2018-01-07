@@ -3,12 +3,12 @@ import { Key as KeyboardKey } from 'ts-keycode-enum';
 import {
     InputBindingsInterface,
     InputMappingInterface,
-    InputDeviceEnum
+    InputDeviceEnum,
+    InputAxisEnum
 } from '../../Input';
 import {
     InputGamepadAxisEnum,
-    InputGamepadButtonEnum,
-    InputGamepadThumbstickEnum
+    InputGamepadButtonEnum
 } from '../../Input/InputGamepad';
 
 export class InputBindingsDefault implements InputBindingsInterface {
@@ -77,8 +77,7 @@ export class InputBindingsDefault implements InputBindingsInterface {
             {
                 device: InputDeviceEnum.Gamepad,
                 data: {
-                    thumbstick: InputGamepadThumbstickEnum.Right,
-                    axis: InputGamepadAxisEnum.Y,
+                    axis: InputGamepadAxisEnum.StickLeftY,
                     scale: 1.0,
                 }
             },
@@ -115,8 +114,7 @@ export class InputBindingsDefault implements InputBindingsInterface {
             {
                 device: InputDeviceEnum.Gamepad,
                 data: {
-                    thumbstick: InputGamepadThumbstickEnum.Right,
-                    axis: InputGamepadAxisEnum.X,
+                    axis: InputGamepadAxisEnum.StickLeftX,
                     scale: 1.0,
                 }
             },
@@ -125,15 +123,14 @@ export class InputBindingsDefault implements InputBindingsInterface {
             {
                 device: InputDeviceEnum.Mouse,
                 data: {
-                    axis: InputGamepadAxisEnum.Y,
+                    axis: InputAxisEnum.Y,
                     scale: 1.0,
                 }
             },
             {
                 device: InputDeviceEnum.Gamepad,
                 data: {
-                    thumbstick: InputGamepadThumbstickEnum.Left,
-                    axis: InputGamepadAxisEnum.Y,
+                    axis: InputGamepadAxisEnum.StickRightY,
                     scale: 1.0,
                 }
             },
@@ -142,15 +139,14 @@ export class InputBindingsDefault implements InputBindingsInterface {
             {
                 device: InputDeviceEnum.Mouse,
                 data: {
-                    axis: InputGamepadAxisEnum.X,
+                    axis: InputAxisEnum.X,
                     scale: 1.0,
                 }
             },
             {
                 device: InputDeviceEnum.Gamepad,
                 data: {
-                    thumbstick: InputGamepadThumbstickEnum.Left,
-                    axis: InputGamepadAxisEnum.X,
+                    axis: InputGamepadAxisEnum.StickRightX,
                     scale: 1.0,
                 }
             },

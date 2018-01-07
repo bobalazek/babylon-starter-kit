@@ -3,10 +3,13 @@ export class InputGamepad {
     public browserGamepad: Gamepad
     public type: InputGamepadTypeEnum = InputGamepadTypeEnum.Generic;
 
-    public leftStick: InputEnumStickValues = { x: 0, y: 0 };
-    public rightStick: InputEnumStickValues = { x: 0, y: 0 };
+    public leftStickX: number = 0;
+    public leftStickY: number = 0;
+    public rightStickX: number = 0;
+    public rightStickY: number = 0;
     public leftTrigger: number = 0;
     public rightTrigger: number = 0;
+
     public buttonA: boolean = false;
     public buttonB: boolean = false;
     public buttonX: boolean = false;
@@ -42,14 +45,10 @@ export class InputGamepad {
 
         if (this.type === InputGamepadTypeEnum.XboxOne) {
             // TODO: not really sure for that one
-            this.leftStick = {
-                x: this.browserGamepad.axes[0],
-                y: this.browserGamepad.axes[1],
-            };
-            this.rightStick = {
-                x: this.browserGamepad.axes[3],
-                y: this.browserGamepad.axes[4],
-            };
+            this.leftStickX = this.browserGamepad.axes[0];
+            this.leftStickY = this.browserGamepad.axes[1];
+            this.rightStickX = this.browserGamepad.axes[3];
+            this.rightStickY = this.browserGamepad.axes[4];
             this.buttonA = this.browserGamepad.buttons[0].pressed;
             this.buttonB = this.browserGamepad.buttons[1].pressed;
             this.buttonX = this.browserGamepad.buttons[2].pressed;
@@ -67,14 +66,10 @@ export class InputGamepad {
             this.buttonDPadLeft = this.browserGamepad.buttons[13].pressed;
             this.buttonDPadRight = this.browserGamepad.buttons[14].pressed;
         } else {
-            this.leftStick = {
-                x: this.browserGamepad.axes[0],
-                y: this.browserGamepad.axes[1],
-            };
-            this.rightStick = {
-                x: this.browserGamepad.axes[2],
-                y: this.browserGamepad.axes[3],
-            };
+            this.leftStickX = this.browserGamepad.axes[0];
+            this.leftStickY = this.browserGamepad.axes[1];
+            this.rightStickX = this.browserGamepad.axes[2];
+            this.rightStickY = this.browserGamepad.axes[3];
             this.buttonA = this.browserGamepad.buttons[0].pressed;
             this.buttonB = this.browserGamepad.buttons[1].pressed;
             this.buttonX = this.browserGamepad.buttons[2].pressed;
@@ -109,13 +104,21 @@ export enum InputGamepadTypeEnum {
 }
 
 export enum InputGamepadAxisEnum {
-    X,
-    Y
+    StickLeftX,
+    StickLeftY,
+    StickRightX,
+    StickRightY,
+    TriggerLeft,
+    TriggerRight
 }
 
-export enum InputGamepadThumbstickEnum {
-    Left,
-    Right
+export enum InputGamepadAxisPropertyEnum {
+    StickLeftX = "leftStickX",
+    StickLeftY = "leftStickY",
+    StickRightX = "rightStickX",
+    StickRightY = "rightStickY",
+    TriggerLeft = "leftTrigger",
+    TriggerRight  = "rightTrigger"
 }
 
 export enum InputGamepadButtonEnum {
@@ -135,4 +138,23 @@ export enum InputGamepadButtonEnum {
     DPadDown,
     DPadLeft,
     DPadRight
+}
+
+export enum InputGamepadButtonPropertyEnum {
+    A = "buttonA",
+    B = "buttonB",
+    X = "buttonX",
+    Y = "buttonY",
+    Start = "buttonStart",
+    Back = "buttonBack",
+    StickLeft = "buttonLeftStick",
+    StickRight = "buttonRightStick",
+    LB = "buttonLB",
+    RB = "buttonRB",
+    LT = "leftTrigger",
+    RT = "rightTrigger",
+    DPadUp = "buttonDPadUp",
+    DPadDown = "buttonDPadDown",
+    DPadLeft = "buttonDPadLeft",
+    DPadRight = "buttonDPadRight",
 }

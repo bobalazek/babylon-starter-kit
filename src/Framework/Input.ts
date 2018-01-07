@@ -2,7 +2,10 @@ import { GameManager } from './GameManager';
 
 import {
     InputGamepad,
-    InputGamepadAxisEnum
+    InputGamepadAxisEnum,
+    InputGamepadAxisPropertyEnum,
+    InputGamepadButtonEnum,
+    InputGamepadButtonPropertyEnum
 } from './Input/InputGamepad';
 
 export class InputManager {
@@ -28,8 +31,8 @@ export class InputManager {
     public hasGamepadSupport: boolean = 'GamepadEvent' in window;
     private _gamepads: Array<InputGamepad> = [];
     private _gamepadActionsMap: { [key: number]: string } = {};
+    private _gamepadActionsInversedMap: { [key: string]: number } = {}; // have the actions on the left & button on the right
     private _gamepadAxesMap: { [key: number]: any } = {};
-
 
     constructor(bindings: InputBindingsInterface) {
 
@@ -58,6 +61,7 @@ export class InputManager {
                     this._keyboardActionsMap[mappings[i].data.keyCode] = key;
                 } else if (mappings[i].device === InputDeviceEnum.Gamepad) {
                     this._gamepadActionsMap[mappings[i].data.button] = key;
+                    this._gamepadActionsInversedMap[key] = mappings[i].data.button;
                 }
             }
         }
@@ -157,12 +161,37 @@ export class InputManager {
             for (let i = 0; i < gamepads.length; i++) {
                 gamepads[i].update();
 
-                // TODO: determine when the mode is switched. When a button is pressed?
+                if (
+                    (
+                        gamepads[i].buttonA ||
+                        gamepads[i].buttonB ||
+                        gamepads[i].buttonX ||
+                        gamepads[i].buttonY
+                    ) &&
+                    this._mode !== InputModeEnum.Gamepad
+                ) {
+                    this._mode = InputModeEnum.Gamepad;
+                    this.resetAxesAndActions();
+                }
 
                 if (this._mode === InputModeEnum.Gamepad) {
                     this.updateAxesAndActionsByGamepad(gamepads[i]);
                 }
             }
+        }
+
+    }
+
+    public resetAxesAndActions() {
+
+        // Axes
+        for (const key in this._bindings.axes) {
+            this._axes[key] = 0.0;
+        }
+
+        // Actions
+        for (const key in this._bindings.actions) {
+            this._actions[key] = false;
         }
 
     }
@@ -232,6 +261,14 @@ export class InputManager {
 
         const isKeydown = e.type === "keydown";
 
+        if (
+            isKeydown &&
+            this._mode !== InputModeEnum.KeyboardAndMouse
+        ) {
+            this._mode = InputModeEnum.KeyboardAndMouse;
+            this.resetAxesAndActions();
+        }
+
         if (typeof this._keyboardActionsMap[e.keyCode] !== "undefined") {
             const action = this._keyboardActionsMap[e.keyCode];
             this._actions[action] = isKeydown;
@@ -258,12 +295,12 @@ export class InputManager {
 
             if (
                 deltaX !== 0 &&
-                mouseAction.axis === InputGamepadAxisEnum.X
+                mouseAction.axis === InputAxisEnum.X
             ) {
                 this._axes[axis] = deltaX * mouseAction.scale;
             } else if (
                 deltaY !== 0 &&
-                mouseAction.axis === InputGamepadAxisEnum.X
+                mouseAction.axis === InputAxisEnum.X
             ) {
                 this._axes[axis] = deltaY * mouseAction.scale;
             }
@@ -299,13 +336,17 @@ export class InputManager {
     public updateAxesAndActionsByGamepad(gamepad: InputGamepad) {
 
         // Axes
-        for (const axis in this._gamepadAxesMap) {
-            // TODO
+        for (const key in this._axes) {
+            const axis = this._axes[key];
+            const actionAxis = this._gamepadAxesMap[key].axis;
+            this._axes[key] = gamepad[InputGamepadAxisPropertyEnum[InputGamepadAxisEnum[actionAxis]]];
         }
 
         // Actions
-        for (const axis in this._gamepadActionsMap) {
-            // TODO
+        for (const key in this._actions) {
+            const action = this._actions[key];
+            const actionEnum = this._gamepadActionsInversedMap[key];
+            this._actions[key] = gamepad[InputGamepadButtonPropertyEnum[InputGamepadButtonEnum[actionEnum]]];
         }
 
     }
@@ -429,6 +470,11 @@ export interface InputBindingsInterface {
 export interface InputMappingInterface {
     device: InputDeviceEnum;
     data: any;
+}
+
+export enum InputAxisEnum {
+    X,
+    Y
 }
 
 export enum InputModeEnum {
