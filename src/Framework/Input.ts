@@ -339,14 +339,18 @@ export class InputManager {
         for (const key in this._axes) {
             const axis = this._axes[key];
             const actionAxis = this._gamepadAxesMap[key].axis;
-            this._axes[key] = gamepad[InputGamepadAxisPropertyEnum[InputGamepadAxisEnum[actionAxis]]];
+            this._axes[key] = gamepad[
+                InputGamepadAxisPropertyEnum[InputGamepadAxisEnum[actionAxis]]
+            ];
         }
 
         // Actions
         for (const key in this._actions) {
             const action = this._actions[key];
             const actionEnum = this._gamepadActionsInversedMap[key];
-            this._actions[key] = gamepad[InputGamepadButtonPropertyEnum[InputGamepadButtonEnum[actionEnum]]];
+            this._actions[key] = gamepad[
+                InputGamepadButtonPropertyEnum[InputGamepadButtonEnum[actionEnum]]
+            ];
         }
 
     }

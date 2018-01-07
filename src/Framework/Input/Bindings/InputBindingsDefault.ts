@@ -81,6 +81,16 @@ export class InputBindingsDefault implements InputBindingsInterface {
                     scale: 1.0,
                 }
             },
+            /*
+            // If you want to use the triggers as your forward movement
+            {
+                device: InputDeviceEnum.Gamepad,
+                data: {
+                    axis: InputGamepadAxisEnum.Triggers,
+                    scale: 1.0,
+                }
+            },
+            */
         ],
         moveRight: [
             {
