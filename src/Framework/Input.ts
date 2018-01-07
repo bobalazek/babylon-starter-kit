@@ -22,7 +22,7 @@ export class InputManager {
     // Keyboard stuff
     private _keyboardActionsMap: { [key: string]: string } = {};
     private _keyboardAxesMap: { [key: string]: any } = {}; // ex.: [ moveForward: { keyCode: 68, scale: 1 } ]
-    private _keyboardAxesKeyScaleMap: { [key: number]: { key: string, scale: number } } = {}; // ex.: [ 66: { key: "moveForward", scale: 1 } ]
+    private _keyboardAxesKeyScaleMap: { [key: number]: { axis: string, scale: number } } = {}; // ex.: [ 66: { axis: "moveForward", scale: 1 } ]
     private _keyboardKeysPressed: Array<number> = [];
 
     // Mouse staff
@@ -41,35 +41,35 @@ export class InputManager {
         this._bindings = bindings;
 
         // Populate the axes & actions
-        for (const key in this._bindings.axes) {
-            this._axes[key] = 0.0;
+        for (const axis in this._bindings.axes) {
+            this._axes[axis] = 0.0;
 
-            const mappings = this._bindings.axes[key];
+            const mappings = this._bindings.axes[axis];
             for (let i = 0; i < mappings.length; i++) {
                 if (mappings[i].device === InputDeviceEnum.Mouse) {
-                    this._mouseAxesMap[key] = mappings[i].data;
+                    this._mouseAxesMap[axis] = mappings[i].data;
                 } else if (mappings[i].device === InputDeviceEnum.Keyboard) {
-                    this._keyboardAxesMap[key] = mappings[i].data;
+                    this._keyboardAxesMap[axis] = mappings[i].data;
                     this._keyboardAxesKeyScaleMap[mappings[i].data.keyCode] = {
-                        key: key,
+                        axis: axis,
                         scale: mappings[i].data.scale,
                     };
                 } else if (mappings[i].device === InputDeviceEnum.Gamepad) {
-                    this._gamepadAxesMap[key] = mappings[i].data;
+                    this._gamepadAxesMap[axis] = mappings[i].data;
                 }
             }
         }
 
-        for (const key in this._bindings.actions) {
-            this._actions[key] = false;
+        for (const action in this._bindings.actions) {
+            this._actions[action] = false;
 
-            const mappings = this._bindings.actions[key];
+            const mappings = this._bindings.actions[action];
             for (let i = 0; i < mappings.length; i++) {
                 if (mappings[i].device === InputDeviceEnum.Keyboard) {
-                    this._keyboardActionsMap[mappings[i].data.keyCode] = key;
+                    this._keyboardActionsMap[mappings[i].data.keyCode] = action;
                 } else if (mappings[i].device === InputDeviceEnum.Gamepad) {
-                    this._gamepadActionsMap[mappings[i].data.button] = key;
-                    this._gamepadActionsInversedMap[key] = mappings[i].data.button;
+                    this._gamepadActionsMap[mappings[i].data.button] = action;
+                    this._gamepadActionsInversedMap[action] = mappings[i].data.button;
                 }
             }
         }
@@ -241,13 +241,13 @@ export class InputManager {
     public resetAxesAndActions() {
 
         // Axes
-        for (const key in this._bindings.axes) {
-            this._axes[key] = 0.0;
+        for (const axis in this._bindings.axes) {
+            this._axes[axis] = 0.0;
         }
 
         // Actions
-        for (const key in this._bindings.actions) {
-            this._actions[key] = false;
+        for (const action in this._bindings.actions) {
+            this._actions[action] = false;
         }
 
     }
@@ -326,27 +326,27 @@ export class InputManager {
         for (let i = 0; i < this._keyboardKeysPressed.length; i++) {
             const keyCode = this._keyboardKeysPressed[i];
             if (this._keyboardAxesKeyScaleMap[keyCode]) {
-                const key = this._keyboardAxesKeyScaleMap[keyCode].key;
+                const axis = this._keyboardAxesKeyScaleMap[keyCode].axis;
                 const scale = this._keyboardAxesKeyScaleMap[keyCode].scale;
 
-                if (typeof affectedAxes[key] === "undefined") {
-                    affectedAxes[key] = { min: 0, max: 0 };
+                if (typeof affectedAxes[axis] === "undefined") {
+                    affectedAxes[axis] = { min: 0, max: 0 };
                 }
 
-                if (scale < affectedAxes[key].min) {
-                    affectedAxes[key].min = scale;
+                if (scale < affectedAxes[axis].min) {
+                    affectedAxes[axis].min = scale;
                 }
-                if (scale > affectedAxes[key].max) {
-                    affectedAxes[key].max = scale;
+                if (scale > affectedAxes[axis].max) {
+                    affectedAxes[axis].max = scale;
                 }
             }
         }
 
-        for (const key in this._bindings.axes) {
+        for (const axis in this._bindings.axes) {
             var value = 0.0;
 
-            if (typeof affectedAxes[key] !== "undefined") {
-                const affectedAxis = affectedAxes[key];
+            if (typeof affectedAxes[axis] !== "undefined") {
+                const affectedAxis = affectedAxes[axis];
                 if (affectedAxis.min !== 0 || affectedAxis.max !== 0) {
                     if (affectedAxis.min !== 0 && affectedAxis.max === 0) {
                         value = affectedAxis.min;
@@ -356,7 +356,7 @@ export class InputManager {
                 }
             }
 
-            this._axes[key] = value;
+            this._axes[axis] = value;
         }
 
     }
@@ -409,9 +409,9 @@ export class InputManager {
         // Axes
         for (const key in this._axes) {
             const axis = this._axes[key];
-            const actionAxis = this._gamepadAxesMap[key].axis;
-            const actionScale = this._gamepadAxesMap[key].scale;
-            this._axes[key] = gamepad[
+            const actionAxis = this._gamepadAxesMap[axis].axis;
+            const actionScale = this._gamepadAxesMap[axis].scale;
+            this._axes[axis] = gamepad[
                 InputGamepadAxisPropertyEnum[InputGamepadAxisEnum[actionAxis]]
             ] * actionScale;
         }
