@@ -10,8 +10,9 @@ import {
 
 export class InputManager {
 
-    private _bindings: InputBindingsInterface;
+    public hasGamepadSupport: boolean = 'GamepadEvent' in window;
 
+    private _bindings: InputBindingsInterface;
     private _mode: InputModeEnum = InputModeEnum.KeyboardAndMouse;
 
     // Axes & actions
@@ -19,24 +20,25 @@ export class InputManager {
     private _actions: { [key: string]: boolean } = {};
 
     // Keyboard stuff
-    private _keyboardActionsMap: { [key: number]: string } = {};
+    private _keyboardActionsMap: { [key: string]: string } = {};
+    private _keyboardAxesMap: { [key: string]: any } = {}; // ex.: [ moveForward: { keyCode: 68, scale: 1 } ]
+    private _keyboardAxesKeyScaleMap: { [key: number]: { key: string, scale: number } } = {}; // ex.: [ 66: { key: "moveForward", scale: 1 } ]
     private _keyboardKeysPressed: Array<number> = [];
 
     // Mouse staff
-    private _mouseAxesMap: { [key: number]: any } = {};
-    private _mouseInterval: any; // TODO: correct type for setInterval?
+    private _mouseAxesMap: { [key: string]: any } = {};
+    private _mouseInterval: any;
     private _mouseIntervalTime: number = 50; // after how many miliseconds it should clear the values?
 
     // Gamepad stuff
-    public hasGamepadSupport: boolean = 'GamepadEvent' in window;
     private _gamepads: Array<InputGamepad> = [];
-    private _gamepadActionsMap: { [key: number]: string } = {};
+    private _gamepadActionsMap: { [key: string]: string } = {};
     private _gamepadActionsInversedMap: { [key: string]: number } = {}; // have the actions on the left & button on the right
-    private _gamepadAxesMap: { [key: number]: any } = {};
+    private _gamepadAxesMap: { [key: string]: any } = {};
 
     constructor(bindings: InputBindingsInterface) {
 
-        this._bindings = new (<any>bindings);
+        this._bindings = bindings;
 
         // Populate the axes & actions
         for (const key in this._bindings.axes) {
@@ -46,6 +48,12 @@ export class InputManager {
             for (let i = 0; i < mappings.length; i++) {
                 if (mappings[i].device === InputDeviceEnum.Mouse) {
                     this._mouseAxesMap[key] = mappings[i].data;
+                } else if (mappings[i].device === InputDeviceEnum.Keyboard) {
+                    this._keyboardAxesMap[key] = mappings[i].data;
+                    this._keyboardAxesKeyScaleMap[mappings[i].data.keyCode] = {
+                        key: key,
+                        scale: mappings[i].data.scale,
+                    };
                 } else if (mappings[i].device === InputDeviceEnum.Gamepad) {
                     this._gamepadAxesMap[key] = mappings[i].data;
                 }
@@ -180,20 +188,24 @@ export class InputManager {
             }
         }
 
+        if (this._mode === InputModeEnum.KeyboardAndMouse) {
+            this.updateAxesByKeyboard();
+        }
+
     }
 
-    public resetAxesAndActions() {
+    public getMode() {
+        return this._mode;
+    }
 
-        // Axes
-        for (const key in this._bindings.axes) {
-            this._axes[key] = 0.0;
-        }
+    public setBindings(bindings: InputBindingsInterface): InputManager {
+        this._bindings = bindings;
 
-        // Actions
-        for (const key in this._bindings.actions) {
-            this._actions[key] = false;
-        }
+        return this;
+    }
 
+    public getBindings(): InputBindingsInterface {
+        return this._bindings;
     }
 
     /***** Axes & Actions *****/
@@ -226,31 +238,16 @@ export class InputManager {
 
     }
 
-    public getGamepads() {
-        return this._gamepads;
-    }
+    public resetAxesAndActions() {
 
-    public prepareGamepads() {
+        // Axes
+        for (const key in this._bindings.axes) {
+            this._axes[key] = 0.0;
+        }
 
-        const gamepads = navigator.getGamepads
-            ? navigator.getGamepads()
-            : (navigator.webkitGetGamepads
-                ? navigator.webkitGetGamepads()
-                : []
-            );
-
-        this._gamepads = new Array();
-        for (let i = 0; i < gamepads.length; i++) {
-            const gamepad = gamepads[i];
-            if (gamepad === null) {
-                continue;
-            }
-
-            this._gamepads.push(
-                new InputGamepad(
-                    gamepad
-                )
-            );
+        // Actions
+        for (const key in this._bindings.actions) {
+            this._actions[key] = false;
         }
 
     }
@@ -275,7 +272,10 @@ export class InputManager {
         }
 
         if (isKeydown) {
-            this._keyboardKeysPressed.push(e.keyCode);
+            var index = this._keyboardKeysPressed.indexOf(e.keyCode);
+            if (index === -1) {
+                this._keyboardKeysPressed.push(e.keyCode);
+            }
         } else {
             var index = this._keyboardKeysPressed.indexOf(e.keyCode);
             if (index > -1) {
@@ -319,6 +319,48 @@ export class InputManager {
 
     }
 
+    // TODO: probably needs optimization
+    public updateAxesByKeyboard() {
+
+        let affectedAxes = {};
+        for (let i = 0; i < this._keyboardKeysPressed.length; i++) {
+            const keyCode = this._keyboardKeysPressed[i];
+            if (this._keyboardAxesKeyScaleMap[keyCode]) {
+                const key = this._keyboardAxesKeyScaleMap[keyCode].key;
+                const scale = this._keyboardAxesKeyScaleMap[keyCode].scale;
+
+                if (typeof affectedAxes[key] === "undefined") {
+                    affectedAxes[key] = { min: 0, max: 0 };
+                }
+
+                if (scale < affectedAxes[key].min) {
+                    affectedAxes[key].min = scale;
+                }
+                if (scale > affectedAxes[key].max) {
+                    affectedAxes[key].max = scale;
+                }
+            }
+        }
+
+        for (const key in this._bindings.axes) {
+            var value = 0.0;
+
+            if (typeof affectedAxes[key] !== "undefined") {
+                const affectedAxis = affectedAxes[key];
+                if (affectedAxis.min !== 0 || affectedAxis.max !== 0) {
+                    if (affectedAxis.min !== 0 && affectedAxis.max === 0) {
+                        value = affectedAxis.min;
+                    } else if (affectedAxis.min === 0 && affectedAxis.max !== 0) {
+                        value = affectedAxis.max;
+                    }
+                }
+            }
+
+            this._axes[key] = value;
+        }
+
+    }
+
     /***** Gamepad Handlers *****/
 
     public handleGamepadConnectedEvent(e: GamepadEvent) {
@@ -333,15 +375,45 @@ export class InputManager {
 
     }
 
+    public getGamepads() {
+        return this._gamepads;
+    }
+
+    public prepareGamepads() {
+
+        const gamepads = navigator.getGamepads
+            ? navigator.getGamepads()
+            : (navigator.webkitGetGamepads
+                ? navigator.webkitGetGamepads()
+                : []
+            );
+
+        this._gamepads = new Array();
+        for (let i = 0; i < gamepads.length; i++) {
+            const gamepad = gamepads[i];
+            if (gamepad === null) {
+                continue;
+            }
+
+            this._gamepads.push(
+                new InputGamepad(
+                    gamepad
+                )
+            );
+        }
+
+    }
+
     public updateAxesAndActionsByGamepad(gamepad: InputGamepad) {
 
         // Axes
         for (const key in this._axes) {
             const axis = this._axes[key];
             const actionAxis = this._gamepadAxesMap[key].axis;
+            const actionScale = this._gamepadAxesMap[key].scale;
             this._axes[key] = gamepad[
                 InputGamepadAxisPropertyEnum[InputGamepadAxisEnum[actionAxis]]
-            ];
+            ] * actionScale;
         }
 
         // Actions
@@ -413,7 +485,7 @@ export class InputManager {
 
         let activeCamera = GameManager.activeLevel.getScene().activeCamera;
 
-        // TODO: GameManager.engine.isPointerLock - do something with it
+        // TODO: GameManager.engine.isPointerLock - do something with it?
 
     }
 
@@ -452,18 +524,11 @@ export class InputManager {
 
     }
 
-    /********** Helpers **********/
+}
 
-    public setBindings(bindings: InputBindingsInterface): InputManager {
-        this._bindings = bindings;
-
-        return this;
-    }
-
-    public getBindings(): InputBindingsInterface {
-        return this._bindings;
-    }
-
+export class AbstractInputBindings {
+    actions: { [key: string]: Array<InputMappingInterface> } = {};
+    axes: { [key: string]: Array<InputMappingInterface> } = {};
 }
 
 export interface InputBindingsInterface {

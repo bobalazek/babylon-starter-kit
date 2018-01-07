@@ -1,7 +1,7 @@
 import { Key as KeyboardKey } from 'ts-keycode-enum';
 
 import {
-    InputBindingsInterface,
+    AbstractInputBindings,
     InputMappingInterface,
     InputDeviceEnum,
     InputAxisEnum
@@ -11,7 +11,7 @@ import {
     InputGamepadButtonEnum
 } from '../../Input/InputGamepad';
 
-export class InputBindingsDefault implements InputBindingsInterface {
+export class InputBindingsDefault extends AbstractInputBindings {
 
     actions: { [key: string]: Array<InputMappingInterface> } = {
         jump: [
@@ -81,16 +81,6 @@ export class InputBindingsDefault implements InputBindingsInterface {
                     scale: 1.0,
                 }
             },
-            /*
-            // If you want to use the triggers as your forward movement
-            {
-                device: InputDeviceEnum.Gamepad,
-                data: {
-                    axis: InputGamepadAxisEnum.Triggers,
-                    scale: 1.0,
-                }
-            },
-            */
         ],
         moveRight: [
             {

@@ -57,7 +57,7 @@ export class AbstractLevel {
     /**
      * When the level is ready.
      */
-    public onLevelReady(callback: () => void) {
+    public onLevelPostLoad(callback: () => void) {
 
         this.onPreLevelStart(() => {
             this.isLevelLoaded = true;

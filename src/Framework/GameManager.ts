@@ -1,7 +1,7 @@
 import * as BABYLON from 'babylonjs';
 
 import { AbstractLevel } from './AbstractLevel';
-import { InputManager } from './Input';
+import { InputManager, AbstractInputBindings } from './Input';
 
 export class GameManager {
 
@@ -22,11 +22,13 @@ export class GameManager {
         this.canvas = document.getElementById("game") as HTMLCanvasElement;
         this.engine = new BABYLON.Engine(this.canvas, true);
 
-        this.inputManager = new InputManager(config.inputBindings);
+        this.inputManager = new InputManager(
+            new (<any>config.inputBindings)
+        );
 
         this.activeLevel = new (<any>config.startupLevel)();
 
-        this.activeLevel.onLevelReady(() => {
+        this.activeLevel.onLevelPostLoad(() => {
             this.inputManager.watch();
 
             this.engine.runRenderLoop(() => {
@@ -41,7 +43,7 @@ export class GameManager {
 
     }
 
-    public static switchLevel(level: any /* AbstractLevel; // TODO: fix; not working ATM*/) {
+    public static switchLevel(level: typeof AbstractLevel) {
 
         let newActiveLevel = new (<any>level)();
         newActiveLevel.onLevelReady(() => {
@@ -53,6 +55,6 @@ export class GameManager {
 }
 
 export interface ConfigInterface {
-    startupLevel: any; // AbstractLevel; // TODO: fix; not working ATM
-    inputBindings: any; // same as above
+    startupLevel: typeof AbstractLevel;
+    inputBindings: typeof AbstractInputBindings;
 }

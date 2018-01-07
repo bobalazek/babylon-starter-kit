@@ -1,3 +1,5 @@
+import { GameManager } from '../GameManager';
+
 export class InputGamepad {
 
     public browserGamepad: Gamepad
@@ -126,6 +128,13 @@ export class InputGamepad {
             : this._leftStickY;
     };
 
+    public get leftStick(): InputEnumStickValues {
+        return {
+            x: this.leftStickX,
+            y: this.leftStickY,
+        };
+    }
+
     public get rightStickX(): number {
         if (Math.abs(this._rightStickX) < this._rightStickXDeadzone) {
             return 0;
@@ -143,6 +152,13 @@ export class InputGamepad {
             ? -this._rightStickY
             : this._rightStickY;
     };
+
+    public get rightStick(): InputEnumStickValues {
+        return {
+            x: this.rightStickX,
+            y: this.rightStickY,
+        };
+    }
 
     public get leftTrigger(): number {
         if (Math.abs(this._leftTrigger) < this._leftTriggerDeadzone) {
