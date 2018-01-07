@@ -3,6 +3,12 @@
   "scripts": {
     "start": "webpack-dev-server --host 0.0.0.0"
   },
+  "license": "MIT",
+  "author": {
+    "name": "Borut Balazek",
+    "email": "bobalazek124@gmail.com",
+    "url": "http://bobalazek.com"
+  },
   "dependencies": {
     "babylonjs": "^3.2.0-alpha0",
     "babylonjs-gui": "^3.2.0-alpha0",
@@ -25,7 +31,7 @@
     "style-loader": "^0.19.0",
     "typescript": "^2.6.1",
     "webpack": "^3.8.1",
-    "webpack-dev-server": "^2.9.4",
+    "webpack-dev-server": "^2.10.0",
     "write-file-webpack-plugin": "^4.2.0"
   }
 }

@@ -8,6 +8,7 @@ export class MeshManager {
     constructor(private _level: AbstractLevel) {}
 
     public load(name: string, url: string, callback: (mesh: BABYLON.AbstractMesh) => void) {
+
         let self = this;
         const path = `${ url }${ name }`;
 
@@ -40,6 +41,7 @@ export class MeshManager {
             };
             this._loading[path] = [];
         }
+
     }
 
 }

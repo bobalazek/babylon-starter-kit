@@ -27,6 +27,7 @@ export class AbstractBaseScene extends AbstractLevel {
     }
 
     public prepareSkybox(size: number) {
+
         this.skybox = BABYLON.Mesh.CreateBox("skybox", size, this.getScene());
         this.skybox.infiniteDistance = true;
 
@@ -37,9 +38,11 @@ export class AbstractBaseScene extends AbstractLevel {
         skyboxMaterial.turbidity = 20;
 
         this.skybox.material = skyboxMaterial;
+
     }
 
     public prepareOcean(size: number) {
+
         // Underwater ground
         let underwaterGround = BABYLON.Mesh.CreateGround(
             "underwaterGround",
@@ -86,9 +89,11 @@ export class AbstractBaseScene extends AbstractLevel {
         waterMaterial.addToRenderList(underwaterGround);
 
         water.material = waterMaterial;
+
     }
 
     public prepareGround(size: number) {
+
         let ground = BABYLON.Mesh.CreateGround(
             "ground",
             size,
@@ -106,15 +111,18 @@ export class AbstractBaseScene extends AbstractLevel {
         groundMaterial.diffuseTexture = groundTexture;
 
         ground.material = groundMaterial;
+
     }
 
     public prepareLights() {
+
         let hemiLight = new BABYLON.HemisphericLight(
             "hemiLight",
             new BABYLON.Vector3(0, 0, 0),
             this.getScene()
         );
         hemiLight.intensity = 0.7;
+
     }
 
 }

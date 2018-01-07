@@ -1,5 +1,5 @@
 import { GameManager } from "./Framework/GameManager";
-import { InputBindingsDefault } from "./Framework/Input/InputBindingsDefault";
+import { InputBindingsDefault } from "./Framework/Input/Bindings/InputBindingsDefault";
 
 import { HelloWorldLevel } from "./Game/Levels/HelloWorldLevel";
 

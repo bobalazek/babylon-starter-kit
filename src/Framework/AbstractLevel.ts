@@ -12,9 +12,11 @@ export class AbstractLevel {
     public isLevelAssetsLoaded: boolean = false;
 
     constructor() {
+
         this._scene = new BABYLON.Scene(GameManager.engine);
         this._assetsManager = new BABYLON.AssetsManager(this._scene);
         this._meshManager = new MeshManager(this);
+
     }
 
     /********** User overwritable methods **********/
@@ -56,6 +58,7 @@ export class AbstractLevel {
      * When the level is ready.
      */
     public onLevelReady(callback: () => void) {
+
         this.onPreLevelStart(() => {
             this.isLevelLoaded = true;
             this.start();
@@ -78,6 +81,7 @@ export class AbstractLevel {
                 callback();
             }
         }, this._onLevelReadyIntervalTime);
+
     }
 
     public render() {

@@ -1,54 +1,70 @@
 import { GameManager } from './GameManager';
 
+import {
+    InputGamepad,
+    InputGamepadAxisEnum
+} from './Input/InputGamepad';
+
 export class InputManager {
 
-    private _inputMode: InputModeEnum = InputModeEnum.KeyboardAndMouse;
+    private _bindings: InputBindingsInterface;
+
+    private _mode: InputModeEnum = InputModeEnum.KeyboardAndMouse;
+
+    // Axes & actions
+    private _axes: { [key: string]: number } = {};
+    private _actions: { [key: string]: boolean } = {};
 
     // Keyboard stuff
-    private _keyboardKeyActionsMap: { [key: number]: string };
-    private _keyboardKeysPressed: { [key: number]: string };
-    private _keyboardKeysPressedOnce: { [key: number]: string }; // will only output the value only on the subsequent frame. Then it will be reset to 0 again
+    private _keyboardActionsMap: { [key: number]: string } = {};
+    private _keyboardKeysPressed: Array<number> = [];
 
     // Mouse staff
-    private _mouseActionAxisMap: { [key: number]: any };
+    private _mouseAxesMap: { [key: number]: any } = {};
     private _mouseInterval: any; // TODO: correct type for setInterval?
     private _mouseIntervalTime: number = 50; // after how many miliseconds it should clear the values?
 
     // Gamepad stuff
-    private _isGamepadConnected: boolean = false;
+    public hasGamepadSupport: boolean = 'GamepadEvent' in window;
+    private _gamepads: Array<InputGamepad> = [];
+    private _gamepadActionsMap: { [key: number]: string } = {};
+    private _gamepadAxesMap: { [key: number]: any } = {};
 
-    // Axes & actions
-    private _axes: { [key: string]: number };
-    private _actions: { [key: string]: boolean };
 
-    constructor(private _bindings: InputBindingsInterface) {
+    constructor(bindings: InputBindingsInterface) {
+
+        this._bindings = new (<any>bindings);
 
         // Populate the axes & actions
-        for (let key in this._bindings.axes) {
+        for (const key in this._bindings.axes) {
             this._axes[key] = 0.0;
 
-            // Mouse action-axis map
             const mappings = this._bindings.axes[key];
             for (let i = 0; i < mappings.length; i++) {
-                if (mappings[i].device !== InputDeviceEnum.Mouse) {
-                    continue;
+                if (mappings[i].device === InputDeviceEnum.Mouse) {
+                    this._mouseAxesMap[key] = mappings[i].data;
+                } else if (mappings[i].device === InputDeviceEnum.Gamepad) {
+                    this._gamepadAxesMap[key] = mappings[i].data;
                 }
-
-                this._mouseActionAxisMap[key] = mappings[i].data;
             }
         }
-        for (let key in this._bindings.actions) {
+
+        for (const key in this._bindings.actions) {
             this._actions[key] = false;
 
-            // Keyboard key-actions map
             const mappings = this._bindings.actions[key];
             for (let i = 0; i < mappings.length; i++) {
-                if (mappings[i].device !== InputDeviceEnum.Keyboard) {
-                    continue;
+                if (mappings[i].device === InputDeviceEnum.Keyboard) {
+                    this._keyboardActionsMap[mappings[i].data.keyCode] = key;
+                } else if (mappings[i].device === InputDeviceEnum.Gamepad) {
+                    this._gamepadActionsMap[mappings[i].data.button] = key;
                 }
-
-                this._keyboardKeyActionsMap[mappings[i].data.keyCode] = key;
             }
+        }
+
+        // Gamepads
+        if (this.hasGamepadSupport) {
+            this.prepareGamepads();
         }
 
     }
@@ -79,16 +95,19 @@ export class InputManager {
         );
 
         // Gamepad events
-        window.addEventListener(
-            "gamepadconnected",
-            this.handleGamepadConnectedEvent.bind(this),
-            false
-        );
-        window.addEventListener(
-            "gamepaddisconnected",
-            this.handleGamepadDisconnectedEvent.bind(this),
-            false
-        );
+        if (this.hasGamepadSupport) {
+            window.addEventListener(
+                "gamepadconnected",
+                this.handleGamepadConnectedEvent.bind(this),
+                false
+            );
+            window.addEventListener(
+                "gamepaddisconnected",
+                this.handleGamepadDisconnectedEvent.bind(this),
+                false
+            );
+        }
+
 
     }
 
@@ -116,22 +135,35 @@ export class InputManager {
         );
 
         // Gamepad events
-        window.removeEventListener(
-            "gamepadconnected",
-            this.handleGamepadConnectedEvent.bind(this),
-            false
-        );
-        window.removeEventListener(
-            "gamepaddisconnected",
-            this.handleGamepadDisconnectedEvent.bind(this),
-            false
-        );
+        if (this.hasGamepadSupport) {
+            window.removeEventListener(
+                "gamepadconnected",
+                this.handleGamepadConnectedEvent.bind(this),
+                false
+            );
+            window.removeEventListener(
+                "gamepaddisconnected",
+                this.handleGamepadDisconnectedEvent.bind(this),
+                false
+            );
+        }
 
     }
 
     public update() {
 
-        // TODO: mainly for updating the gamepad
+        const gamepads = this.getGamepads();
+        if (gamepads.length) {
+            for (let i = 0; i < gamepads.length; i++) {
+                gamepads[i].update();
+
+                // TODO: determine when the mode is switched. When a button is pressed?
+
+                if (this._mode === InputModeEnum.Gamepad) {
+                    this.updateAxesAndActionsByGamepad(gamepads[i]);
+                }
+            }
+        }
 
     }
 
@@ -165,13 +197,53 @@ export class InputManager {
 
     }
 
+    public getGamepads() {
+        return this._gamepads;
+    }
+
+    public prepareGamepads() {
+
+        const gamepads = navigator.getGamepads
+            ? navigator.getGamepads()
+            : (navigator.webkitGetGamepads
+                ? navigator.webkitGetGamepads()
+                : []
+            );
+
+        this._gamepads = new Array();
+        for (let i = 0; i < gamepads.length; i++) {
+            const gamepad = gamepads[i];
+            if (gamepad === null) {
+                continue;
+            }
+
+            this._gamepads.push(
+                new InputGamepad(
+                    gamepad
+                )
+            );
+        }
+
+    }
+
     /***** Keyboard & Mouse Handlers *****/
 
     public handleKeyboardInputEvent(e: KeyboardEvent) {
 
-        if (typeof this._keyboardKeyActionsMap[e.keyCode] !== "undefined") {
-            const action = this._keyboardKeyActionsMap[e.keyCode];
-            this._actions[action] = e.type === "keydown";
+        const isKeydown = e.type === "keydown";
+
+        if (typeof this._keyboardActionsMap[e.keyCode] !== "undefined") {
+            const action = this._keyboardActionsMap[e.keyCode];
+            this._actions[action] = isKeydown;
+        }
+
+        if (isKeydown) {
+            this._keyboardKeysPressed.push(e.keyCode);
+        } else {
+            var index = this._keyboardKeysPressed.indexOf(e.keyCode);
+            if (index > -1) {
+                this._keyboardKeysPressed.splice(index, 1);
+            }
         }
 
     }
@@ -181,17 +253,17 @@ export class InputManager {
         const deltaX = e.movementX;
         const deltaY = e.movementY;
 
-        for (const axis in this._mouseActionAxisMap) {
-            const mouseAction = this._mouseActionAxisMap[axis];
+        for (const axis in this._mouseAxesMap) {
+            const mouseAction = this._mouseAxesMap[axis];
 
             if (
                 deltaX !== 0 &&
-                mouseAction.axis === InputDeviceAxisEnum.X
+                mouseAction.axis === InputGamepadAxisEnum.X
             ) {
                 this._axes[axis] = deltaX * mouseAction.scale;
             } else if (
                 deltaY !== 0 &&
-                mouseAction.axis === InputDeviceAxisEnum.X
+                mouseAction.axis === InputGamepadAxisEnum.X
             ) {
                 this._axes[axis] = deltaY * mouseAction.scale;
             }
@@ -201,7 +273,7 @@ export class InputManager {
         clearTimeout(this._mouseInterval);
         this._mouseInterval = setTimeout(
             () => {
-                for (const axis in this._mouseActionAxisMap) {
+                for (const axis in this._mouseAxesMap) {
                     this._axes[axis] = 0;
                 }
             },
@@ -214,13 +286,27 @@ export class InputManager {
 
     public handleGamepadConnectedEvent(e: GamepadEvent) {
 
-        this._isGamepadConnected = true;
+        this.prepareGamepads();
 
     }
 
     public handleGamepadDisconnectedEvent(e: GamepadEvent) {
 
-        this._isGamepadConnected = false;
+        this.prepareGamepads();
+
+    }
+
+    public updateAxesAndActionsByGamepad(gamepad: InputGamepad) {
+
+        // Axes
+        for (const axis in this._gamepadAxesMap) {
+            // TODO
+        }
+
+        // Actions
+        for (const axis in this._gamepadActionsMap) {
+            // TODO
+        }
 
     }
 
@@ -357,14 +443,4 @@ export enum InputDeviceEnum {
     Gamepad,
     Touch,
     DeviceOrientation
-}
-
-export enum InputDeviceAxisEnum {
-    X,
-    Y
-}
-
-export enum InputDeviceGamepadThumbstickEnum {
-    Left,
-    Right
 }

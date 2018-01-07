@@ -13,6 +13,7 @@ export class GameManager {
     public static activeLevel: AbstractLevel;
 
     public static boot(config: ConfigInterface) {
+
         if (!BABYLON.Engine.isSupported()) {
             alert('Sorry, but your device is unable to run this game :(');
             return false;
@@ -37,13 +38,16 @@ export class GameManager {
         window.addEventListener("resize", () => {
             this.engine.resize();
         });
+
     }
 
     public static switchLevel(level: any /* AbstractLevel; // TODO: fix; not working ATM*/) {
+
         let newActiveLevel = new (<any>level)();
         newActiveLevel.onLevelReady(() => {
             this.activeLevel = newActiveLevel;
         });
+
     }
 
 }
