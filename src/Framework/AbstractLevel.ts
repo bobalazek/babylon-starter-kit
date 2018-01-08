@@ -49,7 +49,7 @@ export class AbstractLevel {
      * Once all the assets were loaded.
      */
     public onLevelAssetsFinish() {
-        this.isLevelAssetsLoaded = true;
+        // Do something after all the assets were loaded ...
     }
 
     /********** Helpers **********/
@@ -65,11 +65,13 @@ export class AbstractLevel {
         });
 
         // Assets manager
-        this._assetsManager.load();
-        this._assetsManager.onProgress = this.onLevelAssetsProgress;
-        this._assetsManager.onFinish = this.onLevelAssetsFinish;
+        this._assetsManager.onProgress = this.onLevelAssetsProgress.bind(this);
+        this._assetsManager.onFinish = () => {
+            this.onLevelAssetsFinish.bind(this);
 
-        this.isLevelAssetsLoaded = true; // TODO: fix in babylon
+            this.isLevelAssetsLoaded = true;
+        };
+        this._assetsManager.load();
 
         // Interval
         let interval = setInterval(() => {

@@ -9,7 +9,6 @@ export class GameManager {
     public static engine: BABYLON.Engine;
 
     public static inputManager: InputManager;
-
     public static activeLevel: AbstractLevel;
 
     public static boot(config: ConfigInterface) {
@@ -22,10 +21,8 @@ export class GameManager {
         this.canvas = document.getElementById("game") as HTMLCanvasElement;
         this.engine = new BABYLON.Engine(this.canvas, true);
 
-        this.inputManager = new InputManager(
-            new (<any>config.inputBindings)
-        );
-
+        const inputBindings = new (<any>config.inputBindings)();
+        this.inputManager = new InputManager(inputBindings);
         this.activeLevel = new (<any>config.startupLevel)();
 
         this.activeLevel.onLevelPostLoad(() => {
