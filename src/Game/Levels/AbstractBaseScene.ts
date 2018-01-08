@@ -20,7 +20,7 @@ export class AbstractBaseScene extends AbstractLevel {
         this.prepareOcean(this.worldSize);
 
         // Ground
-        this.prepareGround(this.worldSize / 32);
+        this.prepareGround(this.worldSize / 16);
 
         // Lights
         this.prepareLights();

@@ -1,4 +1,4 @@
-import { GameManager } from './GameManager';
+import { GameManager } from './../GameManager';
 
 import {
     InputGamepad,
@@ -6,7 +6,19 @@ import {
     InputGamepadAxisPropertyEnum,
     InputGamepadButtonEnum,
     InputGamepadButtonPropertyEnum
-} from './Input/InputGamepad';
+} from './InputGamepad';
+import {
+    InputModeEnum,
+    InputAxisEnum,
+    InputDeviceEnum,
+    InputBindingsInterface,
+    InputMappingAxisKeyboardDataInterface,
+    InputMappingAxisMouseDataInterface,
+    InputMappingAxisGamepadDataInterface,
+    InputMappingActionKeyboardDataInterface,
+    InputMappingActionMouseDataInterface,
+    InputMappingActionGamepadDataInterface
+} from './InputHelpers';
 
 export class InputManager {
 
@@ -20,59 +32,26 @@ export class InputManager {
     private _actions: { [key: string]: boolean } = {};
 
     // Keyboard stuff
-    private _keyboardActionsMap: { [key: string]: string } = {};
-    private _keyboardAxesMap: { [key: string]: any } = {}; // ex.: [ moveForward: { keyCode: 68, scale: 1 } ]
-    private _keyboardAxesKeyScaleMap: { [key: number]: { axis: string, scale: number } } = {}; // ex.: [ 66: { axis: "moveForward", scale: 1 } ]
-    private _keyboardKeysPressed: Array<number> = [];
+    private _keyboardAxesMap: { [key: string]: InputMappingAxisKeyboardDataInterface } = {}; // ex.: [ moveForward: { keyCode: 68, scale: 1 } ]
+    private _keyboardAxesKeyScaleMap: { [key: number]: { axis: string, scale: number } } = {}; // ex.: [ 68: { axis: "moveForward", scale: 1 } ]
+    private _keyboardActionsMap: { [key: number]: string } = {}; // ex.: [ 68: moveForward ]
+    private _keyboardKeysPressed: Array<number> = []; // ex.: [ 0: 68 ]
 
     // Mouse staff
-    private _mouseAxesMap: { [key: string]: any } = {};
+    private _mouseAxesMap: { [key: string]: InputMappingAxisMouseDataInterface } = {}; // ex.: [ moveForward: { axis: 0, scale: 1.0 } ]
+    private _mouseActionsMap: { [key: number]: string } = {}; // ex.: [ 0: interact ]; 0 = InputMouseButtonEnum.Left
     private _mouseInterval: any;
     private _mouseIntervalTime: number = 50; // after how many miliseconds it should clear the values?
 
     // Gamepad stuff
     private _gamepads: Array<InputGamepad> = [];
+    private _gamepadAxesMap: { [key: string]: InputMappingAxisGamepadDataInterface } = {};
     private _gamepadActionsMap: { [key: string]: string } = {};
     private _gamepadActionsInversedMap: { [key: string]: number } = {}; // have the actions on the left & button on the right
-    private _gamepadAxesMap: { [key: string]: any } = {};
 
     constructor(bindings: InputBindingsInterface) {
 
-        this._bindings = bindings;
-
-        // Populate the axes & actions
-        for (const axis in this._bindings.axes) {
-            this._axes[axis] = 0.0;
-
-            const mappings = this._bindings.axes[axis];
-            for (let i = 0; i < mappings.length; i++) {
-                if (mappings[i].device === InputDeviceEnum.Mouse) {
-                    this._mouseAxesMap[axis] = mappings[i].data;
-                } else if (mappings[i].device === InputDeviceEnum.Keyboard) {
-                    this._keyboardAxesMap[axis] = mappings[i].data;
-                    this._keyboardAxesKeyScaleMap[mappings[i].data.keyCode] = {
-                        axis: axis,
-                        scale: mappings[i].data.scale,
-                    };
-                } else if (mappings[i].device === InputDeviceEnum.Gamepad) {
-                    this._gamepadAxesMap[axis] = mappings[i].data;
-                }
-            }
-        }
-
-        for (const action in this._bindings.actions) {
-            this._actions[action] = false;
-
-            const mappings = this._bindings.actions[action];
-            for (let i = 0; i < mappings.length; i++) {
-                if (mappings[i].device === InputDeviceEnum.Keyboard) {
-                    this._keyboardActionsMap[mappings[i].data.keyCode] = action;
-                } else if (mappings[i].device === InputDeviceEnum.Gamepad) {
-                    this._gamepadActionsMap[mappings[i].data.button] = action;
-                    this._gamepadActionsInversedMap[action] = mappings[i].data.button;
-                }
-            }
-        }
+        this.setBindings(bindings);
 
         // Gamepads
         if (this.hasGamepadSupport) {
@@ -196,16 +175,6 @@ export class InputManager {
 
     public getMode() {
         return this._mode;
-    }
-
-    public setBindings(bindings: InputBindingsInterface): InputManager {
-        this._bindings = bindings;
-
-        return this;
-    }
-
-    public getBindings(): InputBindingsInterface {
-        return this._bindings;
     }
 
     /***** Axes & Actions *****/
@@ -524,38 +493,56 @@ export class InputManager {
 
     }
 
-}
+    /********** Bindings **********/
 
-export class AbstractInputBindings {
-    actions: { [key: string]: Array<InputMappingInterface> } = {};
-    axes: { [key: string]: Array<InputMappingInterface> } = {};
-}
+    public setBindings(bindings: InputBindingsInterface): InputManager {
+        this._bindings = bindings;
 
-export interface InputBindingsInterface {
-    actions: { [key: string]: Array<InputMappingInterface> };
-    axes: { [key: string]: Array<InputMappingInterface> };
-}
+        // Populate the axes & actions
+        for (const axis in this._bindings.axes) {
+            this._axes[axis] = 0.0;
 
-export interface InputMappingInterface {
-    device: InputDeviceEnum;
-    data: any;
-}
+            const mappings = this._bindings.axes[axis];
+            for (let i = 0; i < mappings.length; i++) {
+                if (mappings[i].device === InputDeviceEnum.Keyboard) {
+                    let mappingData = <InputMappingAxisKeyboardDataInterface>mappings[i].data;
+                    this._keyboardAxesMap[axis] = mappingData;
+                    this._keyboardAxesKeyScaleMap[mappingData.keyCode] = {
+                        axis: axis,
+                        scale: mappingData.scale,
+                    };
+                } else if (mappings[i].device === InputDeviceEnum.Mouse) {
+                    this._mouseAxesMap[axis] = <InputMappingAxisMouseDataInterface>mappings[i].data;
+                } else if (mappings[i].device === InputDeviceEnum.Gamepad) {
+                    this._gamepadAxesMap[axis] = <InputMappingAxisGamepadDataInterface>mappings[i].data;
+                }
+            }
+        }
 
-export enum InputAxisEnum {
-    X,
-    Y
-}
+        for (const action in this._bindings.actions) {
+            this._actions[action] = false;
 
-export enum InputModeEnum {
-    KeyboardAndMouse,
-    Gamepad,
-    VR
-}
+            const mappings = this._bindings.actions[action];
+            for (let i = 0; i < mappings.length; i++) {
+                if (mappings[i].device === InputDeviceEnum.Keyboard) {
+                    let mappingData = <InputMappingActionKeyboardDataInterface>mappings[i].data;
+                    this._keyboardActionsMap[mappingData.keyCode] = action;
+                } else if (mappings[i].device === InputDeviceEnum.Mouse) {
+                    let mappingData = <InputMappingActionMouseDataInterface>mappings[i].data;
+                    this._keyboardActionsMap[mappingData.button] = action;
+                } else if (mappings[i].device === InputDeviceEnum.Gamepad) {
+                    let mappingData = <InputMappingActionGamepadDataInterface>mappings[i].data;
+                    this._gamepadActionsMap[mappingData.button] = action;
+                    this._gamepadActionsInversedMap[action] = mappingData.button;
+                }
+            }
+        }
 
-export enum InputDeviceEnum {
-    Keyboard,
-    Mouse,
-    Gamepad,
-    Touch,
-    DeviceOrientation
+        return this;
+    }
+
+    public getBindings(): InputBindingsInterface {
+        return this._bindings;
+    }
+
 }

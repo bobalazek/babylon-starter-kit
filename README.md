@@ -28,6 +28,11 @@ That is our main object in the game. It handles the boot up of the game & contai
 Handles all the input stuff for the keyboard, mouse & gamepad(-s). The most important methods here are are `GameManager.inputManager.getAxes()` and `GameManager.inputManager.getActions()`. It will return back the axes values & action booleans, that you specified as your input bindings.
 
 
+#### GameManager - InputManager - InputBindings
+
+This is the class, that will supply your input manager with your bindings. View the `src/Framework/Input/Bindings/InputBindingsDefault` class as an example.
+
+
 ### Level
 
 For those of you who are from Unity or UE4, you should probably know the concept of a level. In this case it's quite similar. A level in this case is a wrapper around the **scene** (that is in the case of babylon & other 3D web engines the closest concept of a level). But because we want our scene to have more components (such as the scene itself, assets manager, mesh manager, player controller, ...), we wrap everything inside the **level**.

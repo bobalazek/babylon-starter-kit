@@ -1,48 +1,20 @@
 import { Key as KeyboardKey } from 'ts-keycode-enum';
 
 import {
-    AbstractInputBindings,
-    InputMappingInterface,
+    InputAxisEnum,
     InputDeviceEnum,
-    InputAxisEnum
-} from '../../Input';
+    InputMappingInterface,
+    AbstractInputBindings
+} from '../InputHelpers';
 import {
     InputGamepadAxisEnum,
     InputGamepadButtonEnum
 } from '../../Input/InputGamepad';
+import {
+    InputMouseButtonEnum
+} from '../../Input/InputMouse';
 
 export class InputBindingsDefault extends AbstractInputBindings {
-
-    actions: { [key: string]: Array<InputMappingInterface> } = {
-        jump: [
-            {
-                device: InputDeviceEnum.Keyboard,
-                data: {
-                    keyCode: KeyboardKey.Space,
-                },
-            },
-            {
-                device: InputDeviceEnum.Gamepad,
-                data: {
-                    button: InputGamepadButtonEnum.B,
-                },
-            },
-        ],
-        interact: [
-            {
-                device: InputDeviceEnum.Keyboard,
-                data: {
-                    keyCode: KeyboardKey.F,
-                },
-            },
-            {
-                device: InputDeviceEnum.Gamepad,
-                data: {
-                    button: InputGamepadButtonEnum.A,
-                },
-            },
-        ],
-    };
 
     axes: { [key: string]: Array<InputMappingInterface> } = {
         moveForward: [
@@ -149,6 +121,43 @@ export class InputBindingsDefault extends AbstractInputBindings {
                     axis: InputGamepadAxisEnum.StickRightX,
                     scale: 1.0,
                 }
+            },
+        ],
+    };
+
+    actions: { [key: string]: Array<InputMappingInterface> } = {
+        jump: [
+            {
+                device: InputDeviceEnum.Keyboard,
+                data: {
+                    keyCode: KeyboardKey.Space,
+                },
+            },
+            {
+                device: InputDeviceEnum.Gamepad,
+                data: {
+                    button: InputGamepadButtonEnum.B,
+                },
+            },
+        ],
+        interact: [
+            {
+                device: InputDeviceEnum.Keyboard,
+                data: {
+                    keyCode: KeyboardKey.F,
+                },
+            },
+            {
+                device: InputDeviceEnum.Gamepad,
+                data: {
+                    button: InputGamepadButtonEnum.A,
+                },
+            },
+            {
+                device: InputDeviceEnum.Mouse,
+                data: {
+                    button: InputMouseButtonEnum.Left,
+                },
             },
         ],
     };

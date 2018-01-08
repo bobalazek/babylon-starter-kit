@@ -1,17 +1,19 @@
 import * as BABYLON from 'babylonjs';
 
 import { AbstractLevel } from './AbstractLevel';
-import { InputManager, AbstractInputBindings } from './Input';
+import { InputManager } from './Input/InputManager';
+import { AbstractInputBindings } from './Input/InputHelpers';
 
 export class GameManager {
 
     public static canvas: HTMLCanvasElement;
     public static engine: BABYLON.Engine;
 
+    public static debug: boolean;
     public static inputManager: InputManager;
     public static activeLevel: AbstractLevel;
 
-    public static boot(config: ConfigInterface) {
+    public static boot(config: GameConfigInterface) {
 
         if (!BABYLON.Engine.isSupported()) {
             alert('Sorry, but your device is unable to run this game :(');
@@ -51,7 +53,8 @@ export class GameManager {
 
 }
 
-export interface ConfigInterface {
+export interface GameConfigInterface {
+    debug: boolean;
     startupLevel: typeof AbstractLevel;
     inputBindings: typeof AbstractInputBindings;
 }
