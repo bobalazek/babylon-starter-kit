@@ -57,7 +57,7 @@ An extended version of the assets manager, but it automatically handles & reuses
 ## Directory structure
 
 * `src/`
-    * `src/main.ts` - the main file that boots up the game.
+    * `src/index.ts` - the main file that boots up the game.
     * `src/static/` - all of your static assets, such as 3D models, CSS, audio, ...
     * `src/Game/` - all of your game logic belongs here.
     * `src/Framework/` - all of your generic engine stuff will belong here. Think of it as a collection of classes, helpers, managers, ... that you'll be able to reuse in your next game.

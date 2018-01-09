@@ -9,7 +9,7 @@ const WriteFilePlugin = require('write-file-webpack-plugin');
 module.exports = {
 
     entry: {
-        app: path.resolve(__dirname, 'src', 'main.ts'),
+        app: path.resolve(__dirname, 'src', 'index.ts'),
     },
 
     output: {
