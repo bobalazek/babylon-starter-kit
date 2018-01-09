@@ -20,6 +20,8 @@ export class GameManager {
             return false;
         }
 
+        this.debug = config.debug;
+
         this.canvas = document.getElementById("game") as HTMLCanvasElement;
         this.engine = new BABYLON.Engine(this.canvas, true);
 

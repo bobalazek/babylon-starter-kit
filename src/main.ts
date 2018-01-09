@@ -8,7 +8,7 @@ import "./static/stylesheets/main.css";
 
 // Boot up the game!
 GameManager.boot({
-    debug: true,
+    debug: true, // TODO
     startupLevel: HelloWorldLevel,
     inputBindings: InputBindingsDefault,
 });
