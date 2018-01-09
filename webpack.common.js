@@ -7,6 +7,7 @@ const CopyWebpackPlugin = require('copy-webpack-plugin');
 const WriteFilePlugin = require('write-file-webpack-plugin');
 
 module.exports = {
+
     entry: {
         app: path.resolve(__dirname, 'src', 'main.ts'),
     },
@@ -15,8 +16,6 @@ module.exports = {
         filename: 'bundle.js',
         path: path.resolve(__dirname, 'dist'),
     },
-
-    devtool: 'cheap-source-map',
 
     module: {
         rules: [
@@ -50,6 +49,7 @@ module.exports = {
                 to: 'static',
                 ignore: [
                     'index.html',
+                    '**/*.css', // already handled by the ExtractTextPlugin, so no need to copy them over
                 ],
             },
         ], {
@@ -60,4 +60,5 @@ module.exports = {
     resolve: {
         extensions: ['.ts', '.js', '.json'],
     },
+
 };
