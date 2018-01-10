@@ -7,6 +7,7 @@ import {
     InputGamepadButtonEnum,
     InputGamepadButtonPropertyEnum
 } from './InputGamepad';
+import { InputMouseButtonEnum } from './InputMouse';
 import {
     InputModeEnum,
     InputAxisEnum,
@@ -40,7 +41,8 @@ export class InputManager {
     // Mouse staff
     private _mouseAxesMap: { [key: string]: InputMappingAxisMouseDataInterface } = {}; // ex.: [ moveForward: { axis: 0, scale: 1.0 } ]
     private _mouseActionsMap: { [key: number]: string } = {}; // ex.: [ 0: interact ]; 0 = InputMouseButtonEnum.Left
-    private _mouseInterval: any;
+    private _mouseButtonsPressed: Array<number> = [];
+    private _mouseInterval: any; // ex.: [ 0: 1 ] // 1 = InputMouseButtonEnum.Middle
     private _mouseIntervalTime: number = 50; // after how many miliseconds it should clear the values?
 
     // Gamepad stuff
@@ -69,19 +71,46 @@ export class InputManager {
         // Keyboard events
         canvas.addEventListener(
             "keydown",
-            this.handleKeyboardInputEvent.bind(this),
+            this.handleKeyboardKeyDownAndUpEvent.bind(this),
             false
         );
         canvas.addEventListener(
             "keyup",
-            this.handleKeyboardInputEvent.bind(this),
+            this.handleKeyboardKeyDownAndUpEvent.bind(this),
             false
         );
 
         // Mouse events
         canvas.addEventListener(
             "mousemove",
-            this.handleMouseInputEvent.bind(this),
+            this.handleMouseMoveEvent.bind(this),
+            false
+        );
+        canvas.addEventListener(
+            "pointermove",
+            this.handleMouseMoveEvent.bind(this),
+            false
+        );
+
+        canvas.addEventListener(
+            "mousedown",
+            this.handleMouseDownAndUpEvent.bind(this),
+            false
+        );
+        canvas.addEventListener(
+            "pointerdown",
+            this.handleMouseDownAndUpEvent.bind(this),
+            false
+        );
+
+        canvas.addEventListener(
+            "mouseup",
+            this.handleMouseDownAndUpEvent.bind(this),
+            false
+        );
+        canvas.addEventListener(
+            "pointerup",
+            this.handleMouseDownAndUpEvent.bind(this),
             false
         );
 
@@ -109,19 +138,46 @@ export class InputManager {
         // Keyboard events
         canvas.removeEventListener(
             "keydown",
-            this.handleKeyboardInputEvent.bind(this),
+            this.handleKeyboardKeyDownAndUpEvent.bind(this),
             false
         );
         canvas.removeEventListener(
             "keyup",
-            this.handleKeyboardInputEvent.bind(this),
+            this.handleKeyboardKeyDownAndUpEvent.bind(this),
             false
         );
 
         // Mouse events
         canvas.removeEventListener(
             "mousemove",
-            this.handleMouseInputEvent.bind(this),
+            this.handleMouseMoveEvent.bind(this),
+            false
+        );
+        canvas.removeEventListener(
+            "pointermove",
+            this.handleMouseMoveEvent.bind(this),
+            false
+        );
+
+        canvas.removeEventListener(
+            "mousedown",
+            this.handleMouseDownAndUpEvent.bind(this),
+            false
+        );
+        canvas.removeEventListener(
+            "pointerdown",
+            this.handleMouseDownAndUpEvent.bind(this),
+            false
+        );
+
+        canvas.removeEventListener(
+            "mouseup",
+            this.handleMouseDownAndUpEvent.bind(this),
+            false
+        );
+        canvas.removeEventListener(
+            "pointerup",
+            this.handleMouseDownAndUpEvent.bind(this),
             false
         );
 
@@ -223,12 +279,12 @@ export class InputManager {
 
     /***** Keyboard & Mouse Handlers *****/
 
-    public handleKeyboardInputEvent(e: KeyboardEvent) {
+    public handleKeyboardKeyDownAndUpEvent(e: KeyboardEvent) {
 
-        const isKeydown = e.type === "keydown";
+        const isPressed = e.type === "keydown";
 
         if (
-            isKeydown &&
+            isPressed &&
             this._mode !== InputModeEnum.KeyboardAndMouse
         ) {
             this._mode = InputModeEnum.KeyboardAndMouse;
@@ -237,10 +293,10 @@ export class InputManager {
 
         if (typeof this._keyboardActionsMap[e.keyCode] !== "undefined") {
             const action = this._keyboardActionsMap[e.keyCode];
-            this._actions[action] = isKeydown;
+            this._actions[action] = isPressed;
         }
 
-        if (isKeydown) {
+        if (isPressed) {
             var index = this._keyboardKeysPressed.indexOf(e.keyCode);
             if (index === -1) {
                 this._keyboardKeysPressed.push(e.keyCode);
@@ -254,7 +310,7 @@ export class InputManager {
 
     }
 
-    public handleMouseInputEvent(e: MouseEvent) {
+    public handleMouseMoveEvent(e: MouseEvent) {
 
         const deltaX = e.movementX;
         const deltaY = e.movementY;
@@ -285,6 +341,44 @@ export class InputManager {
             },
             this._mouseIntervalTime
         );
+
+    }
+
+    public handleMouseDownAndUpEvent(e: MouseEvent) {
+
+        const isPressed = e.type === "mousedown" || e.type === "pointerdown";
+
+        if (
+            isPressed &&
+            this._mode !== InputModeEnum.KeyboardAndMouse
+        ) {
+            this._mode = InputModeEnum.KeyboardAndMouse;
+            this.resetAxesAndActions();
+        }
+
+        // TODO: make sure those bindings are correct
+        const button = e.which === 3
+            ? InputMouseButtonEnum.Right
+            : (e.which === 2
+                ? InputMouseButtonEnum.Middle
+                : InputMouseButtonEnum.Left);
+
+        if (typeof this._mouseActionsMap[button] !== "undefined") {
+            const action = this._mouseActionsMap[button];
+            this._actions[action] = isPressed;
+        }
+
+        if (isPressed) {
+            var index = this._mouseButtonsPressed.indexOf(button);
+            if (index === -1) {
+                this._mouseButtonsPressed.push(button);
+            }
+        } else {
+            var index = this._mouseButtonsPressed.indexOf(button);
+            if (index > -1) {
+                this._mouseButtonsPressed.splice(index, 1);
+            }
+        }
 
     }
 
@@ -529,7 +623,7 @@ export class InputManager {
                     this._keyboardActionsMap[mappingData.keyCode] = action;
                 } else if (mappings[i].device === InputDeviceEnum.Mouse) {
                     let mappingData = <InputMappingActionMouseDataInterface>mappings[i].data;
-                    this._keyboardActionsMap[mappingData.button] = action;
+                    this._mouseActionsMap[mappingData.button] = action;
                 } else if (mappings[i].device === InputDeviceEnum.Gamepad) {
                     let mappingData = <InputMappingActionGamepadDataInterface>mappings[i].data;
                     this._gamepadActionsMap[mappingData.button] = action;
