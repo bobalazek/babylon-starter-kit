@@ -56,7 +56,7 @@ export class InputBindingsDefault extends AbstractInputBindings {
             <InputMappingAxisGamepadInterface>{
                 device: InputDeviceEnum.Gamepad,
                 data: {
-                    axis: InputGamepadAxisEnum.StickLeftY,
+                    axis: InputGamepadAxisEnum.LeftStickY,
                     scale: 1.0,
                 }
             },
@@ -93,7 +93,7 @@ export class InputBindingsDefault extends AbstractInputBindings {
             <InputMappingAxisGamepadInterface>{
                 device: InputDeviceEnum.Gamepad,
                 data: {
-                    axis: InputGamepadAxisEnum.StickLeftX,
+                    axis: InputGamepadAxisEnum.LeftStickX,
                     scale: 1.0,
                 }
             },
@@ -109,7 +109,7 @@ export class InputBindingsDefault extends AbstractInputBindings {
             <InputMappingAxisGamepadInterface>{
                 device: InputDeviceEnum.Gamepad,
                 data: {
-                    axis: InputGamepadAxisEnum.StickRightY,
+                    axis: InputGamepadAxisEnum.RightStickY,
                     scale: 1.0,
                 }
             },
@@ -125,7 +125,7 @@ export class InputBindingsDefault extends AbstractInputBindings {
             <InputMappingAxisGamepadInterface>{
                 device: InputDeviceEnum.Gamepad,
                 data: {
-                    axis: InputGamepadAxisEnum.StickRightX,
+                    axis: InputGamepadAxisEnum.RightStickX,
                     scale: 1.0,
                 }
             },

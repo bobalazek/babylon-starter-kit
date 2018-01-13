@@ -6,22 +6,22 @@ export class InputGamepad {
     public type: InputGamepadTypeEnum = InputGamepadTypeEnum.Generic;
 
     // Buttons
-    public buttonA: boolean = false;
-    public buttonB: boolean = false;
-    public buttonX: boolean = false;
-    public buttonY: boolean = false;
-    public buttonStart: boolean = false;
-    public buttonBack: boolean = false;
-    public buttonLeftStick: boolean = false;
-    public buttonRightStick: boolean = false;
-    public buttonLB: boolean = false;
-    public buttonRB: boolean = false;
-    public buttonLT: boolean = false;
-    public buttonRT: boolean = false;
-    public buttonDPadUp: boolean = false;
-    public buttonDPadDown: boolean = false;
-    public buttonDPadLeft: boolean = false;
-    public buttonDPadRight: boolean = false;
+    private _buttonA: boolean = false;
+    private _buttonB: boolean = false;
+    private _buttonX: boolean = false;
+    private _buttonY: boolean = false;
+    private _buttonStart: boolean = false;
+    private _buttonBack: boolean = false;
+    private _buttonLeftStick: boolean = false;
+    private _buttonRightStick: boolean = false;
+    private _buttonLB: boolean = false;
+    private _buttonRB: boolean = false;
+    private _buttonLT: boolean = false;
+    private _buttonRT: boolean = false;
+    private _buttonDPadUp: boolean = false;
+    private _buttonDPadDown: boolean = false;
+    private _buttonDPadLeft: boolean = false;
+    private _buttonDPadRight: boolean = false;
 
     // Axes
     private _leftStickX: number = 0;
@@ -43,6 +43,15 @@ export class InputGamepad {
     private _leftStickYInvert: boolean = false;
     private _rightStickYInvert: boolean = false;
 
+    // Events
+    public onButtonChanged: (button: InputGamepadButtonEnum, state: boolean) => void;
+    public onLeftStickXChanged: (value: number) => void;
+    public onLeftStickYChanged: (value: number) => void;
+    public onRightStickXChanged: (value: number) => void;
+    public onRightStickYChanged: (value: number) => void;
+    public onLeftTriggerChanged: (value: number) => void;
+    public onRightTriggerChanged: (value: number) => void;
+
     constructor (browserGamepad: Gamepad) {
 
         this.browserGamepad = browserGamepad;
@@ -60,7 +69,7 @@ export class InputGamepad {
     public update() {
 
         if (this.type === InputGamepadTypeEnum.XboxOne) {
-            // TODO: not really sure for that one
+            // TODO: make sure those are correct.
             this._leftStickX = this.browserGamepad.axes[0];
             this._leftStickY = this.browserGamepad.axes[1];
             this._rightStickX = this.browserGamepad.axes[3];
@@ -68,20 +77,20 @@ export class InputGamepad {
             this._leftTrigger = this.browserGamepad.axes[2];
             this._rightTrigger = this.browserGamepad.axes[5];
 
-            this.buttonA = this.browserGamepad.buttons[0].pressed;
-            this.buttonB = this.browserGamepad.buttons[1].pressed;
-            this.buttonX = this.browserGamepad.buttons[2].pressed;
-            this.buttonY = this.browserGamepad.buttons[3].pressed;
-            this.buttonLB = this.browserGamepad.buttons[4].pressed;
-            this.buttonRB = this.browserGamepad.buttons[5].pressed;
-            this.buttonBack = this.browserGamepad.buttons[9].pressed;
-            this.buttonStart = this.browserGamepad.buttons[8].pressed;
-            this.buttonLeftStick = this.browserGamepad.buttons[6].pressed;
-            this.buttonRightStick = this.browserGamepad.buttons[7].pressed;
-            this.buttonDPadUp = this.browserGamepad.buttons[11].pressed;
-            this.buttonDPadDown = this.browserGamepad.buttons[12].pressed;
-            this.buttonDPadLeft = this.browserGamepad.buttons[13].pressed;
-            this.buttonDPadRight = this.browserGamepad.buttons[14].pressed;
+            this._buttonA = this.browserGamepad.buttons[0].pressed;
+            this._buttonB = this.browserGamepad.buttons[1].pressed;
+            this._buttonX = this.browserGamepad.buttons[2].pressed;
+            this._buttonY = this.browserGamepad.buttons[3].pressed;
+            this._buttonLB = this.browserGamepad.buttons[4].pressed;
+            this._buttonRB = this.browserGamepad.buttons[5].pressed;
+            this._buttonBack = this.browserGamepad.buttons[9].pressed;
+            this._buttonStart = this.browserGamepad.buttons[8].pressed;
+            this._buttonLeftStick = this.browserGamepad.buttons[6].pressed;
+            this._buttonRightStick = this.browserGamepad.buttons[7].pressed;
+            this._buttonDPadUp = this.browserGamepad.buttons[11].pressed;
+            this._buttonDPadDown = this.browserGamepad.buttons[12].pressed;
+            this._buttonDPadLeft = this.browserGamepad.buttons[13].pressed;
+            this._buttonDPadRight = this.browserGamepad.buttons[14].pressed;
         } else {
             this._leftStickX = this.browserGamepad.axes[0];
             this._leftStickY = this.browserGamepad.axes[1];
@@ -90,42 +99,62 @@ export class InputGamepad {
             this._leftTrigger = this.browserGamepad.buttons[6].value;
             this._rightTrigger = this.browserGamepad.buttons[7].value;
 
-            this.buttonA = this.browserGamepad.buttons[0].pressed;
-            this.buttonB = this.browserGamepad.buttons[1].pressed;
-            this.buttonX = this.browserGamepad.buttons[2].pressed;
-            this.buttonY = this.browserGamepad.buttons[3].pressed;
-            this.buttonLB = this.browserGamepad.buttons[4].pressed;
-            this.buttonRB = this.browserGamepad.buttons[5].pressed;
-            this.buttonBack = this.browserGamepad.buttons[8].pressed;
-            this.buttonStart = this.browserGamepad.buttons[9].pressed;
-            this.buttonLeftStick = this.browserGamepad.buttons[10].pressed;
-            this.buttonRightStick = this.browserGamepad.buttons[11].pressed;
-            this.buttonDPadUp = this.browserGamepad.buttons[12].pressed;
-            this.buttonDPadDown = this.browserGamepad.buttons[13].pressed;
-            this.buttonDPadLeft = this.browserGamepad.buttons[14].pressed;
-            this.buttonDPadRight = this.browserGamepad.buttons[15].pressed;
+            this._buttonA = this.browserGamepad.buttons[0].pressed;
+            this._buttonB = this.browserGamepad.buttons[1].pressed;
+            this._buttonX = this.browserGamepad.buttons[2].pressed;
+            this._buttonY = this.browserGamepad.buttons[3].pressed;
+            this._buttonLB = this.browserGamepad.buttons[4].pressed;
+            this._buttonRB = this.browserGamepad.buttons[5].pressed;
+            this._buttonBack = this.browserGamepad.buttons[8].pressed;
+            this._buttonStart = this.browserGamepad.buttons[9].pressed;
+            this._buttonLeftStick = this.browserGamepad.buttons[10].pressed;
+            this._buttonRightStick = this.browserGamepad.buttons[11].pressed;
+            this._buttonDPadUp = this.browserGamepad.buttons[12].pressed;
+            this._buttonDPadDown = this.browserGamepad.buttons[13].pressed;
+            this._buttonDPadLeft = this.browserGamepad.buttons[14].pressed;
+            this._buttonDPadRight = this.browserGamepad.buttons[15].pressed;
         }
 
     }
 
     /********** Axes **********/
 
-    public get leftStickX(): number {
-        if (Math.abs(this._leftStickX) < this._leftStickXDeadzone) {
-            return 0;
-        }
+    /*** Left ***/
 
+    public get leftStickX(): number {
         return this._leftStickX;
     };
 
-    public get leftStickY(): number {
-        if (Math.abs(this._leftStickY) < this._leftStickYDeadzone) {
-            return 0;
-        }
+    public set leftStickX(value: number) {
+        if (
+            this._leftStickX !== value &&
+            Math.abs(value) > this._leftStickXDeadzone
+        ) {
+            this._leftStickX = value;
 
+            if (this.onLeftStickXChanged) {
+                this.onLeftStickXChanged(value);
+            }
+        }
+    };
+
+    public get leftStickY(): number {
         return this._leftStickYInvert
             ? -this._leftStickY
             : this._leftStickY;
+    };
+
+    public set leftStickY(value: number) {
+        if (
+            this._leftStickY !== value &&
+            Math.abs(value) > this._leftStickYDeadzone
+        ) {
+            this._leftStickY = value;
+
+            if (this.onLeftStickYChanged) {
+                this.onLeftStickYChanged(value);
+            }
+        }
     };
 
     public get leftStick(): InputEnumStickValues {
@@ -135,22 +164,42 @@ export class InputGamepad {
         };
     }
 
-    public get rightStickX(): number {
-        if (Math.abs(this._rightStickX) < this._rightStickXDeadzone) {
-            return 0;
-        }
+    /*** Right ***/
 
+    public get rightStickX(): number {
         return this._rightStickX;
     };
 
-    public get rightStickY(): number {
-        if (Math.abs(this._rightStickY) < this._rightStickYDeadzone) {
-            return 0;
-        }
+    public set rightStickX(value: number) {
+        if (
+            this._rightStickX !== value &&
+            Math.abs(value) > this._rightStickXDeadzone
+        ) {
+            this._rightStickX = value;
 
+            if (this.onRightStickXChanged) {
+                this.onRightStickXChanged(value);
+            }
+        }
+    };
+
+    public get rightStickY(): number {
         return this._rightStickYInvert
             ? -this._rightStickY
             : this._rightStickY;
+    };
+
+    public set rightStickY(value: number) {
+        if (
+            this._rightStickY !== value &&
+            Math.abs(value) > this._rightStickYDeadzone
+        ) {
+            this._rightStickY = value;
+
+            if (this.onRightStickYChanged) {
+                this.onRightStickYChanged(value);
+            }
+        }
     };
 
     public get rightStick(): InputEnumStickValues {
@@ -158,23 +207,49 @@ export class InputGamepad {
             x: this.rightStickX,
             y: this.rightStickY,
         };
-    }
+    };
+
+    /***** Triggers *****/
+
+    /*** Left ***/
 
     public get leftTrigger(): number {
-        if (Math.abs(this._leftTrigger) < this._leftTriggerDeadzone) {
-            return 0;
-        }
-
         return this._leftTrigger;
     };
 
-    public get rightTrigger(): number {
-        if (Math.abs(this._rightTrigger) < this._rightTriggerDeadzone) {
-            return 0;
-        }
+    public set leftTrigger(value: number) {
+        if (
+            this._leftTrigger !== value &&
+            value > this._leftTriggerDeadzone
+        ) {
+            this._leftTrigger = value;
 
+            if (this.onLeftTriggerChanged) {
+                this.onLeftTriggerChanged(value);
+            }
+        }
+    };
+
+    /*** Right ***/
+
+    public get rightTrigger(): number {
         return this._rightTrigger;
     };
+
+    public set rightTrigger(value: number) {
+        if (
+            this._rightTrigger !== value &&
+            value > this._rightTriggerDeadzone
+        ) {
+            this._rightTrigger = value;
+
+            if (this.onRightTriggerChanged) {
+                this.onLeftTriggerChanged(value);
+            }
+        }
+    };
+
+    /*** Both ***/
 
     public get triggers(): number {
         if (
@@ -197,6 +272,240 @@ export class InputGamepad {
         return 0;
     };
 
+    /********** Buttons **********/
+
+    public get buttonA(): boolean {
+        return this._buttonA;
+    };
+
+    public set buttonA(state: boolean) {
+        if (state != this._buttonA) {
+            this._buttonA = state;
+
+            if (this.onButtonChanged) {
+                this.onButtonChanged(InputGamepadButtonEnum.A, state);
+            }
+        }
+    };
+
+    public get buttonB(): boolean {
+        return this._buttonB;
+    };
+
+    public set buttonB(state: boolean) {
+        if (state != this._buttonB) {
+            this._buttonB = state;
+
+            if (this.onButtonChanged) {
+                this.onButtonChanged(InputGamepadButtonEnum.B, state);
+            }
+        }
+    };
+
+    public get buttonX(): boolean {
+        return this._buttonX;
+    };
+
+    public set buttonX(state: boolean) {
+        if (state != this._buttonX) {
+            this._buttonX = state;
+
+            if (this.onButtonChanged) {
+                this.onButtonChanged(InputGamepadButtonEnum.X, state);
+            }
+        }
+    };
+
+    public get buttonY(): boolean {
+        return this._buttonY;
+    };
+
+    public set buttonY(state: boolean) {
+        if (state != this._buttonY) {
+            this._buttonY = state;
+
+            if (this.onButtonChanged) {
+                this.onButtonChanged(InputGamepadButtonEnum.Y, state);
+            }
+        }
+    };
+
+    public get buttonStart(): boolean {
+        return this._buttonStart;
+    };
+
+    public set buttonStart(state: boolean) {
+        if (state != this._buttonStart) {
+            this._buttonStart = state;
+
+            if (this.onButtonChanged) {
+                this.onButtonChanged(InputGamepadButtonEnum.Start, state);
+            }
+        }
+    };
+
+    public get buttonBack(): boolean {
+        return this._buttonBack;
+    };
+
+    public set buttonBack(state: boolean) {
+        if (state != this._buttonBack) {
+            this._buttonBack = state;
+
+            if (this.onButtonChanged) {
+                this.onButtonChanged(InputGamepadButtonEnum.Back, state);
+            }
+        }
+    };
+
+    /*** Sticks ***/
+
+    public get buttonLeftStick(): boolean {
+        return this._buttonLeftStick;
+    };
+
+    public set buttonLeftStick(state: boolean) {
+        if (state != this._buttonLeftStick) {
+            this._buttonLeftStick = state;
+
+            if (this.onButtonChanged) {
+                this.onButtonChanged(InputGamepadButtonEnum.LeftStick, state);
+            }
+        }
+    };
+
+    public get buttonRightStick(): boolean {
+        return this._buttonRightStick;
+    };
+
+    public set buttonRightStick(state: boolean) {
+        if (state != this._buttonRightStick) {
+            this._buttonRightStick = state;
+
+            if (this.onButtonChanged) {
+                this.onButtonChanged(InputGamepadButtonEnum.RightStick, state);
+            }
+        }
+    };
+
+    /*** Bottoms ***/
+
+    public get buttonLB(): boolean {
+        return this._buttonLB;
+    };
+
+    public set buttonLB(state: boolean) {
+        if (state != this._buttonLB) {
+            this._buttonLB = state;
+
+            if (this.onButtonChanged) {
+                this.onButtonChanged(InputGamepadButtonEnum.LB, state);
+            }
+        }
+    };
+
+    public get buttonRB(): boolean {
+        return this._buttonRB;
+    };
+
+    public set buttonRB(state: boolean) {
+        if (state != this._buttonRB) {
+            this._buttonRB = state;
+
+            if (this.onButtonChanged) {
+                this.onButtonChanged(InputGamepadButtonEnum.RB, state);
+            }
+        }
+    };
+
+    /*** Triggers ***/
+
+    public get buttonLT(): boolean {
+        return this._buttonLT;
+    };
+
+    public set buttonLT(state: boolean) {
+        if (state != this._buttonLT) {
+            this._buttonLT = state;
+
+            if (this.onButtonChanged) {
+                this.onButtonChanged(InputGamepadButtonEnum.LT, state);
+            }
+        }
+    };
+
+    public get buttonRT(): boolean {
+        return this._buttonRT;
+    };
+
+    public set buttonRT(state: boolean) {
+        if (state != this._buttonRT) {
+            this._buttonRT = state;
+
+            if (this.onButtonChanged) {
+                this.onButtonChanged(InputGamepadButtonEnum.RT, state);
+            }
+        }
+    };
+
+    /*** DPad ***/
+
+    public get buttonDPadUp(): boolean {
+        return this._buttonDPadUp;
+    };
+
+    public set buttonDPadUp(state: boolean) {
+        if (state != this._buttonDPadUp) {
+            this._buttonDPadUp = state;
+
+            if (this.onButtonChanged) {
+                this.onButtonChanged(InputGamepadButtonEnum.DPadUp, state);
+            }
+        }
+    };
+
+    public get buttonDPadDown(): boolean {
+        return this._buttonDPadDown;
+    };
+
+    public set buttonDPadDown(state: boolean) {
+        if (state != this._buttonDPadDown) {
+            this._buttonDPadDown = state;
+
+            if (this.onButtonChanged) {
+                this.onButtonChanged(InputGamepadButtonEnum.DPadDown, state);
+            }
+        }
+    };
+
+    public get buttonDPadLeft(): boolean {
+        return this._buttonDPadLeft;
+    };
+
+    public set buttonDPadLeft(state: boolean) {
+        if (state != this._buttonDPadLeft) {
+            this._buttonDPadLeft = state;
+
+            if (this.onButtonChanged) {
+                this.onButtonChanged(InputGamepadButtonEnum.DPadLeft, state);
+            }
+        }
+    };
+
+    public get buttonDPadRight(): boolean {
+        return this._buttonDPadRight;
+    };
+
+    public set buttonDPadRight(state: boolean) {
+        if (state != this._buttonDPadRight) {
+            this._buttonDPadRight = state;
+
+            if (this.onButtonChanged) {
+                this.onButtonChanged(InputGamepadButtonEnum.DPadRight, state);
+            }
+        }
+    };
+
 }
 
 export interface InputEnumStickValues {
@@ -211,12 +520,12 @@ export enum InputGamepadTypeEnum {
 }
 
 export enum InputGamepadAxisEnum {
-    StickLeftX,
-    StickLeftY,
-    StickRightX,
-    StickRightY,
-    TriggerLeft,
-    TriggerRight,
+    LeftStickX,
+    LeftStickY,
+    RightStickX,
+    RightStickY,
+    LeftTrigger,
+    RightTrigger,
     Triggers
 }
 
@@ -224,12 +533,12 @@ export enum InputGamepadAxisEnum {
  * Directly related to the InputGamepadAxisEnum enum and the InputGamepad class.
  */
 export enum InputGamepadAxisPropertyEnum {
-    StickLeftX = "leftStickX",
-    StickLeftY = "leftStickY",
-    StickRightX = "rightStickX",
-    StickRightY = "rightStickY",
-    TriggerLeft = "leftTrigger",
-    TriggerRight  = "rightTrigger",
+    LeftStickX = "leftStickX",
+    LeftStickY = "leftStickY",
+    RightStickX = "rightStickX",
+    RightStickY = "rightStickY",
+    LeftTrigger = "leftTrigger",
+    RightTrigger  = "rightTrigger",
     Triggers  = "triggers" // A special, virtual field. If left trigger is pressed, the value is negative. If right trigger is pressed, it's positive.
 }
 
@@ -240,8 +549,8 @@ export enum InputGamepadButtonEnum {
     Y,
     Start,
     Back,
-    StickLeft,
-    StickRight,
+    LeftStick,
+    RightStick,
     LB,
     RB,
     LT,
@@ -262,8 +571,8 @@ export enum InputGamepadButtonPropertyEnum {
     Y = "buttonY",
     Start = "buttonStart",
     Back = "buttonBack",
-    StickLeft = "buttonLeftStick",
-    StickRight = "buttonRightStick",
+    LeftStick = "buttonLeftStick",
+    RightStick = "buttonRightStick",
     LB = "buttonLB",
     RB = "buttonRB",
     LT = "leftTrigger",

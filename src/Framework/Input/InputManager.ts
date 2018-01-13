@@ -459,9 +459,7 @@ export class InputManager {
             }
 
             this._gamepads.push(
-                new InputGamepad(
-                    gamepad
-                )
+                new InputGamepad(gamepad)
             );
         }
 
