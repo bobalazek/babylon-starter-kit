@@ -1,4 +1,4 @@
-import { GameManager } from './../GameManager';
+import { GameManager } from './../Core/GameManager';
 
 import {
     InputGamepad,
@@ -205,13 +205,13 @@ export class InputManager {
                 gamepads[i].update();
 
                 if (
+                    this._mode !== InputModeEnum.Gamepad &&
                     (
                         gamepads[i].buttonA ||
                         gamepads[i].buttonB ||
                         gamepads[i].buttonX ||
                         gamepads[i].buttonY
-                    ) &&
-                    this._mode !== InputModeEnum.Gamepad
+                    )
                 ) {
                     this._mode = InputModeEnum.Gamepad;
                     this.resetAxesAndActions();
@@ -284,8 +284,8 @@ export class InputManager {
         const isPressed = e.type === "keydown";
 
         if (
-            isPressed &&
-            this._mode !== InputModeEnum.KeyboardAndMouse
+            this._mode !== InputModeEnum.KeyboardAndMouse &&
+            isPressed
         ) {
             this._mode = InputModeEnum.KeyboardAndMouse;
             this.resetAxesAndActions();
@@ -349,8 +349,8 @@ export class InputManager {
         const isPressed = e.type === "mousedown" || e.type === "pointerdown";
 
         if (
-            isPressed &&
-            this._mode !== InputModeEnum.KeyboardAndMouse
+            this._mode !== InputModeEnum.KeyboardAndMouse &&
+            isPressed
         ) {
             this._mode = InputModeEnum.KeyboardAndMouse;
             this.resetAxesAndActions();

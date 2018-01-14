@@ -1,4 +1,4 @@
-import { AbstractLevel } from './AbstractLevel';
+import { AbstractLevel } from '../Level/AbstractLevel';
 
 export class MeshManager {
 

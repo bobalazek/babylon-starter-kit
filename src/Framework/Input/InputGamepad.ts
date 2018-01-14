@@ -1,4 +1,4 @@
-import { GameManager } from '../GameManager';
+import { GameManager } from '../Core/GameManager';
 
 export class InputGamepad {
 
@@ -126,11 +126,10 @@ export class InputGamepad {
     };
 
     public set leftStickX(value: number) {
-        if (
-            this._leftStickX !== value &&
-            Math.abs(value) > this._leftStickXDeadzone
-        ) {
-            this._leftStickX = value;
+        if (this._leftStickX !== value) {
+            this._leftStickX = Math.abs(value) > this._leftStickXDeadzone
+                ? value
+                : 0;
 
             if (this.onLeftStickXChanged) {
                 this.onLeftStickXChanged(value);
@@ -145,11 +144,10 @@ export class InputGamepad {
     };
 
     public set leftStickY(value: number) {
-        if (
-            this._leftStickY !== value &&
-            Math.abs(value) > this._leftStickYDeadzone
-        ) {
-            this._leftStickY = value;
+        if (this._leftStickY !== value) {
+            this._leftStickY = Math.abs(value) > this._leftStickYDeadzone
+                ? value
+                : 0;
 
             if (this.onLeftStickYChanged) {
                 this.onLeftStickYChanged(value);
@@ -171,11 +169,10 @@ export class InputGamepad {
     };
 
     public set rightStickX(value: number) {
-        if (
-            this._rightStickX !== value &&
-            Math.abs(value) > this._rightStickXDeadzone
-        ) {
-            this._rightStickX = value;
+        if (this._rightStickX !== value) {
+            this._rightStickX = Math.abs(value) > this._rightStickXDeadzone
+                ? value
+                : 0;
 
             if (this.onRightStickXChanged) {
                 this.onRightStickXChanged(value);
@@ -190,11 +187,10 @@ export class InputGamepad {
     };
 
     public set rightStickY(value: number) {
-        if (
-            this._rightStickY !== value &&
-            Math.abs(value) > this._rightStickYDeadzone
-        ) {
-            this._rightStickY = value;
+        if (this._rightStickY !== value) {
+            this._rightStickY = Math.abs(value) > this._rightStickYDeadzone
+                ? value
+                : 0;
 
             if (this.onRightStickYChanged) {
                 this.onRightStickYChanged(value);
@@ -218,11 +214,10 @@ export class InputGamepad {
     };
 
     public set leftTrigger(value: number) {
-        if (
-            this._leftTrigger !== value &&
-            value > this._leftTriggerDeadzone
-        ) {
-            this._leftTrigger = value;
+        if (this._leftTrigger !== value) {
+            this._leftTrigger = value > this._leftTriggerDeadzone
+                ? value
+                : 0;
 
             if (this.onLeftTriggerChanged) {
                 this.onLeftTriggerChanged(value);
@@ -237,11 +232,10 @@ export class InputGamepad {
     };
 
     public set rightTrigger(value: number) {
-        if (
-            this._rightTrigger !== value &&
-            value > this._rightTriggerDeadzone
-        ) {
-            this._rightTrigger = value;
+        if (this._rightTrigger !== value) {
+            this._rightTrigger = value > this._rightTriggerDeadzone
+                ? value
+                : 0;
 
             if (this.onRightTriggerChanged) {
                 this.onLeftTriggerChanged(value);
@@ -279,7 +273,7 @@ export class InputGamepad {
     };
 
     public set buttonA(state: boolean) {
-        if (state != this._buttonA) {
+        if (state !== this._buttonA) {
             this._buttonA = state;
 
             if (this.onButtonChanged) {
@@ -293,7 +287,7 @@ export class InputGamepad {
     };
 
     public set buttonB(state: boolean) {
-        if (state != this._buttonB) {
+        if (state !== this._buttonB) {
             this._buttonB = state;
 
             if (this.onButtonChanged) {
@@ -307,7 +301,7 @@ export class InputGamepad {
     };
 
     public set buttonX(state: boolean) {
-        if (state != this._buttonX) {
+        if (state !== this._buttonX) {
             this._buttonX = state;
 
             if (this.onButtonChanged) {
@@ -321,7 +315,7 @@ export class InputGamepad {
     };
 
     public set buttonY(state: boolean) {
-        if (state != this._buttonY) {
+        if (state !== this._buttonY) {
             this._buttonY = state;
 
             if (this.onButtonChanged) {
@@ -335,7 +329,7 @@ export class InputGamepad {
     };
 
     public set buttonStart(state: boolean) {
-        if (state != this._buttonStart) {
+        if (state !== this._buttonStart) {
             this._buttonStart = state;
 
             if (this.onButtonChanged) {
@@ -349,7 +343,7 @@ export class InputGamepad {
     };
 
     public set buttonBack(state: boolean) {
-        if (state != this._buttonBack) {
+        if (state !== this._buttonBack) {
             this._buttonBack = state;
 
             if (this.onButtonChanged) {
@@ -365,7 +359,7 @@ export class InputGamepad {
     };
 
     public set buttonLeftStick(state: boolean) {
-        if (state != this._buttonLeftStick) {
+        if (state !== this._buttonLeftStick) {
             this._buttonLeftStick = state;
 
             if (this.onButtonChanged) {
@@ -379,7 +373,7 @@ export class InputGamepad {
     };
 
     public set buttonRightStick(state: boolean) {
-        if (state != this._buttonRightStick) {
+        if (state !== this._buttonRightStick) {
             this._buttonRightStick = state;
 
             if (this.onButtonChanged) {
@@ -395,7 +389,7 @@ export class InputGamepad {
     };
 
     public set buttonLB(state: boolean) {
-        if (state != this._buttonLB) {
+        if (state !== this._buttonLB) {
             this._buttonLB = state;
 
             if (this.onButtonChanged) {
@@ -409,7 +403,7 @@ export class InputGamepad {
     };
 
     public set buttonRB(state: boolean) {
-        if (state != this._buttonRB) {
+        if (state !== this._buttonRB) {
             this._buttonRB = state;
 
             if (this.onButtonChanged) {
@@ -425,7 +419,7 @@ export class InputGamepad {
     };
 
     public set buttonLT(state: boolean) {
-        if (state != this._buttonLT) {
+        if (state !== this._buttonLT) {
             this._buttonLT = state;
 
             if (this.onButtonChanged) {
@@ -439,7 +433,7 @@ export class InputGamepad {
     };
 
     public set buttonRT(state: boolean) {
-        if (state != this._buttonRT) {
+        if (state !== this._buttonRT) {
             this._buttonRT = state;
 
             if (this.onButtonChanged) {
@@ -455,7 +449,7 @@ export class InputGamepad {
     };
 
     public set buttonDPadUp(state: boolean) {
-        if (state != this._buttonDPadUp) {
+        if (state !== this._buttonDPadUp) {
             this._buttonDPadUp = state;
 
             if (this.onButtonChanged) {
@@ -469,7 +463,7 @@ export class InputGamepad {
     };
 
     public set buttonDPadDown(state: boolean) {
-        if (state != this._buttonDPadDown) {
+        if (state !== this._buttonDPadDown) {
             this._buttonDPadDown = state;
 
             if (this.onButtonChanged) {
@@ -483,7 +477,7 @@ export class InputGamepad {
     };
 
     public set buttonDPadLeft(state: boolean) {
-        if (state != this._buttonDPadLeft) {
+        if (state !== this._buttonDPadLeft) {
             this._buttonDPadLeft = state;
 
             if (this.onButtonChanged) {
@@ -497,7 +491,7 @@ export class InputGamepad {
     };
 
     public set buttonDPadRight(state: boolean) {
-        if (state != this._buttonDPadRight) {
+        if (state !== this._buttonDPadRight) {
             this._buttonDPadRight = state;
 
             if (this.onButtonChanged) {

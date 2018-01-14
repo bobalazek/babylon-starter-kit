@@ -1,4 +1,4 @@
-import { GameManager } from "./Framework/GameManager";
+import { GameManager } from "./Framework/Core/GameManager";
 
 import { InputBindingsDefault } from "./Framework/Input/Bindings/InputBindingsDefault";
 import { HelloWorldLevel } from "./Game/Levels/HelloWorldLevel";

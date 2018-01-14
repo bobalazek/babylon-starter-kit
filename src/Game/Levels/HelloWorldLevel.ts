@@ -1,4 +1,4 @@
-import { GameManager } from "../../Framework/GameManager";
+import { GameManager } from "../../Framework/Core/GameManager";
 import { AbstractBaseScene } from './AbstractBaseScene';
 
 export class HelloWorldLevel extends AbstractBaseScene {

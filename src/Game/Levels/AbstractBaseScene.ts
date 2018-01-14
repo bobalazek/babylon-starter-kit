@@ -1,7 +1,7 @@
 import 'babylonjs-materials';
 
-import { GameManager } from "../../Framework/GameManager";
-import { AbstractLevel } from '../../Framework/AbstractLevel';
+import { GameManager } from "../../Framework/Core/GameManager";
+import { AbstractLevel } from '../../Framework/Level/AbstractLevel';
 
 export class AbstractBaseScene extends AbstractLevel {
 

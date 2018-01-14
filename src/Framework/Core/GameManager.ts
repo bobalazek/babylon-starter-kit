@@ -1,8 +1,8 @@
 import * as BABYLON from 'babylonjs';
 
-import { AbstractLevel } from './AbstractLevel';
-import { InputManager } from './Input/InputManager';
-import { AbstractInputBindings } from './Input/InputHelpers';
+import { AbstractLevel } from '../Level/AbstractLevel';
+import { InputManager } from '../Input/InputManager';
+import { AbstractInputBindings } from '../Input/InputHelpers';
 
 export class GameManager {
 

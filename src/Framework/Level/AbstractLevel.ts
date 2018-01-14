@@ -1,5 +1,5 @@
-import { GameManager } from './GameManager';
-import { MeshManager } from './MeshManager';
+import { GameManager } from '../Core/GameManager';
+import { MeshManager } from '../Core/MeshManager';
 
 export class AbstractLevel {
 
