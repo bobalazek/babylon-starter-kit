@@ -1,16 +1,14 @@
 import { PossessableEntity } from '../PossessableEntity';
 import {
+    VehicleParametersInterface,
+    VehicleDataInterface,
+    VehicleInputInterface,
     VehicleTypeEnum,
     VehicleAircraftTypeEnum,
     VehicleLandcraftTypeEnum,
     VehicleWatercraftTypeEnum,
     VehicleStatusEnum
 } from './VehicleHelpers';
-import {
-    VehicleParametersInterface,
-    VehicleDataInterface,
-    VehicleInputInterface
-} from './VehicleInterfaces';
 
 export class Vehicle extends PossessableEntity {
 

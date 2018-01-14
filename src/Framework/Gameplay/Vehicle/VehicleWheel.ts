@@ -1,6 +1,4 @@
-import {
-    VehicleWheelStatusEnum
-} from './VehicleHelpers';
+import { VehicleWheelStatusEnum } from './VehicleHelpers';
 
 export class VehicleWheel {
 
