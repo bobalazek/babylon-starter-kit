@@ -253,23 +253,14 @@ export interface VehicleInputInterface {
 
 }
 
-export interface VehicleWheelParametersInterface {
-
-    /**
-     * The number of KG the vehicle has.
-     *
-     * @var number
-     */
-    mass: number;
-
-}
-
 /********** Enums **********/
 
 export enum VehicleTypeEnum {
     Aircraft,
     Landcraft,
-    Watercraft
+    Watercraft,
+    Hovercraft,
+    Spacecraft
 }
 
 export enum VehicleAircraftTypeEnum {
@@ -303,7 +294,6 @@ export enum VehicleWatercraftTypeEnum {
     Boat,
     Catamaran,
     MerchantShip,
-    Hovercraft,
     Hydroplane,
     Motorboat,
     Sailboat,
@@ -314,8 +304,10 @@ export enum VehicleWatercraftTypeEnum {
 }
 
 export enum VehicleEngineEnum {
+    None, // hang glider for example
     InternalCombustionEngine, // cars & co.
     PumpjetEngine, // boats & ships
+    Turboprop, // propeller planes
     RocketEngine // planes & rockets
 }
 
@@ -339,11 +331,4 @@ export enum VehicleStatusEnum {
     Submerging,
     Submerged,
     Slipping // drifting
-}
-
-
-export enum VehicleWheelStatusEnum {
-    Grounded,
-    Airborne,
-    Wheelspin
 }

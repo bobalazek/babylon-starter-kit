@@ -7,7 +7,8 @@ import {
     VehicleAircraftTypeEnum,
     VehicleLandcraftTypeEnum,
     VehicleWatercraftTypeEnum,
-    VehicleStatusEnum
+    VehicleStatusEnum,
+    VehicleEngineEnum
 } from './VehicleHelpers';
 
 export class Vehicle extends PossessableEntity {
@@ -15,12 +16,17 @@ export class Vehicle extends PossessableEntity {
     /**
      * What type is the vehicle?
      */
-    public type: VehicleTypeEnum;
+    private _type: VehicleTypeEnum;
 
     /**
      * What sub-type is the vehicle?
      */
-    public subType: VehicleAircraftTypeEnum | VehicleLandcraftTypeEnum | VehicleWatercraftTypeEnum;
+    private _subType: VehicleAircraftTypeEnum | VehicleLandcraftTypeEnum | VehicleWatercraftTypeEnum;
+
+    /**
+     * The vehicle engine type?
+     */
+    private _engineType: VehicleEngineEnum;
 
     /**
      * Holds all the parameters data of that vehicle.
