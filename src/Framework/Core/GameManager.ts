@@ -29,7 +29,7 @@ export class GameManager {
         this.inputManager = new InputManager(inputBindings);
         this.activeLevel = new (<any>config.startupLevel)();
 
-        this.activeLevel.onLevelPostLoad(() => {
+        this.activeLevel.onPostLoad(() => {
             this.inputManager.watch();
 
             this.engine.runRenderLoop(() => {
