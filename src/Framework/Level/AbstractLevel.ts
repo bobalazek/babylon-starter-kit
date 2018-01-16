@@ -8,8 +8,8 @@ export class AbstractLevel {
     protected _meshManager: MeshManager;
     protected _onLevelReadyIntervalTime: number = 100;
 
-    public isLevelLoaded: boolean = false;
-    public isLevelAssetsLoaded: boolean = false;
+    public isLoaded: boolean = false;
+    public isAssetsLoaded: boolean = false;
 
     constructor() {
 
@@ -31,14 +31,14 @@ export class AbstractLevel {
     /**
      * If you need to do something before we start the level, like manually loading meshes via the MeshManager.
      */
-    public onPreLevelStart(callback: () => void) {
+    public onPreStart(callback: () => void) {
         callback();
     }
 
     /**
      * If called on each progress of the assets manager.
      */
-    public onLevelAssetsProgress(remainingCount: number, totalCount: number, lastTask: BABYLON.AbstractAssetTask) {
+    public onAssetsProgress(remainingCount: number, totalCount: number, lastTask: BABYLON.AbstractAssetTask) {
         GameManager.engine.loadingUIText = [
             'We are loading the scene. ',
             remainingCount + ' out of ' + totalCount + ' items still need to be loaded.',
@@ -48,7 +48,7 @@ export class AbstractLevel {
     /**
      * Once all the assets were loaded.
      */
-    public onLevelAssetsFinish() {
+    public onAssetsFinish() {
         // Do something after all the assets were loaded ...
     }
 
@@ -57,27 +57,27 @@ export class AbstractLevel {
     /**
      * When the level is ready.
      */
-    public onLevelPostLoad(callback: () => void) {
+    public onPostLoad(callback: () => void) {
 
-        this.onPreLevelStart(() => {
-            this.isLevelLoaded = true;
+        this.onPreStart(() => {
+            this.isLoaded = true;
             this.start();
         });
 
         // Assets manager
-        this._assetsManager.onProgress = this.onLevelAssetsProgress.bind(this);
+        this._assetsManager.onProgress = this.onAssetsProgress.bind(this);
         this._assetsManager.onFinish = () => {
-            this.onLevelAssetsFinish.bind(this);
+            this.onAssetsFinish.bind(this);
 
-            this.isLevelAssetsLoaded = true;
+            this.isAssetsLoaded = true;
         };
         this._assetsManager.load();
 
         // Interval
         let interval = setInterval(() => {
             if (
-                this.isLevelLoaded &&
-                this.isLevelAssetsLoaded
+                this.isLoaded &&
+                this.isAssetsLoaded
             ) {
                 clearInterval(interval);
                 callback();

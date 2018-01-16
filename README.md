@@ -40,9 +40,9 @@ For those of you who are from Unity or UE4, you should probably know the concept
 All your levels should go inside the `src/Game/Levels/` directory. Your level class needs to extend the `src/Framework/AbstractLevel`. Your level should then include the following methods:
 
 * `AbstractLevel::start()` - this is where all your game logic will go in.
-* (optional) `AbstractLevel::onPreLevelStart(callback: () => void)` - into this method you will normally put some preloading stuff: meshes, audio, video, ... for later use. It you MUST call the callback after all your assets have been loaded, else the level will not start.
-* (optional) `AbstractLevel::onLevelAssetsProgress(remainingCount: number, totalCount: number, lastTask: BABYLON.AbstractAssetTask)` - will be run by the assets manager, after an asset was loaded. You can change the loading text here (ex.: `GameManager.engine.loadingUIText = "We are loading the assets. " + remainingCount + " assets are left to be loaded."`).
-* (optional) `AbstractLevel:: onLevelAssetsFinish()` - will run after all the assets have been loaded.
+* (optional) `AbstractLevel::onPreStart(callback: () => void)` - into this method you will normally put some preloading stuff: meshes, audio, video, ... for later use. It you MUST call the callback after all your assets have been loaded, else the level will not start.
+* (optional) `AbstractLevel::onAssetsProgress(remainingCount: number, totalCount: number, lastTask: BABYLON.AbstractAssetTask)` - will be run by the assets manager, after an asset was loaded. You can change the loading text here (ex.: `GameManager.engine.loadingUIText = "We are loading the assets. " + remainingCount + " assets are left to be loaded."`).
+* (optional) `AbstractLevel:: onAssetsFinish()` - will run after all the assets have been loaded.
 
 
 #### Level - AssetsManager
