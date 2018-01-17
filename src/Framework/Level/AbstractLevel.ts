@@ -1,12 +1,15 @@
 import { GameManager } from '../Core/GameManager';
 import { MeshManager } from '../Core/MeshManager';
 
+import { PossessableEntity } from '../Gameplay/PossessableEntity';
+
 export class AbstractLevel {
 
     protected _scene: BABYLON.Scene;
     protected _assetsManager: BABYLON.AssetsManager;
     protected _meshManager: MeshManager;
     protected _onLevelReadyIntervalTime: number = 100;
+    protected _player: PossessableEntity;
 
     public isLoaded: boolean = false;
     public isAssetsLoaded: boolean = false;
@@ -100,6 +103,10 @@ export class AbstractLevel {
 
     public getMeshManager(): MeshManager {
         return this._meshManager;
+    }
+
+    public getPlayer(): PossessableEntity {
+        return this._player;
     }
 
 }

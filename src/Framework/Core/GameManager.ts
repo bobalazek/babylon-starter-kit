@@ -1,6 +1,7 @@
 import * as BABYLON from 'babylonjs';
 
 import { AbstractLevel } from '../Level/AbstractLevel';
+import { AbstractController } from '../Gameplay/Controller/AbstractController';
 import { InputManager } from '../Input/InputManager';
 import { AbstractInputBindings } from '../Input/InputHelpers';
 
@@ -12,6 +13,7 @@ export class GameManager {
     public static debug: boolean;
     public static inputManager: InputManager;
     public static activeLevel: AbstractLevel;
+    public static controller: AbstractController;
 
     public static boot(config: GameConfigInterface) {
 
@@ -28,9 +30,11 @@ export class GameManager {
         const inputBindings = new (<any>config.inputBindings)();
         this.inputManager = new InputManager(inputBindings);
         this.activeLevel = new (<any>config.startupLevel)();
+        this.controller = new (<any>config.controller)();
 
         this.activeLevel.onPostLoad(() => {
             this.inputManager.watch();
+            this.controller.start();
 
             this.engine.runRenderLoop(() => {
                 this.inputManager.update();
@@ -59,4 +63,5 @@ export interface GameConfigInterface {
     debug: boolean;
     startupLevel: typeof AbstractLevel;
     inputBindings: typeof AbstractInputBindings;
+    controller: typeof AbstractController;
 }

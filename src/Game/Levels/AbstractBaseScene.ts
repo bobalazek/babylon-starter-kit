@@ -13,6 +13,9 @@ export class AbstractBaseScene extends AbstractLevel {
 
     public start() {
 
+        // Physics
+        this.getScene().enablePhysics();
+
         // Skybox
         this.prepareSkybox(this.worldSize);
 
@@ -65,6 +68,13 @@ export class AbstractBaseScene extends AbstractLevel {
 
         underwaterGround.material = underwaterGroundMaterial;
 
+        underwaterGround.physicsImpostor = new BABYLON.PhysicsImpostor(
+            underwaterGround,
+            BABYLON.PhysicsImpostor.BoxImpostor,
+            { mass: 0, restitution: 0 },
+            this.getScene()
+        );
+
         // Water
         let water = BABYLON.Mesh.CreateGround(
             "water",
@@ -112,6 +122,13 @@ export class AbstractBaseScene extends AbstractLevel {
         groundMaterial.diffuseTexture = groundTexture;
 
         ground.material = groundMaterial;
+
+        ground.physicsImpostor = new BABYLON.PhysicsImpostor(
+            ground,
+            BABYLON.PhysicsImpostor.BoxImpostor,
+            { mass: 0, restitution: 0 },
+            this.getScene()
+        );
 
     }
 
