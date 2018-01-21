@@ -14,6 +14,10 @@ export enum CharacterStatusEnum {
     Throwing,
     Attacking,
     Defending,
+    Driving,
+    Flying,
+    Riding,
+    Sailing, // Rowing? Steering?
     EnteringVehicle,
     InVehicle,
     ExitingVehicle,
