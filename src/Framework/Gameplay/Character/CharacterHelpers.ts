@@ -15,6 +15,7 @@ export enum CharacterStatusEnum {
     Attacking,
     Defending,
     EnteringVehicle,
+    InVehicle,
     ExitingVehicle,
     Seated,
     Crouched,
