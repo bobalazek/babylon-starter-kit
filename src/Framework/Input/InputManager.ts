@@ -282,6 +282,10 @@ export class InputManager {
     public handleKeyboardKeyDownAndUpEvent(e: KeyboardEvent) {
 
         const isPressed = e.type === "keydown";
+        const keyCode = e.keyCode;
+        const action = typeof this._keyboardActionsMap[keyCode] !== "undefined"
+            ? this._keyboardActionsMap[keyCode]
+            : null;
 
         if (
             this._mode !== InputModeEnum.KeyboardAndMouse &&
@@ -291,22 +295,27 @@ export class InputManager {
             this.resetAxesAndActions();
         }
 
-        if (typeof this._keyboardActionsMap[e.keyCode] !== "undefined") {
-            const action = this._keyboardActionsMap[e.keyCode];
+        if (action !== null) {
             this._actions[action] = isPressed;
         }
 
         if (isPressed) {
-            var index = this._keyboardKeysPressed.indexOf(e.keyCode);
+            var index = this._keyboardKeysPressed.indexOf(keyCode);
             if (index === -1) {
-                this._keyboardKeysPressed.push(e.keyCode);
+                this._keyboardKeysPressed.push(keyCode);
             }
         } else {
-            var index = this._keyboardKeysPressed.indexOf(e.keyCode);
+            var index = this._keyboardKeysPressed.indexOf(keyCode);
             if (index > -1) {
                 this._keyboardKeysPressed.splice(index, 1);
             }
         }
+
+        this.dispatchEvent("input:device:keyboard", {
+            isPressed: isPressed,
+            keyCode: keyCode,
+            action: action,
+        });
 
     }
 
@@ -331,6 +340,11 @@ export class InputManager {
             }
         }
 
+        this.dispatchEvent("input:device:mouse:move", {
+            deltaX: deltaX,
+            deltaY: deltaY,
+        });
+
         // Clear the position after a few miliseconds
         clearTimeout(this._mouseInterval);
         this._mouseInterval = setTimeout(
@@ -347,6 +361,15 @@ export class InputManager {
     public handleMouseDownAndUpEvent(e: MouseEvent) {
 
         const isPressed = e.type === "mousedown" || e.type === "pointerdown";
+        // TODO: make sure those bindings are correct
+        const button = e.which === 3
+            ? InputMouseButtonEnum.Right
+            : (e.which === 2
+                ? InputMouseButtonEnum.Middle
+                : InputMouseButtonEnum.Left);
+        const action = typeof this._mouseActionsMap[button] !== "undefined"
+            ? this._mouseActionsMap[button]
+            : null;
 
         if (
             this._mode !== InputModeEnum.KeyboardAndMouse &&
@@ -356,15 +379,7 @@ export class InputManager {
             this.resetAxesAndActions();
         }
 
-        // TODO: make sure those bindings are correct
-        const button = e.which === 3
-            ? InputMouseButtonEnum.Right
-            : (e.which === 2
-                ? InputMouseButtonEnum.Middle
-                : InputMouseButtonEnum.Left);
-
-        if (typeof this._mouseActionsMap[button] !== "undefined") {
-            const action = this._mouseActionsMap[button];
+        if (action !== null) {
             this._actions[action] = isPressed;
         }
 
@@ -379,6 +394,12 @@ export class InputManager {
                 this._mouseButtonsPressed.splice(index, 1);
             }
         }
+
+        this.dispatchEvent("input:device:mouse", {
+            isPressed: isPressed,
+            button: button,
+            action: action,
+        });
 
     }
 
@@ -486,6 +507,14 @@ export class InputManager {
             ];
         }
 
+    }
+
+    /***** Events ******/
+
+    public dispatchEvent(name: string, data: any) {
+        GameManager.engine.getRenderingCanvas().dispatchEvent(
+            new CustomEvent(name, data)
+        );
     }
 
     /***** Pointer Lock *****/
