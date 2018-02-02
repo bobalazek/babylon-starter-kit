@@ -366,7 +366,16 @@ export class InputManager {
             ? InputMouseButtonEnum.Right
             : (e.which === 2
                 ? InputMouseButtonEnum.Middle
-                : InputMouseButtonEnum.Left);
+                : (e.which === 1
+                    ? InputMouseButtonEnum.Left
+                    : null
+                )
+            );
+
+        if (button === null) {
+            return;
+        }
+
         const action = typeof this._mouseActionsMap[button] !== "undefined"
             ? this._mouseActionsMap[button]
             : null;
