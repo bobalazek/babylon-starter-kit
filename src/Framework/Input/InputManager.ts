@@ -35,8 +35,8 @@ export class InputManager {
     // Keyboard stuff
     private _keyboardAxesMap: { [key: string]: InputMappingAxisKeyboardDataInterface } = {}; // ex.: [ moveForward: { keyCode: 68, scale: 1 } ]
     private _keyboardAxesKeyScaleMap: { [key: number]: { axis: string, scale: number } } = {}; // ex.: [ 68: { axis: "moveForward", scale: 1 } ]
-    private _keyboardActionsMap: { [key: number]: string } = {}; // ex.: [ 68: moveForward ]
-    private _keyboardKeysPressed: Array<number> = []; // ex.: [ 0: 68 ]
+    private _keyboardActionsMap: { [key: number]: string } = {}; // ex.: { 68: moveForward }
+    private _keyboardKeysPressed: { [key: number]: number } = {}; // ex.: { 68: 123456789 /* unix time */ }
 
     // Mouse staff
     private _mouseAxesMap: { [key: string]: InputMappingAxisMouseDataInterface } = {}; // ex.: [ moveForward: { axis: 0, scale: 1.0 } ]
@@ -300,14 +300,10 @@ export class InputManager {
         }
 
         if (isPressed) {
-            var index = this._keyboardKeysPressed.indexOf(keyCode);
-            if (index === -1) {
-                this._keyboardKeysPressed.push(keyCode);
-            }
+            this._keyboardKeysPressed[keyCode] = (new Date()).getTime();
         } else {
-            var index = this._keyboardKeysPressed.indexOf(keyCode);
-            if (index > -1) {
-                this._keyboardKeysPressed.splice(index, 1);
+            if (typeof this._keyboardKeysPressed[keyCode] !== "undefined") {
+                delete this._keyboardKeysPressed[keyCode];
             }
         }
 
@@ -416,8 +412,7 @@ export class InputManager {
     public updateAxesByKeyboard() {
 
         let affectedAxes = {};
-        for (let i = 0; i < this._keyboardKeysPressed.length; i++) {
-            const keyCode = this._keyboardKeysPressed[i];
+        for (let keyCode in this._keyboardKeysPressed) {
             if (this._keyboardAxesKeyScaleMap[keyCode]) {
                 const axis = this._keyboardAxesKeyScaleMap[keyCode].axis;
                 const scale = this._keyboardAxesKeyScaleMap[keyCode].scale;
