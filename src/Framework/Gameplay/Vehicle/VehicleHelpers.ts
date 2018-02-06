@@ -312,13 +312,23 @@ export enum VehicleEngineEnum {
 }
 
 export enum VehicleSteeringEnum {
-    FrontWheelSteering,
-    RearWheelSteering,
-    FourWheelSteering,
-    RudderSteering, // boats & ships
-    DifferentialSteering, // tanks & co.
-    CounterSteering, // 2-wheel vehicles (cycles & bikes)
-    AileronSteering // planes
+    FrontWheel,
+    RearWheel,
+    FourWheel,
+    Rudder, // boats & ships
+    Differential, // tanks & co.
+    Railway, // trains & co.
+    Counter, // 2-wheel vehicles (cycles & bikes)
+    Aileron // planes
+}
+
+
+export enum VehiclGroundContactEnum {
+    None,
+    Wheels, // cars, planes, 2-wheel vehicles, trains, ...
+    ContinuousTrack, // tanks & co.
+    Hull, // boats & ships
+    Maglev // magnetic levitation
 }
 
 export enum VehicleStatusEnum {
