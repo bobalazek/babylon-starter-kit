@@ -274,7 +274,8 @@ export enum VehicleAircraftTypeEnum {
     Hydrofoil,
     Rotorcraft,
     Seaplane,
-    Spaceplane
+    Spaceplane,
+    JetPack
 }
 
 export enum VehicleLandcraftTypeEnum {
@@ -286,13 +287,16 @@ export enum VehicleLandcraftTypeEnum {
     Snowmobile,
     Tank,
     Train,
-    Truck
+    Truck,
+    Skateboard,
+    Snowboard,
+    Ski
 }
 
 export enum VehicleWatercraftTypeEnum {
     Amphibian,
     Boat,
-    Catamaran,
+    Jetski,
     MerchantShip,
     Hydroplane,
     Motorboat,
@@ -300,7 +304,10 @@ export enum VehicleWatercraftTypeEnum {
     Submarine,
     Tanker,
     Trimaran,
-    Yacht
+    Yacht,
+    Raft,
+    Catamaran,
+    AircraftCarrier
 }
 
 export enum VehicleEngineEnum {
