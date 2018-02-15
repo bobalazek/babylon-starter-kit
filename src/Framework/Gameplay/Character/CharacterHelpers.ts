@@ -28,3 +28,8 @@ export enum CharacterStatusEnum {
     Airborne,
     Ragdoll
 }
+
+export enum CharacterPredationEnum {
+    Predator,
+    Prey
+}
