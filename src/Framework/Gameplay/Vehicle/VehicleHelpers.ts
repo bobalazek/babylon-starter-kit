@@ -340,12 +340,20 @@ export enum VehiclGroundContactEnum {
 
 export enum VehicleStatusEnum {
     Idle,
-    Accelerating,
-    Decelerating,
-    HandBraking,
-    Grounded,
-    Airborne,
-    Submerging,
-    Submerged,
-    Slipping // drifting
+    Grounded, // if the vehicle is on the ground
+    Submerged, // if the vehicle is (fully) under water
+    Floating, // if the vehicle is bouyant on the water
+    Airborne, // if the vehicle is in the air
+    Accelerating, // if the forward velocity is positive
+    Decelerating, // if the forward velocity is negative
+    Submerging, // when descending in water
+    Upthrusting, // when ascending in water
+    Climbing, // when ascending in the air
+    Falling, // when descending in the air
+    Ascending, // when ascending in water (upthrusting) or air (climbing)
+    Descending, // when descending in water (submerging) or air (fallinf)
+    Braking, 
+    Hovering, // for a hovercraft
+    HandBraking, // for landcraft vehicles (mostly)
+    Slipping // a.k.a. drifting
 }
