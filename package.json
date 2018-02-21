@@ -13,20 +13,22 @@
     "url": "http://bobalazek.com"
   },
   "dependencies": {
+    "@types/uws": "^0.13.1",
     "babylonjs": "^3.2.0-alpha9",
     "babylonjs-gui": "^3.2.0-alpha9",
     "babylonjs-inspector": "^3.2.0-alpha9",
     "babylonjs-loaders": "^3.2.0-alpha9",
     "babylonjs-materials": "^3.2.0-alpha9",
     "cannon": "^0.6.2",
-    "oimo": "^1.0.9",
-    "ts-keycode-enum": "^1.0.4",
-    "@types/uws": "^0.13.1",
     "colyseus": "^0.8.11",
     "colyseus.js": "^0.8.0",
+    "dotenv": "^5.0.0",
     "express": "^4.16.0",
     "nodemon": "^1.15.1",
-    "serve-index": "^1.8.0"
+    "oimo": "^1.0.9",
+    "serve-index": "^1.8.0",
+    "ts-keycode-enum": "^1.0.4",
+    "uws": "^9.14.0"
   },
   "devDependencies": {
     "awesome-typescript-loader": "^3.3.0",
