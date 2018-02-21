@@ -9,8 +9,17 @@ import { LobbyRoom } from './Rooms/LobbyRoom';
 
 const port = Number(process.env.GAME_SERVER_PORT || 8081);
 
+////////// App //////////
 const app = express();
+
+app.get('/ping', function (req, res) {
+    res.send('pong');
+});
+
+////////// HTTP server //////////
 const httpServer = createServer(app);
+
+////////// Game server //////////
 const gameServer = new Server({ server: httpServer });
 
 gameServer.register("lobby", LobbyRoom);

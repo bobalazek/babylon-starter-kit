@@ -2,7 +2,7 @@
   "name": "babylon-starter-kit",
   "scripts": {
     "dev-client-start": "webpack-dev-server --open --config webpack.dev.js",
-    "dev-server-start": "nodemon --watch '**/*.ts' --exec ts-node src/Game/Network/Server.ts",
+    "dev-server-start": "nodemon --ext ts --watch src/Game/Network --watch src/Game/Network/Rooms --exec ts-node src/Game/Network/Server.ts",
     "dev-start": "concurrently --kill-others \"npm run dev-server-start\" \"npm run dev-client-start\" ",
     "build": "webpack --config webpack.prod.js --progress"
   },
