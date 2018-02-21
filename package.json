@@ -1,7 +1,9 @@
 {
   "name": "babylon-starter-kit",
   "scripts": {
-    "start": "webpack-dev-server --open --config webpack.dev.js",
+    "dev-client-start": "webpack-dev-server --open --config webpack.dev.js",
+    "dev-server-start": "nodemon --watch '**/*.ts' --exec ts-node src/Game/Network/Server.ts",
+    "dev-start": "concurrently --kill-others \"npm run dev-server-start\" \"npm run dev-client-start\" ",
     "build": "webpack --config webpack.prod.js --progress"
   },
   "license": "MIT",
@@ -11,17 +13,24 @@
     "url": "http://bobalazek.com"
   },
   "dependencies": {
-    "babylonjs": "^3.2.0-alpha7",
-    "babylonjs-gui": "^3.2.0-alpha7",
-    "babylonjs-inspector": "^3.2.0-alpha7",
-    "babylonjs-loaders": "^3.2.0-alpha7",
-    "babylonjs-materials": "^3.2.0-alpha7",
+    "babylonjs": "^3.2.0-alpha9",
+    "babylonjs-gui": "^3.2.0-alpha9",
+    "babylonjs-inspector": "^3.2.0-alpha9",
+    "babylonjs-loaders": "^3.2.0-alpha9",
+    "babylonjs-materials": "^3.2.0-alpha9",
     "cannon": "^0.6.2",
     "oimo": "^1.0.9",
-    "ts-keycode-enum": "^1.0.4"
+    "ts-keycode-enum": "^1.0.4",
+    "@types/uws": "^0.13.1",
+    "colyseus": "^0.8.11",
+    "colyseus.js": "^0.8.0",
+    "express": "^4.16.0",
+    "nodemon": "^1.15.1",
+    "serve-index": "^1.8.0"
   },
   "devDependencies": {
     "awesome-typescript-loader": "^3.3.0",
+    "concurrently": "^3.5.1",
     "copy-webpack-plugin": "^4.2.0",
     "css-loader": "^0.28.7",
     "extract-text-webpack-plugin": "^3.0.1",
@@ -30,6 +39,7 @@
     "node-sass": "^4.6.0",
     "sass-loader": "^6.0.6",
     "style-loader": "^0.19.0",
+    "ts-node": "^3.3.0",
     "typescript": "^2.6.1",
     "uglifyjs-webpack-plugin": "^1.1.6",
     "webpack": "^3.8.1",

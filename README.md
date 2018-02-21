@@ -12,7 +12,7 @@ A starter kit for BabylonJS.
 ## Development
 
 * Navigate to the root of the project
-* Run `npm start`
+* Run `npm dev-start`
 * That's it!
 
 
