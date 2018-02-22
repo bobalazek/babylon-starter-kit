@@ -109,4 +109,8 @@ export class AbstractLevel {
         return this._player;
     }
 
+    public getCamera(): BABYLON.Camera {
+        return this._scene.activeCamera;
+    }
+
 }

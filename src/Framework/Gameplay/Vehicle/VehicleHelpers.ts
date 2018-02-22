@@ -279,6 +279,7 @@ export enum VehicleAircraftTypeEnum {
 }
 
 export enum VehicleLandcraftTypeEnum {
+    ATV, // quad bike
     Bike,
     Bulldozer,
     Bus,
@@ -286,6 +287,7 @@ export enum VehicleLandcraftTypeEnum {
     Motorcycle,
     Snowmobile,
     Tank,
+    Trailer,
     Train,
     Truck,
     Skateboard,
@@ -352,7 +354,7 @@ export enum VehicleStatusEnum {
     Falling, // when descending in the air
     Ascending, // when ascending in water (upthrusting) or air (climbing)
     Descending, // when descending in water (submerging) or air (fallinf)
-    Braking, 
+    Braking,
     Hovering, // for a hovercraft
     HandBraking, // for landcraft vehicles (mostly)
     Slipping // a.k.a. drifting

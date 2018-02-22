@@ -6,6 +6,8 @@ import { PossessableEntity } from '../PossessableEntity';
  */
 export class AbstractController {
 
+    public inputEnabledOnlyOnPointerLock: boolean = true; // should we update & proess the input only only when pointer is locked?
+
     /**
      * Which entity should we control?
      */
@@ -19,8 +21,13 @@ export class AbstractController {
         this._possessableEntity = GameManager.activeLevel.getPlayer();
 
         GameManager.engine.runRenderLoop(() => {
-            this.update();
-            this.processInput();
+            if (
+                this.inputEnabledOnlyOnPointerLock &&
+                GameManager.engine.isPointerLock
+            ) {
+                this.update();
+                this._processInput();
+            }
         });
 
     }
@@ -37,7 +44,12 @@ export class AbstractController {
         this._rotationInput = rotationInput;
     }
 
-    private processInput() {
+    public getPossessableEntity() {
+        return this._possessableEntity;
+    }
+
+    private _processInput() {
+
         if (this._possessableEntity) {
             const physicsBody = this._possessableEntity.getMesh().physicsImpostor;
             if (this._locationInput !== BABYLON.Vector3.Zero()) {
@@ -47,6 +59,7 @@ export class AbstractController {
                 );
             }
         }
+
     }
 
 }

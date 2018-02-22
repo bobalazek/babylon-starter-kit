@@ -330,7 +330,7 @@ export class InputManager {
                 this._axes[axis] = deltaX * mouseAction.scale;
             } else if (
                 deltaY !== 0 &&
-                mouseAction.axis === InputAxisEnum.X
+                mouseAction.axis === InputAxisEnum.Y
             ) {
                 this._axes[axis] = deltaY * mouseAction.scale;
             }

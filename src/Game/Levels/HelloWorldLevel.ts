@@ -8,6 +8,7 @@ export class HelloWorldLevel extends AbstractBaseScene {
 
         super.start();
 
+        // Spawn a spectator camera, until our player is ready
         let camera = new BABYLON.UniversalCamera(
             "spectatorCamera",
             new BABYLON.Vector3(0, 4, -8),

@@ -7,7 +7,7 @@ import 'dotenv/config';
 
 import { LobbyRoom } from './Rooms/LobbyRoom';
 
-const port = Number(process.env.GAME_SERVER_PORT || 8081);
+const GAME_SERVER_PORT = Number(process.env.GAME_SERVER_PORT || 8081);
 
 ////////// App //////////
 const app = express();
@@ -23,6 +23,6 @@ const httpServer = createServer(app);
 const gameServer = new Server({ server: httpServer });
 
 gameServer.register("lobby", LobbyRoom);
-gameServer.listen(port);
+gameServer.listen(GAME_SERVER_PORT);
 
-console.log(`Game server is listening on http://localhost:${ port }`);
+console.log(`Game server is listening on http://localhost:${ GAME_SERVER_PORT }`);
