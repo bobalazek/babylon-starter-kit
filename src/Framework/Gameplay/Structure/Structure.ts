@@ -2,7 +2,18 @@ import { UsableEntity } from '../UsableEntity';
 import {
     StructureParametersInterface,
     StructureDataInterface,
-    StructureTypeEnum
+    StructureTypeEnum,
+    StructureAgriculturalTypeEnum,
+    StructureCommercialTypeEnum,
+    StructureResidentialTypeEnum,
+    StructureMedicalTypeEnum,
+    StructureEducationalTypeEnum,
+    StructureGovernmentTypeEnum,
+    StructureIndustrialTypeEnum,
+    StructureMilitaryTypeEnum,
+    StructureParkingAndStorageTypeEnum,
+    StructureReligiousTypeEnum,
+    StructureTransportTypeEnum
 } from './StructureHelpers';
 
 export class Structure {
@@ -15,7 +26,7 @@ export class Structure {
     /**
      * What sub-type is the structure?
      */
-    private _subType: number; // TODO
+    private _subType: StructureAgriculturalTypeEnum | StructureCommercialTypeEnum | StructureResidentialTypeEnum | StructureMedicalTypeEnum | StructureEducationalTypeEnum | StructureGovernmentTypeEnum | StructureIndustrialTypeEnum | StructureMilitaryTypeEnum | StructureParkingAndStorageTypeEnum | StructureReligiousTypeEnum | StructureTransportTypeEnum;
 
     /**
      * Holds all the parameters data of that structure.
