@@ -33,6 +33,8 @@ export enum WeaponThrowableTypeEnum {
     Grenade
 }
 
+/******************** Interfaces ********************/
+
 export interface WeaponParametersInterface {
 
     /**

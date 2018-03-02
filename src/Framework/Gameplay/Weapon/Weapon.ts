@@ -22,12 +22,12 @@ export class Weapon extends UsableEntity {
     private _subType: WeaponFirearmTypeEnum | WeaponMeleeTypeEnum | WeaponRangedTypeEnum | WeaponThrowableTypeEnum;
 
     /**
-     * Holds all the parameters data of that vehicle.
+     * Holds all the parameters data of that weapon.
      */
     private _parameters: WeaponParametersInterface;
 
     /**
-     * Holds all the (real time) data of that vehicle.
+     * Holds all the (real time) data of that weapon.
      */
     private _data: WeaponDataInterface;
 
