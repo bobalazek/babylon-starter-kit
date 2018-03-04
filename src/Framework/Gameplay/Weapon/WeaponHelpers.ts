@@ -42,7 +42,7 @@ export interface WeaponParametersInterface {
      *
      * @var number
      */
-    damage: number;
+    damagePoints: number;
 
     /**
      * @var number
