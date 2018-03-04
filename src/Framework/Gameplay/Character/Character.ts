@@ -4,7 +4,7 @@ import {
     CharacterPredationModeEnum
 } from './CharacterHelpers';
 
-export class PlayerCharacter extends PossessableEntity {
+export class Character extends PossessableEntity {
 
     /**
      * Holds all the character statuses.
