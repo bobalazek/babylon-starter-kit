@@ -29,7 +29,8 @@ export enum CharacterStatusEnum {
     Ragdoll
 }
 
-export enum CharacterPredationEnum {
+export enum CharacterPredationModeEnum {
+    None,
     Predator,
     Prey
 }

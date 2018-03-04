@@ -171,6 +171,16 @@ export enum StructureTransportTypeEnum {
     Lighthouse
 }
 
+export enum StructureStatusEnum {
+    Active,
+    Inactive,
+    UnderConstruction,
+    UnderAttack,
+    Upgrading,
+    Repairing,
+    Destroyed
+}
+
 /******************** Interfaces ********************/
 
 export interface StructureParametersInterface {

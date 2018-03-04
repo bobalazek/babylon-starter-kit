@@ -21,7 +21,9 @@ export class Vehicle extends PossessableEntity {
     /**
      * What sub-type is the vehicle?
      */
-    private _subType: VehicleAircraftTypeEnum | VehicleLandcraftTypeEnum | VehicleWatercraftTypeEnum;
+    private _subType: VehicleAircraftTypeEnum
+        | VehicleLandcraftTypeEnum
+        | VehicleWatercraftTypeEnum;
 
     /**
      * The vehicle engine type?
