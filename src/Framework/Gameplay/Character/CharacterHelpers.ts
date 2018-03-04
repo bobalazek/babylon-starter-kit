@@ -34,3 +34,27 @@ export enum CharacterPredationModeEnum {
     Predator,
     Prey
 }
+
+/******************** Interfaces ********************/
+
+export interface CharacterParametersInterface {
+
+    /**
+     * How much health points does that character have?
+     *
+     * @var number
+     */
+    healthPoints: number;
+
+}
+
+export interface CharacterDataInterface {
+
+    /**
+     * How much health points does that character have left?
+     *
+     * @var number
+     */
+    healthPoints: number;
+
+}
