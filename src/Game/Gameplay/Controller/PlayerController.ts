@@ -82,13 +82,26 @@ export class PlayerController extends AbstractController {
 
     public updateMesh() {
 
-        // TODO: forward should be camera forward
+        const possessableEntity = this.getPossessableEntity()
+        if (possessableEntity) {
+            const physicsBody = possessableEntity.getMesh().physicsImpostor;
+            if (this._inputLocation !== BABYLON.Vector3.Zero()) {
+                let force = this._inputLocation;
 
-        this.setLocationInput(this._inputLocation);
+                // TODO: force should be camera forward, but still perpendicular to the ground
+
+                physicsBody.applyForce(
+                    force,
+                    physicsBody.getObjectCenter()
+                );
+            }
+        }
 
     }
 
     public updateCamera() {
+
+        // TODO: collisions
 
         this._camera.alpha += this._inputRotation.x * this._rotationMultiplier * -1;
         this._camera.beta += this._inputRotation.y * this._rotationMultiplier * -1;

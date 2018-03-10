@@ -13,9 +13,6 @@ export class AbstractController {
      */
     private _possessableEntity: PossessableEntity;
 
-    private _locationInput: BABYLON.Vector3;
-    private _rotationInput: BABYLON.Vector3;
-
     public start () {
 
         this._possessableEntity = GameManager.activeLevel.getPlayer();
@@ -26,7 +23,6 @@ export class AbstractController {
                 GameManager.engine.isPointerLock
             ) {
                 this.update();
-                this._processInput();
             }
         });
 
@@ -36,30 +32,8 @@ export class AbstractController {
         // this will run on every loop, before the possessable entity will get updated
     }
 
-    public setLocationInput(locationInput: BABYLON.Vector3) {
-        this._locationInput = locationInput;
-    }
-
-    public setRotationInput(rotationInput: BABYLON.Vector3) {
-        this._rotationInput = rotationInput;
-    }
-
     public getPossessableEntity() {
         return this._possessableEntity;
-    }
-
-    private _processInput() {
-
-        if (this._possessableEntity) {
-            const physicsBody = this._possessableEntity.getMesh().physicsImpostor;
-            if (this._locationInput !== BABYLON.Vector3.Zero()) {
-                physicsBody.applyForce(
-                    this._locationInput,
-                    physicsBody.getObjectCenter()
-                );
-            }
-        }
-
     }
 
 }
