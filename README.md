@@ -13,7 +13,7 @@ A starter kit for BabylonJS.
 
 * Navigate to the root of the project
 * (optional) Set your parameters for the `.env` file (see `.env.example`)
-* Run `npm dev-start`
+* Run `npm run dev-start`
 * That's it!
 
 
