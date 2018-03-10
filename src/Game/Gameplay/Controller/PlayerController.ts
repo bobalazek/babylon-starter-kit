@@ -4,16 +4,15 @@ import { AbstractController } from '../../../Framework/Gameplay/Controller/Abstr
 export class PlayerController extends AbstractController {
 
     private _mesh: BABYLON.AbstractMesh;
-    private _camera: BABYLON.TargetCamera;
-    private _cameraPositionOffset: BABYLON.Vector3 = new BABYLON.Vector3(0, 2, -8);
-    private _cameraPositionDelta: BABYLON.Vector3 = BABYLON.Vector3.Zero();
+    private _camera: BABYLON.ArcRotateCamera;
+    private _cameraRadius: number = 8;
 
     private _inputAxes: any;
     private _inputLocation: BABYLON.Vector3 = BABYLON.Vector3.Zero();
     private _inputRotation: BABYLON.Vector2 = BABYLON.Vector2.Zero();
 
     private _locationMultiplier = 50;
-    private _rotationMultiplier = 0.01;
+    private _rotationMultiplier = 0.05;
 
     public start () {
 
@@ -24,13 +23,14 @@ export class PlayerController extends AbstractController {
         let scene = GameManager.activeLevel.getScene();
 
         this._mesh = this.getPossessableEntity().getMesh();
-        scene.activeCamera = this._camera = new BABYLON.TargetCamera(
+        scene.activeCamera = this._camera = new BABYLON.ArcRotateCamera(
             'thirdPersonCamera',
-            this._cameraPositionOffset,
+            -Math.PI / 2,
+            Math.PI / 2,
+            this._cameraRadius,
+            this._mesh.position,
             GameManager.activeLevel.getScene()
         );
-
-        this._camera.position = this._mesh.position.add(this._cameraPositionOffset);
 
         this._camera.lockedTarget = this._mesh;
 
@@ -82,32 +82,16 @@ export class PlayerController extends AbstractController {
 
     public updateMesh() {
 
+        // TODO: forward should be camera forward
+
         this.setLocationInput(this._inputLocation);
 
     }
 
     public updateCamera() {
 
-        // TODO: fix the math
-        const x = this._inputRotation.x;
-        const y = this._inputRotation.y;
-        const radius = this._cameraPositionOffset.z;
-
-        const cosX = Math.cos(x);
-        const cosY = Math.cos(y);
-        const sinX = Math.sin(x);
-        const sinY = Math.sin(y);
-
-        this._cameraPositionDelta.addInPlace(
-            new BABYLON.Vector3(
-                radius * cosX * sinY,
-                radius * cosY,
-                radius * sinX * sinY
-            )
-        );
-        // TODO /end
-
-        this._camera.position = this._mesh.position.add(this._cameraPositionOffset);
+        this._camera.alpha += this._inputRotation.x * this._rotationMultiplier * -1;
+        this._camera.beta += this._inputRotation.y * this._rotationMultiplier * -1;
 
     }
 
