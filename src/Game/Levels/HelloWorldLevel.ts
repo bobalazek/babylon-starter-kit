@@ -16,10 +16,20 @@ export class HelloWorldLevel extends AbstractBaseScene {
         );
 
         // Player
+        this._player = new PossessableEntity(this._getPlayerMesh());
+
+    }
+
+    private _getPlayerMesh(): BABYLON.AbstractMesh {
         let player = BABYLON.MeshBuilder.CreateSphere("player", {
+            diameterX: 1,
             diameterY: 2,
+            diameterZ: 0.5,
         }, this.getScene());
+
         player.position = new BABYLON.Vector3(0, 2, 8);
+        player.material = new BABYLON.StandardMaterial('playerMaterial', this.getScene());
+        player.material.alpha = 0.8;
         player.physicsImpostor = new BABYLON.PhysicsImpostor(
             player,
             BABYLON.PhysicsImpostor.SphereImpostor,
@@ -31,8 +41,7 @@ export class HelloWorldLevel extends AbstractBaseScene {
         );
         player.physicsImpostor.physicsBody.angularDamping = 1;
 
-        this._player = new PossessableEntity(player);
-
+        return player;
     }
 
 }

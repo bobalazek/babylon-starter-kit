@@ -88,7 +88,7 @@ export class PlayerController extends AbstractController {
             if (this._inputLocation !== BABYLON.Vector3.Zero()) {
                 let force = this._inputLocation;
 
-                // TODO: force should be camera forward, but still perpendicular to the ground
+                // TODO: rotate the player towards the cameras forward location and add force to it.
 
                 physicsBody.applyForce(
                     force,
