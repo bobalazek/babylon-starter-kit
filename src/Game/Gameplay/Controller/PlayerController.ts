@@ -8,11 +8,13 @@ export class PlayerController extends AbstractController {
     private _cameraRadius: number = 8;
 
     private _inputAxes: any;
-    private _inputLocation: BABYLON.Vector3 = BABYLON.Vector3.Zero();
+    private _inputLocation: BABYLON.Vector2 = BABYLON.Vector2.Zero();
     private _inputRotation: BABYLON.Vector2 = BABYLON.Vector2.Zero();
 
     private _locationMultiplier = 50;
     private _rotationMultiplier = 0.05;
+
+    private _forward: BABYLON.Vector3 = new BABYLON.Vector3(0, 0, 1);
 
     public start () {
 
@@ -49,17 +51,17 @@ export class PlayerController extends AbstractController {
         this._inputAxes = GameManager.inputManager.getAxes();
 
         // Location
-        this._inputLocation = BABYLON.Vector3.Zero();
+        this._inputLocation = BABYLON.Vector2.Zero();
 
         if (this._inputAxes['moveForward'] !== 0) {
             this._inputLocation.addInPlace(
-                new BABYLON.Vector3(0, 0, this._inputAxes['moveForward'] * this._locationMultiplier)
+                new BABYLON.Vector2(0, this._inputAxes['moveForward'] * this._locationMultiplier)
             );
         }
 
         if (this._inputAxes['moveRight'] !== 0) {
             this._inputLocation.addInPlace(
-                new BABYLON.Vector3(this._inputAxes['moveRight'] * this._locationMultiplier, 0, 0)
+                new BABYLON.Vector2(this._inputAxes['moveRight'] * this._locationMultiplier, 0)
             );
         }
 
@@ -84,11 +86,30 @@ export class PlayerController extends AbstractController {
 
         const possessableEntity = this.getPossessableEntity()
         if (possessableEntity) {
-            const physicsBody = possessableEntity.getMesh().physicsImpostor;
-            if (this._inputLocation !== BABYLON.Vector3.Zero()) {
-                let force = this._inputLocation;
+            const cameraDirection = this._camera.getForwardRay().direction;
+            const mesh = possessableEntity.getMesh();
+            const physicsBody = mesh.physicsImpostor;
+            const meshForward = BABYLON.Vector3.TransformNormal(
+                this._forward,
+                mesh.getPoseMatrix()
+            );
+            const meshDirection = BABYLON.Vector3.Normalize(meshForward);
 
-                // TODO: rotate the player towards the cameras forward location and add force to it.
+            let meshCameraDirectionDiff = BABYLON.Vector3.Zero();
+            meshDirection.subtractToRef(cameraDirection, meshCameraDirectionDiff);
+
+            if (this._inputRotation.x !== 0) {
+                let yaw = 0;
+
+                // TODO: rotate
+
+                mesh.rotate(BABYLON.Axis.Y, yaw, BABYLON.Space.LOCAL);
+            }
+
+            if (this._inputLocation !== BABYLON.Vector2.Zero()) {
+                let force = BABYLON.Vector3.Zero();
+
+                // TODO: move
 
                 physicsBody.applyForce(
                     force,
