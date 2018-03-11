@@ -6,7 +6,8 @@ import {
     WeaponFirearmTypeEnum,
     WeaponMeleeTypeEnum,
     WeaponRangedTypeEnum,
-    WeaponThrowableTypeEnum
+    WeaponThrowableTypeEnum,
+    WeaponNonLethalTypeEnum
 } from './WeaponHelpers';
 
 export class Weapon extends UsableEntity {
@@ -19,7 +20,7 @@ export class Weapon extends UsableEntity {
     /**
      * What sub-type is the weapon?
      */
-    private _subType: WeaponFirearmTypeEnum | WeaponMeleeTypeEnum | WeaponRangedTypeEnum | WeaponThrowableTypeEnum;
+    private _subType: WeaponFirearmTypeEnum | WeaponMeleeTypeEnum | WeaponRangedTypeEnum | WeaponThrowableTypeEnum | WeaponNonLethalTypeEnum;
 
     /**
      * Holds all the parameters data of that weapon.

@@ -5,9 +5,8 @@ export enum WeaponTypeEnum {
     Melee,
     Ranged,
     Throwable,
-    Rocket,
-    Cannon,
-    Nuclear
+    NonLethal,
+    Shield
 }
 
 export enum WeaponFirearmTypeEnum {
@@ -21,16 +20,33 @@ export enum WeaponFirearmTypeEnum {
 
 export enum WeaponMeleeTypeEnum {
     Axe,
-    Sword
+    Knive,
+    Spear,
+    Sword,
+    Whip
 }
 
 export enum WeaponRangedTypeEnum {
     Bow,
-    Crossbow
+    Cannon,
+    Crossbow,
+    Energy, // DEW or Magnetic
+    Missile,
+    Nuclear,
+    Rocket,
+    Sling
 }
 
 export enum WeaponThrowableTypeEnum {
-    Grenade
+    Grenade,
+    Shuriken
+}
+
+export enum WeaponNonLethalTypeEnum {
+    Water,
+    PepperSpray,
+    Electroshock,
+    LRAD // Long Range Acoustic Device
 }
 
 /******************** Interfaces ********************/
@@ -58,6 +74,20 @@ export interface WeaponParametersInterface {
      * @var number
      */
     recoilForce: number;
+
+    /**
+     * How far does the weapon reach (for ranged weapons)?
+     *
+     * @var number
+     */
+    range: number;
+
+    /**
+     * What is the explosion radius for that weapon?
+     *
+     * @var number
+     */
+    explosionRadius: number;
 
 }
 
