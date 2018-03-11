@@ -357,5 +357,6 @@ export enum VehicleStatusEnum {
     Braking,
     Hovering, // for a hovercraft
     HandBraking, // for landcraft vehicles (mostly)
-    Slipping // a.k.a. drifting
+    Slipping, // a.k.a. drifting
+    Stalling // for aircraft vehicles
 }
