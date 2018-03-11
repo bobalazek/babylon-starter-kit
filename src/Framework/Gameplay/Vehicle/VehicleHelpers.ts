@@ -355,7 +355,7 @@ export enum VehicleStatusEnum {
     Ascending, // when ascending in water (upthrusting) or air (climbing)
     Descending, // when descending in water (submerging) or air (falling)
     Braking,
-    Hovering, // for a hovercraft
+    Hovering, // for a hovercraft vehicle
     HandBraking, // for landcraft vehicles (mostly)
     Slipping, // a.k.a. drifting
     Stalling // for aircraft vehicles
