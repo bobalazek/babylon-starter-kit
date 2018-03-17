@@ -6,6 +6,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const WriteFilePlugin = require('write-file-webpack-plugin');
+const DotenvPlugin = require('dotenv-webpack');
 
 dotenv.config();
 
@@ -58,6 +59,7 @@ module.exports = {
         ], {
             copyUnmodified: true,
         }),
+        new DotenvPlugin(),
     ],
 
     resolve: {

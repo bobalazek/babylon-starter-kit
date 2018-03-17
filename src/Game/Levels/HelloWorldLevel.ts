@@ -1,6 +1,9 @@
+import * as Colyseus from "colyseus.js";
+
 import { GameManager } from "../../Framework/Core/GameManager";
 import { AbstractBaseScene } from './AbstractBaseScene';
 import { PossessableEntity } from "../../Framework/Gameplay/PossessableEntity";
+import { GAME_SERVER_PORT } from '../Config';
 
 export class HelloWorldLevel extends AbstractBaseScene {
 
@@ -17,6 +20,15 @@ export class HelloWorldLevel extends AbstractBaseScene {
 
         // Player
         this._player = new PossessableEntity(this._getPlayerMesh());
+
+        // Network
+        let client = new Colyseus.Client('ws://localhost:' + GAME_SERVER_PORT);
+        var lobbyRoom = client.join('lobby');
+
+        lobbyRoom.onJoin.add(() => {
+            console.log(client)
+            console.log(`${ client.id } joined the lobby.`);
+        });
 
     }
 

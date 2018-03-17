@@ -3,11 +3,12 @@ import * as express from 'express';
 import * as serveIndex from 'serve-index';
 import { createServer } from 'http';
 import { Server } from 'colyseus';
-import 'dotenv/config';
 
 import { LobbyRoom } from './Rooms/LobbyRoom';
 
-const GAME_SERVER_PORT = Number(process.env.GAME_SERVER_PORT || 8081);
+// NEEDS be before the Config include, so we can then reuse that file in browser & node environment
+import 'dotenv/config';
+import { GAME_SERVER_PORT } from '../Config';
 
 ////////// App //////////
 const app = express();
