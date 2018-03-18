@@ -19,6 +19,11 @@ export class LobbyRoom extends Room {
         this.state.players[client.id] = {
             name: playerName,
             client: client,
+            transform: {
+                position: { x: 0, y: 0, z: 0 },
+                rotation: { x: 0, y: 0, z: 0 },
+                // scale: { x: 0, y: 0, z: 0 },
+            },
         };
         this.state.actionLogs.push({
             client: client,
@@ -41,15 +46,23 @@ export class LobbyRoom extends Room {
         console.log(`LobbyRoom received message from ${ client.id }:`);
         console.log(data);
 
-        this.state.chatMessages.push({
-            id: uuid.v4(),
-            sender: this.state.players[client.id].name,
-            text: data.text,
-        });
+        if (data.action === 'chat:messages:new') {
+            this.processNewChatMessage(client, data.detail);
+        }
+
     }
 
     onDispose () {
         console.log("Lobby disposed.");
+    }
+
+    /********** Actions **********/
+    processNewChatMessage(client, detail) {
+        this.state.chatMessages.push({
+            id: uuid.v4(),
+            sender: this.state.players[client.id].name,
+            text: detail.text,
+        });
     }
 
 }

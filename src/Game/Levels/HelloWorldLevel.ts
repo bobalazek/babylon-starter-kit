@@ -5,7 +5,7 @@ import * as ReactDOM from "react-dom";
 import { GameManager } from "../../Framework/Core/GameManager";
 import { AbstractBaseScene } from './AbstractBaseScene';
 import { PossessableEntity } from "../../Framework/Gameplay/PossessableEntity";
-import { GAME_SERVER_PORT } from '../Config';
+import { GAME_SERVER_PORT, SERVER_UPDATE_RATE } from '../Config';
 import { ChatComponent } from '../UI/Chat';
 
 export class HelloWorldLevel extends AbstractBaseScene {
@@ -37,6 +37,7 @@ export class HelloWorldLevel extends AbstractBaseScene {
             document.getElementById('ui')
         );
 
+        // Chat
         lobbyRoom.listen('chatMessages/:id', (change) => {
             window.dispatchEvent(new CustomEvent('chat:messages', {
                 detail: {
@@ -47,9 +48,29 @@ export class HelloWorldLevel extends AbstractBaseScene {
 
         window.addEventListener('chat:messages:new', (event: CustomEvent) => {
             lobbyRoom.send({
-                text: event.detail.text,
+                action: 'chat:messages:new',
+                detail: {
+                    text: event.detail.text,
+                },
             });
         }, false);
+
+        // Player updates
+        let lastPlayerUpdateDetail = null;
+        setInterval(() => {
+            // only update the player if something has really changed
+            if (
+                lastPlayerUpdateDetail === null ||
+                !this._player.isMeshTransformSameAs(lastPlayerUpdateDetail)
+            ) {
+                const playerUpdateDetail = this._player.getMeshTransform();
+                lobbyRoom.send({
+                    action: 'player:transform:update',
+                    detail: playerUpdateDetail,
+                });
+                lastPlayerUpdateDetail = playerUpdateDetail;
+            }
+        }, 1000 / SERVER_UPDATE_RATE);
 
     }
 
