@@ -8,14 +8,38 @@ export class ChatComponent extends React.Component<ChatProps, ChatState>  {
 
         this.state = {
             messages: props.messages,
-            isActive: true,
+            isActive: props.isActive || false,
+            inputValue: props.inputValue || '',
         };
 
-        this.onChange = this.onChange.bind(this);
+        this.onUpdateMessages = this.onUpdateMessages.bind(this);
+        this.onHandleKeyPress = this.onHandleKeyPress.bind(this);
     }
 
-    onChange() {
+    componentDidMount() {
+        window.addEventListener('chat:messages', this.onUpdateMessages);
+    }
 
+    componentWillUnmount() {
+        window.removeEventListener('chat:messages', this.onUpdateMessages);
+    }
+
+    onUpdateMessages(event) {
+        this.setState({
+            messages: event.detail.messages,
+        });
+    }
+
+    onHandleKeyPress(event) {
+        if (event.key === 'Enter') {
+            window.dispatchEvent(new CustomEvent('chat:messages:new', {
+                detail: {
+                    text: this.state.inputValue,
+                },
+            }));
+
+            this.setState({ inputValue: '' });
+        }
     }
 
     render() {
@@ -32,12 +56,25 @@ export class ChatComponent extends React.Component<ChatProps, ChatState>  {
                 },
                 this.state.messages.map(message => React.createElement(
                     ChatMessageComponent,
-                    { message: message }
+                    {
+                        key: message.id,
+                        message: message,
+                    }
                 ))
             ),
-            React.createElement('input', {
-                id: 'chat-input',
-            })
+            React.createElement(
+                'div', {
+                    id: 'chat-input-wrapper',
+                },
+                React.createElement('input', {
+                    id: 'chat-input',
+                    value: this.state.inputValue,
+                    onChange: (event) => {
+                        this.setState({ inputValue: event.target.value });
+                    },
+                    onKeyPress: this.onHandleKeyPress,
+                })
+            )
         );
     }
 
@@ -50,6 +87,7 @@ export class ChatMessageComponent extends React.Component<ChatMessageProps, Chat
 
         this.state = {
             message: {
+                id: props.message.id,
                 sender: props.message.sender,
                 text: props.message.text,
             },
@@ -59,15 +97,21 @@ export class ChatMessageComponent extends React.Component<ChatMessageProps, Chat
     render() {
         return React.createElement(
             'li',
-            { className: 'chat-message' },
+            {
+                className: 'chat-message',
+            },
             React.createElement(
                 'b',
-                { className: 'chat-message--sender' },
+                {
+                    className: 'chat-message--sender',
+                },
                 this.state.message.sender
             ),
             React.createElement(
                 'span',
-                { className: 'chat-message--text' },
+                {
+                    className: 'chat-message--text',
+                },
                 this.state.message.text
             )
         );
@@ -77,10 +121,10 @@ export class ChatMessageComponent extends React.Component<ChatMessageProps, Chat
 
 /********** Interfaces **********/
 
-interface ChatMessage { sender: string, text: string }
+interface ChatMessage { id: string, sender: string, text: string }
 
 interface ChatProps {}
-interface ChatState { messages: Array<ChatMessage>, isActive: boolean }
+interface ChatState { messages: Array<ChatMessage>, isActive: boolean, inputValue: string }
 
 interface ChatMessageProps {}
 interface ChatMessageState { message: ChatMessage }

@@ -38,6 +38,12 @@ export class LobbyRoom extends Room {
     onMessage (client, data) {
         console.log(`LobbyRoom received message from ${ client.id }:`);
         console.log(data);
+
+        this.state.chatMessages.push({
+            id: this.state.chatMessages.length,
+            sender: 'Guest', // TODO
+            text: data.text,
+        });
     }
 
     onDispose () {

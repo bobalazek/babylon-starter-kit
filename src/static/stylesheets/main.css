@@ -10,12 +10,16 @@ canvas {
     touch-action: none;
 }
 
-* { box-sizing: border-box; }
+* {
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
 
 /********** Chat **********/
 #chat-wrapper {
     position: fixed;
-    bottom: 20%;
+    bottom: 100px;
     right: 0;
     width: 30%;
     height: 200px;
@@ -50,6 +54,21 @@ canvas {
     margin-right: 10px;
 }
 
+#chat-input-wrapper {
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    margin: 20px;
+    padding: 10px;
+    width: 50%;
+    background: #000;
+    opacity: 0.8;
+}
+
 #chat-input {
     width: 100%;
+    color: #fff;
+    background: none;
+    border: none;
+    outline: none !important;
 }

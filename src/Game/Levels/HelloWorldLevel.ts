@@ -28,20 +28,28 @@ export class HelloWorldLevel extends AbstractBaseScene {
         let client = new Colyseus.Client('ws://localhost:' + GAME_SERVER_PORT);
         let lobbyRoom = client.join('lobby');
 
-        lobbyRoom.onJoin.add(() => {
-            console.log(`${ client.id } joined the lobby.`);
-            console.log(client);
-        });
-
         // UI
-        let chatMessages = [
-            { sender: 'JohnDoe', text: 'Hello world!' },
-            { sender: 'JohnDoe2', text: 'Hello world 2!' },
-        ];
         ReactDOM.render(
-            React.createElement(ChatComponent, { messages: chatMessages }),
+            React.createElement(ChatComponent, {
+                messages: [],
+                isActive: true,
+            }),
             document.getElementById('ui')
         );
+
+        lobbyRoom.onUpdate.add((data) => {
+            window.dispatchEvent(new CustomEvent('chat:messages', {
+                detail: {
+                    messages: data.chatMessages,
+                },
+            }));
+        });
+
+        window.addEventListener('chat:messages:new', (event: CustomEvent) => {
+            lobbyRoom.send({
+                text: event.detail.text,
+            });
+        }, false);
 
     }
 
