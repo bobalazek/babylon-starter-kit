@@ -7,9 +7,10 @@ export class ChatComponent extends React.Component<ChatProps, ChatState>  {
         super(props);
 
         this.state = {
-            messages: props.messages,
-            isActive: props.isActive || false,
+            messages: props.messages || [],
             inputValue: props.inputValue || '',
+            showMessages: props.showMessages || false,
+            showInput: props.showInput || false,
         };
 
         this.onUpdateMessages = this.onUpdateMessages.bind(this);
@@ -25,8 +26,13 @@ export class ChatComponent extends React.Component<ChatProps, ChatState>  {
     }
 
     onUpdateMessages(event) {
-        this.setState({
-            messages: event.detail.messages,
+        this.setState((prevState) => {
+            return {
+                messages: [
+                    ...prevState.messages,
+                    event.detail.messages
+                ],
+            };
         });
     }
 
@@ -47,12 +53,12 @@ export class ChatComponent extends React.Component<ChatProps, ChatState>  {
             'div',
             {
                 id: 'chat-wrapper',
-                className: this.state.isActive ? 'active' : '',
             },
             React.createElement(
                 'ul',
                 {
                     id: 'chat',
+                    className: this.state.showMessages ? '' : 'hidden',
                 },
                 this.state.messages.map(message => React.createElement(
                     ChatMessageComponent,
@@ -65,6 +71,7 @@ export class ChatComponent extends React.Component<ChatProps, ChatState>  {
             React.createElement(
                 'div', {
                     id: 'chat-input-wrapper',
+                    className: this.state.showInput ? '' : 'hidden',
                 },
                 React.createElement('input', {
                     id: 'chat-input',
@@ -124,7 +131,12 @@ export class ChatMessageComponent extends React.Component<ChatMessageProps, Chat
 interface ChatMessage { id: string, sender: string, text: string }
 
 interface ChatProps {}
-interface ChatState { messages: Array<ChatMessage>, isActive: boolean, inputValue: string }
+interface ChatState {
+    messages: Array<ChatMessage>,
+    inputValue: string,
+    showMessages: boolean,
+    showInput: boolean
+}
 
 interface ChatMessageProps {}
 interface ChatMessageState { message: ChatMessage }

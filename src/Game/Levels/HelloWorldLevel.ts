@@ -31,16 +31,16 @@ export class HelloWorldLevel extends AbstractBaseScene {
         // UI
         ReactDOM.render(
             React.createElement(ChatComponent, {
-                messages: [],
-                isActive: true,
+                showMessages: true,
+                showInput: true,
             }),
             document.getElementById('ui')
         );
 
-        lobbyRoom.onUpdate.add((data) => {
+        lobbyRoom.listen('chatMessages/:id', (change) => {
             window.dispatchEvent(new CustomEvent('chat:messages', {
                 detail: {
-                    messages: data.chatMessages,
+                    messages: change.value,
                 },
             }));
         });

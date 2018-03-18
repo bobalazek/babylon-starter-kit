@@ -16,27 +16,21 @@ canvas {
     box-sizing: border-box;
 }
 
-/********** Chat **********/
-#chat-wrapper {
-    position: fixed;
-    bottom: 100px;
-    right: 0;
-    width: 30%;
-    height: 200px;
-    overflow: hidden;
-    padding: 10px;
+.hidden {
     display: none;
 }
 
-#chat-wrapper.active {
-    display: block;
-}
-
+/********** Chat **********/
 #chat {
-    padding: 0;
-    margin: 0 0 20px;
+    position: fixed;
+    bottom: 100px;
+    right: 0;
+    width: 50%;
+    height: 200px;
+    padding: 20px;
     list-style-type: none;
     color: #fff;
+    text-align: right;
 }
 
 .chat-message {
@@ -58,9 +52,9 @@ canvas {
     position: fixed;
     bottom: 0;
     right: 0;
-    margin: 20px;
-    padding: 10px;
     width: 50%;
+    padding: 10px;
+    margin: 20px;
     background: #000;
     opacity: 0.8;
 }
