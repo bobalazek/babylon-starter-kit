@@ -1,9 +1,12 @@
 import * as Colyseus from "colyseus.js";
+import * as React from "react";
+import * as ReactDOM from "react-dom";
 
 import { GameManager } from "../../Framework/Core/GameManager";
 import { AbstractBaseScene } from './AbstractBaseScene';
 import { PossessableEntity } from "../../Framework/Gameplay/PossessableEntity";
 import { GAME_SERVER_PORT } from '../Config';
+import { ChatComponent } from '../UI/Chat';
 
 export class HelloWorldLevel extends AbstractBaseScene {
 
@@ -23,12 +26,22 @@ export class HelloWorldLevel extends AbstractBaseScene {
 
         // Network
         let client = new Colyseus.Client('ws://localhost:' + GAME_SERVER_PORT);
-        var lobbyRoom = client.join('lobby');
+        let lobbyRoom = client.join('lobby');
 
         lobbyRoom.onJoin.add(() => {
-            console.log(client)
             console.log(`${ client.id } joined the lobby.`);
+            console.log(client);
         });
+
+        // UI
+        let chatMessages = [
+            { sender: 'JohnDoe', text: 'Hello world!' },
+            { sender: 'JohnDoe2', text: 'Hello world 2!' },
+        ];
+        ReactDOM.render(
+            React.createElement(ChatComponent, { messages: chatMessages }),
+            document.getElementById('ui')
+        );
 
     }
 

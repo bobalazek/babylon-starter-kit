@@ -13,6 +13,9 @@
     "url": "http://bobalazek.com"
   },
   "dependencies": {
+    "@types/express": "^4.11.1",
+    "@types/react": "^16.0.40",
+    "@types/react-dom": "^16.0.4",
     "@types/uws": "^0.13.1",
     "babylonjs": "^3.2.0-alphaC",
     "babylonjs-gui": "^3.2.0-alphaC",
@@ -28,6 +31,8 @@
     "express": "^4.16.0",
     "nodemon": "^1.15.1",
     "oimo": "^1.0.9",
+    "react": "^16.2.0",
+    "react-dom": "^16.2.0",
     "serve-index": "^1.8.0",
     "ts-keycode-enum": "^1.0.4",
     "uws": "^9.14.0"
