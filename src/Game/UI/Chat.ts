@@ -2,6 +2,9 @@ import * as React from "react";
 import * as ReactDOM from "react-dom";
 
 export class ChatComponent extends React.Component<ChatProps, ChatState>  {
+
+    hideMessagesTimeout; // holds the timeout callback
+    hideMessagesDelay: number = 10000; // how long should the messages stay visible after we update the messages?
     
     constructor(props) {
         super(props);
@@ -13,19 +16,22 @@ export class ChatComponent extends React.Component<ChatProps, ChatState>  {
             showInput: props.showInput || false,
         };
 
-        this.onUpdateMessages = this.onUpdateMessages.bind(this);
+        this.onMessagesUpdate = this.onMessagesUpdate.bind(this);
+        this.onInputToggle = this.onInputToggle.bind(this);
         this.onHandleKeyPress = this.onHandleKeyPress.bind(this);
     }
 
     componentDidMount() {
-        window.addEventListener('chat:messages', this.onUpdateMessages);
+        window.addEventListener('chat:messages:update', this.onMessagesUpdate);
+        window.addEventListener('chat:input:toggle', this.onInputToggle);
     }
 
     componentWillUnmount() {
-        window.removeEventListener('chat:messages', this.onUpdateMessages);
+        window.removeEventListener('chat:messages:update', this.onMessagesUpdate);
+        window.removeEventListener('chat:input:toggle', this.onInputToggle);
     }
 
-    onUpdateMessages(event) {
+    onMessagesUpdate(event) {
         this.setState((prevState) => {
             return {
                 messages: [
@@ -34,6 +40,19 @@ export class ChatComponent extends React.Component<ChatProps, ChatState>  {
                 ],
             };
         });
+
+        this.setState({ showMessages: true });
+
+        clearTimeout(this.hideMessagesTimeout);
+
+        this.hideMessagesTimeout = setTimeout(() => {
+            this.setState({ showMessages: false });
+        }, this.hideMessagesDelay);
+    }
+
+    onInputToggle(event) {
+        this.setState({ showInput: !this.state.showInput });
+        this.setState({ showMessages: this.state.showInput });
     }
 
     onHandleKeyPress(event) {

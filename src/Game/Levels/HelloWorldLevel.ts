@@ -1,6 +1,7 @@
 import * as Colyseus from "colyseus.js";
 import * as React from "react";
 import * as ReactDOM from "react-dom";
+import { Key as KeyboardKey } from 'ts-keycode-enum';
 
 import { GameManager } from "../../Framework/Core/GameManager";
 import { AbstractBaseScene } from './AbstractBaseScene';
@@ -30,16 +31,13 @@ export class HelloWorldLevel extends AbstractBaseScene {
 
         // UI
         ReactDOM.render(
-            React.createElement(ChatComponent, {
-                showMessages: true,
-                showInput: true,
-            }),
+            React.createElement(ChatComponent),
             document.getElementById('ui')
         );
 
         // Chat
         lobbyRoom.listen('chatMessages/:id', (change) => {
-            window.dispatchEvent(new CustomEvent('chat:messages', {
+            window.dispatchEvent(new CustomEvent('chat:messages:update', {
                 detail: {
                     messages: change.value,
                 },
@@ -53,6 +51,12 @@ export class HelloWorldLevel extends AbstractBaseScene {
                     text: event.detail.text,
                 },
             });
+        }, false);
+
+        window.addEventListener('keydown', (e) => {
+            if (e.keyCode === KeyboardKey.T) {
+                window.dispatchEvent(new Event('chat:input:toggle'));
+            }
         }, false);
 
         // Player updates
