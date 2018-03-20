@@ -31,7 +31,7 @@ export class HelloWorldLevel extends AbstractBaseScene {
         this._player = new PossessableEntity(this._getPlayerMesh());
 
         /********** Network **********/
-        let client = new Colyseus.Client('ws://localhost:' + GAME_SERVER_PORT);
+        let client = new Colyseus.Client('ws://' + window.location.hostname + ':' + GAME_SERVER_PORT);
         let lobbyRoom = client.join('lobby');
 
         /***** Chat *****/
