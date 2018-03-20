@@ -16,7 +16,10 @@ const expressApplication = express();
 expressApplication.use(cors());
 
 expressApplication.get('/ping', function (req, res) {
-    res.send('pong');
+    res.json({
+        start: req.query.start,
+        ping: 'pong',
+    });
 });
 
 ////////// HTTP server //////////

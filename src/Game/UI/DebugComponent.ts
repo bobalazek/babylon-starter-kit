@@ -45,7 +45,7 @@ export class DebugComponent extends React.Component<DebugComponentProps, DebugCo
                 {
                     id: 'ping-counter',
                 },
-                'Ping: ' + this.state.ping
+                'Ping: ' + ((this.state.ping >= 0) ? this.state.ping : '999+'),
             ),
             React.createElement(
                 'div',

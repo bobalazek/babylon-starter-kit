@@ -35,6 +35,8 @@ export class HelloWorldLevel extends AbstractBaseScene {
         let lobbyRoom = client.join('lobby');
 
         /***** Chat *****/
+        let chatInputShown = false;
+
         lobbyRoom.listen('chatMessages/:id', (change) => {
             window.dispatchEvent(new CustomEvent('chat:messages:update', {
                 detail: {
@@ -53,21 +55,32 @@ export class HelloWorldLevel extends AbstractBaseScene {
         }, false);
 
         window.addEventListener('keydown', (e) => {
-            if (e.keyCode === KeyboardKey.T) {
+            if (
+                (
+                    !chatInputShown &&
+                    e.keyCode === KeyboardKey.T
+                ) || (
+                    chatInputShown &&
+                    e.keyCode === KeyboardKey.Escape
+                )
+            ) {
                 window.dispatchEvent(new Event('chat:input:toggle'));
+                chatInputShown = !chatInputShown;
             }
         }, false);
 
         /***** Debug *****/
+        const pingUrl = 'http://' + window.location.hostname + ':' + GAME_SERVER_PORT + '/ping';
         let ping: number = 0;
         setInterval(() => {
-            let requestStart = (new Date()).getMilliseconds();
-            axios.get('http://localhost:' + GAME_SERVER_PORT + '/ping')
-                .then((response) => {
-                    let requestEnd = (new Date()).getMilliseconds();
+            let requestStart = (new Date()).getTime();
+            axios.get(pingUrl + '?start=' + requestStart)
+                .then((res) => {
+                    const requestEnd = (new Date()).getTime();
                     ping = Math.round(requestEnd - requestStart);
+                }).catch(() => {
+                    ping = -1;
                 });
-
             window.dispatchEvent(new CustomEvent('debug:update', {
                 detail: {
                     ping: ping,
