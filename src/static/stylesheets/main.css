@@ -67,3 +67,14 @@ canvas {
     border: none;
     outline: none !important;
 }
+
+/********** Debug **********/
+#debug-wrapper {
+    position: fixed;
+    top: 0;
+    left: 0;
+    padding: 10px;
+    color: #fff;
+    text-shadow: 1px 1px #000;
+    line-height: 1.5;
+}

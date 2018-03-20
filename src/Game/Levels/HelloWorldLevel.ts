@@ -1,13 +1,18 @@
 import * as Colyseus from "colyseus.js";
 import * as React from "react";
 import * as ReactDOM from "react-dom";
+import axios from 'axios';
 import { Key as KeyboardKey } from 'ts-keycode-enum';
 
+import {
+    GAME_SERVER_PORT,
+    GAME_SERVER_UPDATE_RATE
+} from '../Config';
 import { GameManager } from "../../Framework/Core/GameManager";
 import { AbstractBaseScene } from './AbstractBaseScene';
 import { PossessableEntity } from "../../Framework/Gameplay/PossessableEntity";
-import { GAME_SERVER_PORT, SERVER_UPDATE_RATE } from '../Config';
-import { ChatComponent } from '../UI/Chat';
+import { ChatComponent } from '../UI/ChatComponent';
+import { DebugComponent } from '../UI/DebugComponent';
 
 export class HelloWorldLevel extends AbstractBaseScene {
 
@@ -15,27 +20,21 @@ export class HelloWorldLevel extends AbstractBaseScene {
 
         super.start();
 
-        // Spawn a spectator camera, until our player is ready
+        /********** Spectator camera **********/
         let camera = new BABYLON.UniversalCamera(
             "spectatorCamera",
             new BABYLON.Vector3(0, 4, -8),
             this.getScene()
         );
 
-        // Player
+        /********** Player ************/
         this._player = new PossessableEntity(this._getPlayerMesh());
 
-        // Network
+        /********** Network **********/
         let client = new Colyseus.Client('ws://localhost:' + GAME_SERVER_PORT);
         let lobbyRoom = client.join('lobby');
 
-        // UI
-        ReactDOM.render(
-            React.createElement(ChatComponent),
-            document.getElementById('ui')
-        );
-
-        // Chat
+        /***** Chat *****/
         lobbyRoom.listen('chatMessages/:id', (change) => {
             window.dispatchEvent(new CustomEvent('chat:messages:update', {
                 detail: {
@@ -59,7 +58,25 @@ export class HelloWorldLevel extends AbstractBaseScene {
             }
         }, false);
 
-        // Player updates
+        /***** Debug *****/
+        let ping: number = 0;
+        setInterval(() => {
+            let requestStart = (new Date()).getMilliseconds();
+            axios.get('http://localhost:' + GAME_SERVER_PORT + '/ping')
+                .then((response) => {
+                    let requestEnd = (new Date()).getMilliseconds();
+                    ping = Math.round(requestEnd - requestStart);
+                });
+
+            window.dispatchEvent(new CustomEvent('debug:update', {
+                detail: {
+                    ping: ping,
+                    fps: Math.round(this.getScene().getEngine().getFps()),
+                },
+            }));
+        }, 1000);
+
+        /***** Player updates *****/
         let lastPlayerUpdateDetail = null;
         setInterval(() => {
             // only update the player if something has really changed
@@ -74,7 +91,20 @@ export class HelloWorldLevel extends AbstractBaseScene {
                 });
                 lastPlayerUpdateDetail = playerUpdateDetail;
             }
-        }, 1000 / SERVER_UPDATE_RATE);
+        }, 1000 / GAME_SERVER_UPDATE_RATE);
+
+        /********** UI **********/
+        ReactDOM.render(
+            React.createElement(
+                'div',
+                {
+                    id: 'ui-inner',
+                },
+                React.createElement(ChatComponent),
+                React.createElement(DebugComponent)
+            ),
+            document.getElementById('ui')
+        );
 
     }
 

@@ -2,7 +2,7 @@
   "name": "babylon-starter-kit",
   "scripts": {
     "dev-client-start": "webpack-dev-server --open --config webpack.dev.js",
-    "dev-server-start": "nodemon --ext ts --watch src/Game/Network --watch src/Game/Network/Rooms --exec ts-node src/Game/Network/Server.ts",
+    "dev-server-start": "nodemon --ext ts --watch src/Game/Network --watch src/Game/Network/Rooms --exec ts-node src/server.ts",
     "dev-start": "concurrently --kill-others \"npm run dev-server-start\" \"npm run dev-client-start\"",
     "build": "webpack --config webpack.prod.js --progress"
   },
@@ -18,6 +18,7 @@
     "@types/react-dom": "^16.0.4",
     "@types/uuid": "^3.4.3",
     "@types/uws": "^0.13.1",
+    "axios": "^0.18.0",
     "babylonjs": "^3.2.0-alphaC",
     "babylonjs-gui": "^3.2.0-alphaC",
     "babylonjs-inspector": "^3.2.0-alphaC",
@@ -27,6 +28,7 @@
     "cannon": "^0.6.2",
     "colyseus": "^0.8.15",
     "colyseus.js": "^0.8.4",
+    "cors": "^2.8.4",
     "dotenv": "^5.0.0",
     "dotenv-webpack": "^1.5.5",
     "express": "^4.16.0",

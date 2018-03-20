@@ -1,7 +1,7 @@
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 
-export class ChatComponent extends React.Component<ChatProps, ChatState>  {
+export class ChatComponent extends React.Component<ChatComponentProps, ChatComponentState> {
 
     hideMessagesTimeout; // holds the timeout callback
     hideMessagesDelay: number = 10000; // how long should the messages stay visible after we update the messages?
@@ -88,7 +88,8 @@ export class ChatComponent extends React.Component<ChatProps, ChatState>  {
                 ))
             ),
             React.createElement(
-                'div', {
+                'div',
+                {
                     id: 'chat-input-wrapper',
                     className: this.state.showInput ? '' : 'hidden',
                 },
@@ -149,8 +150,8 @@ export class ChatMessageComponent extends React.Component<ChatMessageProps, Chat
 
 interface ChatMessage { id: string, sender: string, text: string }
 
-interface ChatProps {}
-interface ChatState {
+interface ChatComponentProps {}
+interface ChatComponentState {
     messages: Array<ChatMessage>,
     inputValue: string,
     showMessages: boolean,

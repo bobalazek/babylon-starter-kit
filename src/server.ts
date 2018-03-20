@@ -1,23 +1,26 @@
 import * as path from 'path';
 import * as express from 'express';
+import * as cors from 'cors';
 import { createServer } from 'http';
 import { Server } from 'colyseus';
 
-import { LobbyRoom } from './Rooms/LobbyRoom';
+import { LobbyRoom } from './Game/Network/Rooms/LobbyRoom';
 
 // NEEDS be before the Config include, so we can then reuse that file in browser & node environment
 import 'dotenv/config';
-import { GAME_SERVER_PORT } from '../Config';
+import { GAME_SERVER_PORT } from './Game/Config';
 
 ////////// App //////////
-const app = express();
+const expressApplication = express();
 
-app.get('/ping', function (req, res) {
+expressApplication.use(cors());
+
+expressApplication.get('/ping', function (req, res) {
     res.send('pong');
 });
 
 ////////// HTTP server //////////
-const httpServer = createServer(app);
+const httpServer = createServer(expressApplication);
 
 ////////// Game server //////////
 const gameServer = new Server({ server: httpServer });
