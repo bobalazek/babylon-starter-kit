@@ -14,8 +14,6 @@ export class PlayerController extends AbstractController {
     private _locationMultiplier = 50;
     private _rotationMultiplier = 0.05;
 
-    private _forward: BABYLON.Vector3 = new BABYLON.Vector3(0, 0, 1);
-
     public start () {
 
         super.start();
@@ -89,31 +87,39 @@ export class PlayerController extends AbstractController {
             const cameraDirection = this._camera.getForwardRay().direction;
             const mesh = possessableEntity.getMesh();
             const physicsBody = mesh.physicsImpostor;
-            const meshForward = BABYLON.Vector3.TransformNormal(
-                this._forward,
-                mesh.getPoseMatrix()
-            );
-            const meshDirection = BABYLON.Vector3.Normalize(meshForward);
 
-            let meshCameraDirectionDiff = BABYLON.Vector3.Zero();
-            meshDirection.subtractToRef(cameraDirection, meshCameraDirectionDiff);
+            // TODO: mesh.forward, when new version of babylon is released
+            const meshForward = BABYLON.Vector3.Normalize(BABYLON.Vector3.TransformNormal(
+                new BABYLON.Vector3(0, 0, 1),
+                mesh.getWorldMatrix()
+            ));
+            let meshCameraDirectionDiff = meshForward.subtract(cameraDirection);
 
+            // TODO: only rotate the character if you also move
             if (this._inputRotation.x !== 0) {
-                let yaw = 0;
-
-                // TODO: rotate
-
-                mesh.rotate(BABYLON.Axis.Y, yaw, BABYLON.Space.LOCAL);
+                // TODO: rotation not correct!
+                mesh.rotate(
+                    new BABYLON.Vector3(
+                        0,
+                        this._inputRotation.x,
+                        0
+                    ),
+                    0.02,
+                    BABYLON.Space.WORLD
+                );
             }
 
             if (this._inputLocation !== BABYLON.Vector2.Zero()) {
-                let force = BABYLON.Vector3.Zero();
+                const direction = new BABYLON.Vector3(
+                    this._inputLocation.x,
+                    0,
+                    this._inputLocation.y
+                ).normalize();
 
-                // TODO: move
-
-                physicsBody.applyForce(
-                    force,
-                    physicsBody.getObjectCenter()
+                mesh.translate(
+                    direction,
+                    0.1,
+                    BABYLON.Space.LOCAL
                 );
             }
         }
