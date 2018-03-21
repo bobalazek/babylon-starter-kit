@@ -11,8 +11,17 @@ export class Entity {
         // const meshLinearVelocity = mesh.physicsImpostor.getLinearVelocity();
         // const meshAngularVelocity = mesh.physicsImpostor.getAngularVelocity();
 
-        const position = { x: mesh.position.x, y: mesh.position.y, z: mesh.position.z };
-        const rotation = { x: mesh.rotation.x, y: mesh.rotation.y, z: mesh.rotation.z };
+        const position = {
+            x: mesh.position.x,
+            y: mesh.position.y,
+            z: mesh.position.z,
+        };
+        const rotation = {
+            x: mesh.rotationQuaternion.x,
+            y: mesh.rotationQuaternion.y,
+            z: mesh.rotationQuaternion.z,
+            w: mesh.rotationQuaternion.w,
+        };
         // const scale = { x: mesh.scaling.x, y: mesh.scaling.y, z: mesh.scaling.z };
         // const linearVelocity = { x: meshLinearVelocity.x, y: meshLinearVelocity.y, z: meshLinearVelocity.z };
         // const angularVelocity = { x: meshAngularVelocity.x, y: meshAngularVelocity.y, z: meshAngularVelocity.z };
@@ -41,7 +50,8 @@ export class Entity {
             lastTransform.position.z === meshTransform.position.z &&
             lastTransform.rotation.x === meshTransform.rotation.x &&
             lastTransform.rotation.y === meshTransform.rotation.y &&
-            lastTransform.rotation.z === meshTransform.rotation.z /* &&
+            lastTransform.rotation.z === meshTransform.rotation.z &&
+            lastTransform.rotation.w === meshTransform.rotation.w /* &&
             lastTransform.scale.x === meshTransform.scale.x &&
             lastTransform.scale.y === meshTransform.scale.y &&
             lastTransform.scale.z === meshTransform.scale.z */
