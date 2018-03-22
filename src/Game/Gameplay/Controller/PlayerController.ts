@@ -86,7 +86,6 @@ export class PlayerController extends AbstractController {
         if (possessableEntity) {
             const cameraDirection = this._camera.getForwardRay().direction;
             const mesh = possessableEntity.getMesh();
-            const physicsBody = mesh.physicsImpostor;
 
             // TODO: mesh.forward, when new version of babylon is released
             const meshForward = BABYLON.Vector3.Normalize(BABYLON.Vector3.TransformNormal(
@@ -94,18 +93,14 @@ export class PlayerController extends AbstractController {
                 mesh.getWorldMatrix()
             ));
             let meshCameraDirectionDiff = meshForward.subtract(cameraDirection);
-
-            // TODO: only rotate the character if you also move
+            
             if (this._inputRotation.x !== 0) {
-                // TODO: rotation not correct!
-                mesh.rotate(
-                    new BABYLON.Vector3(
-                        0,
-                        this._inputRotation.x,
-                        0
-                    ),
-                    0.02,
-                    BABYLON.Space.WORLD
+                // TODO: works, but need to figure the actual formula
+                const yaw = this._inputRotation.x * this._rotationMultiplier; 
+                mesh.addRotation(
+                    0,
+                    yaw,
+                    0
                 );
             }
 
