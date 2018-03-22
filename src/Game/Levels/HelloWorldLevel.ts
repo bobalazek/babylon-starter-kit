@@ -95,7 +95,7 @@ export class HelloWorldLevel extends AbstractBaseScene {
             // only update the player if something has really changed
             if (
                 lastPlayerUpdateDetail === null ||
-                !this._player.isMeshTransformSameAs(lastPlayerUpdateDetail)
+                !this._player.isMeshTransformSameAs(lastPlayerUpdateDetail, 0.001)
             ) {
                 const playerUpdateDetail = this._player.getMeshTransform();
                 lobbyRoom.send({

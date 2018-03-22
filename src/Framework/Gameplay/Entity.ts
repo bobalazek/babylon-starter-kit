@@ -37,7 +37,7 @@ export class Entity {
         return transform;
     }
 
-    public isMeshTransformSameAs(lastTransform?): boolean {
+    public isMeshTransformSameAs(lastTransform?, tolerance?: number): boolean {
         if (lastTransform === null) {
             return false;
         }
@@ -55,6 +55,23 @@ export class Entity {
             lastTransform.scale.x === meshTransform.scale.x &&
             lastTransform.scale.y === meshTransform.scale.y &&
             lastTransform.scale.z === meshTransform.scale.z */
+        ) {
+            return true;
+        }
+
+        if (
+            tolerance !== undefined && (
+                Math.abs(lastTransform.position.x - meshTransform.position.x) < tolerance &&
+                Math.abs(lastTransform.position.y - meshTransform.position.y) < tolerance &&
+                Math.abs(lastTransform.position.z - meshTransform.position.z) < tolerance &&
+                Math.abs(lastTransform.rotation.x - meshTransform.rotation.x) < tolerance &&
+                Math.abs(lastTransform.rotation.y - meshTransform.rotation.y) < tolerance &&
+                Math.abs(lastTransform.rotation.z - meshTransform.rotation.z) < tolerance &&
+                Math.abs(lastTransform.rotation.w - meshTransform.rotation.w) < tolerance /* &&
+                Math.abs(lastTransform.scale.x - meshTransform.rotation.x) > tolerance &&
+                Math.abs(lastTransform.scale.y - meshTransform.rotation.y) > tolerance &&
+                Math.abs(lastTransform.scale.z - meshTransform.rotation.z) > tolerance && */
+            )
         ) {
             return true;
         }
