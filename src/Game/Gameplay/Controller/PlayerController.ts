@@ -11,7 +11,7 @@ export class PlayerController extends AbstractController {
     private _inputLocation: BABYLON.Vector2 = BABYLON.Vector2.Zero();
     private _inputRotation: BABYLON.Vector2 = BABYLON.Vector2.Zero();
 
-    private _locationMultiplier = 50;
+    private _locationMultiplier = 2;
     private _rotationMultiplier = 0.05;
 
     public start () {
@@ -95,11 +95,9 @@ export class PlayerController extends AbstractController {
             let meshCameraDirectionDiff = meshForward.subtract(cameraDirection);
             
             if (this._inputRotation.x !== 0) {
-                // TODO: works, but need to figure the actual formula
-                const yaw = this._inputRotation.x * this._rotationMultiplier; 
                 mesh.addRotation(
                     0,
-                    yaw,
+                    this._inputRotation.x * this._rotationMultiplier, // TODO: actually understand why this works
                     0
                 );
             }
@@ -109,7 +107,7 @@ export class PlayerController extends AbstractController {
                     this._inputLocation.x,
                     0,
                     this._inputLocation.y
-                ).normalize();
+                ).normalize().scaleInPlace(this._locationMultiplier);
 
                 mesh.translate(
                     direction,
