@@ -1,8 +1,8 @@
 import { GameManager } from "./Framework/Core/GameManager";
 
 import { InputBindingsDefault } from "./Framework/Input/Bindings/InputBindingsDefault";
+import { PlayerController } from "./Framework/Gameplay/Controller/PlayerController";
 import { HelloWorldLevel } from "./Game/Levels/HelloWorldLevel";
-import { PlayerController } from "./Game/Gameplay/Controller/PlayerController";
 
 // CSS
 import "./static/stylesheets/main.css";

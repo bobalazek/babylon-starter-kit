@@ -1,15 +1,19 @@
 import { GameManager } from "../../../Framework/Core/GameManager";
-import { AbstractController } from '../../../Framework/Gameplay/Controller/AbstractController';
+import { AbstractController } from './AbstractController';
+import { ThirdPersonCamera } from '../../Camera/ThirdPersonCamera';
 
 export class PlayerController extends AbstractController {
 
     private _mesh: BABYLON.AbstractMesh;
     private _camera: BABYLON.ArcRotateCamera;
-    private _cameraRadius: number = 8;
 
-    private _inputAxes: any;
     private _inputLocation: BABYLON.Vector2 = BABYLON.Vector2.Zero();
     private _inputRotation: BABYLON.Vector2 = BABYLON.Vector2.Zero();
+
+    /**
+     * How far back on the forward axis, the camera should be behind the target character.
+     */
+    private cameraRadius: number = 8;
 
     /**
      * This is the speed of the mesh for the forward/right direction.
@@ -59,15 +63,18 @@ export class PlayerController extends AbstractController {
         let scene = GameManager.activeLevel.getScene();
 
         this._mesh = this.getPossessableEntity().getMesh();
-        scene.activeCamera = this._camera = new BABYLON.ArcRotateCamera(
+        scene.activeCamera = this._camera = new ThirdPersonCamera(
             'thirdPersonCamera',
             -Math.PI / 2,
             Math.PI / 2,
-            this._cameraRadius,
+            this.cameraRadius,
             this._mesh.position,
-            GameManager.activeLevel.getScene()
+            scene
         );
 
+        this._camera.checkCollisions = true;
+        this._camera.collisionRadius = new BABYLON.Vector3(0.5, 0.5, 0.5);
+        
         this._camera.lockedTarget = this._mesh;
 
     }
@@ -82,35 +89,35 @@ export class PlayerController extends AbstractController {
 
     public updateInput() {
 
-        this._inputAxes = GameManager.inputManager.getAxes();
+        const inputAxes = GameManager.inputManager.getAxes();
 
-        // Location
+        // Location/Move
         this._inputLocation = BABYLON.Vector2.Zero();
 
-        if (this._inputAxes['moveForward'] !== 0) {
+        if (inputAxes['moveForward'] !== 0) {
             this._inputLocation.addInPlace(
-                new BABYLON.Vector2(0, this._inputAxes['moveForward'] * this.locationMultiplier)
+                new BABYLON.Vector2(0, inputAxes['moveForward'] * this.locationMultiplier)
             );
         }
 
-        if (this._inputAxes['moveRight'] !== 0) {
+        if (inputAxes['moveRight'] !== 0) {
             this._inputLocation.addInPlace(
-                new BABYLON.Vector2(this._inputAxes['moveRight'] * this.locationMultiplier, 0)
+                new BABYLON.Vector2(inputAxes['moveRight'] * this.locationMultiplier, 0)
             );
         }
 
-        // Rotation
+        // Rotation/Look
         this._inputRotation = BABYLON.Vector2.Zero();
 
-        if (this._inputAxes['lookRight'] !== 0) {
+        if (inputAxes['lookRight'] !== 0) {
             this._inputRotation.addInPlace(
-                new BABYLON.Vector2(this._inputAxes['lookRight'] * this.rotationMultiplier, 0)
+                new BABYLON.Vector2(inputAxes['lookRight'] * this.rotationMultiplier, 0)
             );
         }
 
-        if (this._inputAxes['lookUp'] !== 0) {
+        if (inputAxes['lookUp'] !== 0) {
             this._inputRotation.addInPlace(
-                new BABYLON.Vector2(0, this._inputAxes['lookUp'] * this.rotationMultiplier)
+                new BABYLON.Vector2(0, inputAxes['lookUp'] * this.rotationMultiplier)
             );
         }
 
@@ -165,8 +172,6 @@ export class PlayerController extends AbstractController {
     }
 
     public updateCamera() {
-
-        // TODO: collisions
 
         this._camera.alpha += this._inputRotation.x * this.rotationMultiplier * -1;
         this._camera.beta += this._inputRotation.y * this.rotationMultiplier * -1;

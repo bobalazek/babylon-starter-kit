@@ -13,6 +13,9 @@ export class AbstractBaseScene extends AbstractLevel {
 
     public start() {
 
+        // Collisions
+        this.getScene().collisionsEnabled = true;
+
         // Physics
         this.getScene().enablePhysics();
 
@@ -68,6 +71,8 @@ export class AbstractBaseScene extends AbstractLevel {
 
         underwaterGround.material = underwaterGroundMaterial;
 
+        underwaterGround.checkCollisions = true;
+
         underwaterGround.physicsImpostor = new BABYLON.PhysicsImpostor(
             underwaterGround,
             BABYLON.PhysicsImpostor.BoxImpostor,
@@ -122,6 +127,8 @@ export class AbstractBaseScene extends AbstractLevel {
         groundMaterial.diffuseTexture = groundTexture;
 
         ground.material = groundMaterial;
+
+        ground.checkCollisions = true;
 
         ground.physicsImpostor = new BABYLON.PhysicsImpostor(
             ground,
