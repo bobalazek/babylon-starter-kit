@@ -6,6 +6,7 @@ import { Key as KeyboardKey } from 'ts-keycode-enum';
 
 import {
     GAME_SERVER_PORT,
+    GAME_SERVER_HOST,
     GAME_SERVER_UPDATE_RATE
 } from '../Config';
 import { GameManager } from "../../Framework/Core/GameManager";
@@ -19,7 +20,7 @@ export class HelloWorldLevel extends AbstractBaseScene {
     public showChatInputKeyCode = KeyboardKey.T;
     public hideChatInputKeyCode = KeyboardKey.Escape;
 
-    public serverHost: string = window.location.hostname + ':' + GAME_SERVER_PORT;
+    public serverHost: string = GAME_SERVER_HOST + ':' + GAME_SERVER_PORT;
 
     /**
      * What is the still acceptable tolerance for position/rotation to send the update to the server?
