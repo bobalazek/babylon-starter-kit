@@ -34,7 +34,7 @@ export class InputManager {
 
     // Keyboard stuff
     private _keyboardAxesMap: { [key: string]: InputMappingAxisKeyboardDataInterface } = {}; // ex.: [ moveForward: { keyCode: 68, scale: 1 } ]
-    private _keyboardAxesKeyScaleMap: { [key: number]: { axis: string, scale: number } } = {}; // ex.: [ 68: { axis: "moveForward", scale: 1 } ]
+    private _keyboardAxesKeyScaleMap: { [key: number]: { axis: string, scale: number } } = {}; // ex.: [ 68: { axis: 'moveForward', scale: 1 } ]
     private _keyboardActionsMap: { [key: number]: string } = {}; // ex.: { 68: moveForward }
     private _keyboardKeysPressed: { [key: number]: number } = {}; // ex.: { 68: 123456789 /* unix time */ }
 
@@ -70,46 +70,46 @@ export class InputManager {
 
         // Keyboard events
         canvas.addEventListener(
-            "keydown",
+            'keydown',
             this.handleKeyboardKeyDownAndUpEvent.bind(this),
             false
         );
         canvas.addEventListener(
-            "keyup",
+            'keyup',
             this.handleKeyboardKeyDownAndUpEvent.bind(this),
             false
         );
 
         // Mouse events
         canvas.addEventListener(
-            "mousemove",
+            'mousemove',
             this.handleMouseMoveEvent.bind(this),
             false
         );
         canvas.addEventListener(
-            "pointermove",
+            'pointermove',
             this.handleMouseMoveEvent.bind(this),
             false
         );
 
         canvas.addEventListener(
-            "mousedown",
+            'mousedown',
             this.handleMouseDownAndUpEvent.bind(this),
             false
         );
         canvas.addEventListener(
-            "pointerdown",
+            'pointerdown',
             this.handleMouseDownAndUpEvent.bind(this),
             false
         );
 
         canvas.addEventListener(
-            "mouseup",
+            'mouseup',
             this.handleMouseDownAndUpEvent.bind(this),
             false
         );
         canvas.addEventListener(
-            "pointerup",
+            'pointerup',
             this.handleMouseDownAndUpEvent.bind(this),
             false
         );
@@ -117,12 +117,12 @@ export class InputManager {
         // Gamepad events
         if (this.hasGamepadSupport) {
             window.addEventListener(
-                "gamepadconnected",
+                'gamepadconnected',
                 this.handleGamepadConnectedEvent.bind(this),
                 false
             );
             window.addEventListener(
-                "gamepaddisconnected",
+                'gamepaddisconnected',
                 this.handleGamepadDisconnectedEvent.bind(this),
                 false
             );
@@ -137,46 +137,46 @@ export class InputManager {
 
         // Keyboard events
         canvas.removeEventListener(
-            "keydown",
+            'keydown',
             this.handleKeyboardKeyDownAndUpEvent.bind(this),
             false
         );
         canvas.removeEventListener(
-            "keyup",
+            'keyup',
             this.handleKeyboardKeyDownAndUpEvent.bind(this),
             false
         );
 
         // Mouse events
         canvas.removeEventListener(
-            "mousemove",
+            'mousemove',
             this.handleMouseMoveEvent.bind(this),
             false
         );
         canvas.removeEventListener(
-            "pointermove",
+            'pointermove',
             this.handleMouseMoveEvent.bind(this),
             false
         );
 
         canvas.removeEventListener(
-            "mousedown",
+            'mousedown',
             this.handleMouseDownAndUpEvent.bind(this),
             false
         );
         canvas.removeEventListener(
-            "pointerdown",
+            'pointerdown',
             this.handleMouseDownAndUpEvent.bind(this),
             false
         );
 
         canvas.removeEventListener(
-            "mouseup",
+            'mouseup',
             this.handleMouseDownAndUpEvent.bind(this),
             false
         );
         canvas.removeEventListener(
-            "pointerup",
+            'pointerup',
             this.handleMouseDownAndUpEvent.bind(this),
             false
         );
@@ -184,12 +184,12 @@ export class InputManager {
         // Gamepad events
         if (this.hasGamepadSupport) {
             window.removeEventListener(
-                "gamepadconnected",
+                'gamepadconnected',
                 this.handleGamepadConnectedEvent.bind(this),
                 false
             );
             window.removeEventListener(
-                "gamepaddisconnected",
+                'gamepaddisconnected',
                 this.handleGamepadDisconnectedEvent.bind(this),
                 false
             );
@@ -239,7 +239,7 @@ export class InputManager {
 
         if (axis) {
             if (typeof this._axes[axis] === 'undefined') {
-                throw new Error('The axis "' + axis + '" does not exist.');
+                throw new Error('The axis ' + axis + ' does not exist.');
             }
 
             return this._axes[axis];
@@ -253,7 +253,7 @@ export class InputManager {
 
         if (action) {
             if (typeof this._actions[action] === 'undefined') {
-                throw new Error('The action "' + action + '" does not exist.');
+                throw new Error('The action ' + action + ' does not exist.');
             }
 
             return this._actions[action];
@@ -281,9 +281,9 @@ export class InputManager {
 
     public handleKeyboardKeyDownAndUpEvent(e: KeyboardEvent) {
 
-        const isPressed = e.type === "keydown";
+        const isPressed = e.type === 'keydown';
         const keyCode = e.keyCode;
-        const action = typeof this._keyboardActionsMap[keyCode] !== "undefined"
+        const action = typeof this._keyboardActionsMap[keyCode] !== 'undefined'
             ? this._keyboardActionsMap[keyCode]
             : null;
 
@@ -302,12 +302,12 @@ export class InputManager {
         if (isPressed) {
             this._keyboardKeysPressed[keyCode] = (new Date()).getTime();
         } else {
-            if (typeof this._keyboardKeysPressed[keyCode] !== "undefined") {
+            if (typeof this._keyboardKeysPressed[keyCode] !== 'undefined') {
                 delete this._keyboardKeysPressed[keyCode];
             }
         }
 
-        this.dispatchEvent("input:device:keyboard", {
+        this.dispatchEvent('input:device:keyboard', {
             isPressed: isPressed,
             keyCode: keyCode,
             action: action,
@@ -336,7 +336,7 @@ export class InputManager {
             }
         }
 
-        this.dispatchEvent("input:device:mouse:move", {
+        this.dispatchEvent('input:device:mouse:move', {
             deltaX: deltaX,
             deltaY: deltaY,
         });
@@ -356,7 +356,7 @@ export class InputManager {
 
     public handleMouseDownAndUpEvent(e: MouseEvent) {
 
-        const isPressed = e.type === "mousedown" || e.type === "pointerdown";
+        const isPressed = e.type === 'mousedown' || e.type === 'pointerdown';
         // TODO: make sure those bindings are correct
         const button = e.which === 3
             ? InputMouseButtonEnum.Right
@@ -372,7 +372,7 @@ export class InputManager {
             return;
         }
 
-        const action = typeof this._mouseActionsMap[button] !== "undefined"
+        const action = typeof this._mouseActionsMap[button] !== 'undefined'
             ? this._mouseActionsMap[button]
             : null;
 
@@ -400,7 +400,7 @@ export class InputManager {
             }
         }
 
-        this.dispatchEvent("input:device:mouse", {
+        this.dispatchEvent('input:device:mouse', {
             isPressed: isPressed,
             button: button,
             action: action,
@@ -417,7 +417,7 @@ export class InputManager {
                 const axis = this._keyboardAxesKeyScaleMap[keyCode].axis;
                 const scale = this._keyboardAxesKeyScaleMap[keyCode].scale;
 
-                if (typeof affectedAxes[axis] === "undefined") {
+                if (typeof affectedAxes[axis] === 'undefined') {
                     affectedAxes[axis] = { min: 0, max: 0 };
                 }
 
@@ -433,7 +433,7 @@ export class InputManager {
         for (const axis in this._bindings.axes) {
             var value = 0.0;
 
-            if (typeof affectedAxes[axis] !== "undefined") {
+            if (typeof affectedAxes[axis] !== 'undefined') {
                 const affectedAxis = affectedAxes[axis];
                 if (affectedAxis.min !== 0 || affectedAxis.max !== 0) {
                     if (affectedAxis.min !== 0 && affectedAxis.max === 0) {
@@ -528,22 +528,22 @@ export class InputManager {
         this.requestPointerLockOnClick();
 
         document.addEventListener(
-            "pointerlockchange",
+            'pointerlockchange',
             this.onPointerLockChange.bind(this),
             false
         );
         document.addEventListener(
-            "mspointerlockchange",
+            'mspointerlockchange',
             this.onPointerLockChange.bind(this),
             false
         );
         document.addEventListener(
-            "mozpointerlockchange",
+            'mozpointerlockchange',
             this.onPointerLockChange.bind(this),
             false
         );
         document.addEventListener(
-            "webkitpointerlockchange",
+            'webkitpointerlockchange',
             this.onPointerLockChange.bind(this),
             false
         );
@@ -553,22 +553,22 @@ export class InputManager {
     public removePointerLock() {
 
         document.removeEventListener(
-            "pointerlockchange",
+            'pointerlockchange',
             this.onPointerLockChange.bind(this),
             false
         );
         document.removeEventListener(
-            "mspointerlockchange",
+            'mspointerlockchange',
             this.onPointerLockChange.bind(this),
             false
         );
         document.removeEventListener(
-            "mozpointerlockchange",
+            'mozpointerlockchange',
             this.onPointerLockChange.bind(this),
             false
         );
         document.removeEventListener(
-            "webkitpointerlockchange",
+            'webkitpointerlockchange',
             this.onPointerLockChange.bind(this),
             false
         );

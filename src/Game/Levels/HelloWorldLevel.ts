@@ -1,4 +1,3 @@
-import * as Colyseus from "colyseus.js";
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 import axios from 'axios';
@@ -19,10 +18,8 @@ import { PreloaderComponent } from '../UI/PreloaderComponent';
 
 export class HelloWorldLevel extends AbstractBaseScene {
 
-    private _serverHost: string = GAME_SERVER_HOST + ':' + GAME_SERVER_PORT;
-    private _serverRoom: Colyseus.Room;
-
-    protected _player: PossessableEntity;
+    protected _serverEnable: boolean = true;
+    protected _serverRoomName: string = 'lobby';
 
     /**
      * What key do we need to press to open the chat input?
@@ -49,7 +46,6 @@ export class HelloWorldLevel extends AbstractBaseScene {
 
         super.start();
 
-        /********** Camera **********/
         // A temporary camera until the player has loaded and ready
         let camera = new BABYLON.UniversalCamera(
             "spectatorCamera",
@@ -57,27 +53,14 @@ export class HelloWorldLevel extends AbstractBaseScene {
             this.getScene()
         );
 
-        /********** Network **********/
-        this._prepareNetwork();
-
-        /***** Chat *****/
         this._prepareChat();
-
-        /********** Player ************/
         this._preparePlayer();
-
-        /***** Debug *****/
         this._prepareUIDebug();
 
     }
 
     public onReady() {
         window.dispatchEvent(new Event('preloader:hide'));
-    }
-
-    private _prepareNetwork() {
-        const client = new Colyseus.Client('ws://' + this._serverHost);
-        this._serverRoom = client.join('lobby');
     }
 
     private _prepareChat() {

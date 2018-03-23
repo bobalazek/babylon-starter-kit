@@ -56,8 +56,8 @@ export class InputGamepad {
 
         this.browserGamepad = browserGamepad;
 
-        const isXbox = (<string>this.browserGamepad.id).search("Xbox") !== -1;
-        const isXboxOne = (<string>this.browserGamepad.id).search("Xbox One") !== -1;
+        const isXbox = (<string>this.browserGamepad.id).search('Xbox') !== -1;
+        const isXboxOne = (<string>this.browserGamepad.id).search('Xbox One') !== -1;
         if (isXbox) {
             this.type = isXboxOne
                 ? InputGamepadTypeEnum.XboxOne
@@ -527,13 +527,13 @@ export enum InputGamepadAxisEnum {
  * Directly related to the InputGamepadAxisEnum enum and the InputGamepad class.
  */
 export enum InputGamepadAxisPropertyEnum {
-    LeftStickX = "leftStickX",
-    LeftStickY = "leftStickY",
-    RightStickX = "rightStickX",
-    RightStickY = "rightStickY",
-    LeftTrigger = "leftTrigger",
-    RightTrigger  = "rightTrigger",
-    Triggers  = "triggers" // A special, virtual field. If left trigger is pressed, the value is negative. If right trigger is pressed, it's positive.
+    LeftStickX = 'leftStickX',
+    LeftStickY = 'leftStickY',
+    RightStickX = 'rightStickX',
+    RightStickY = 'rightStickY',
+    LeftTrigger = 'leftTrigger',
+    RightTrigger  = 'rightTrigger',
+    Triggers  = 'triggers' // A special, virtual field. If left trigger is pressed, the value is negative. If right trigger is pressed, it's positive.
 }
 
 export enum InputGamepadButtonEnum {
@@ -559,20 +559,20 @@ export enum InputGamepadButtonEnum {
  * Directly related to the InputGamepadButtonEnum enum and the InputGamepad class.
  */
 export enum InputGamepadButtonPropertyEnum {
-    A = "buttonA",
-    B = "buttonB",
-    X = "buttonX",
-    Y = "buttonY",
-    Start = "buttonStart",
-    Back = "buttonBack",
-    LeftStick = "buttonLeftStick",
-    RightStick = "buttonRightStick",
-    LB = "buttonLB",
-    RB = "buttonRB",
-    LT = "leftTrigger",
-    RT = "rightTrigger",
-    DPadUp = "buttonDPadUp",
-    DPadDown = "buttonDPadDown",
-    DPadLeft = "buttonDPadLeft",
-    DPadRight = "buttonDPadRight",
+    A = 'buttonA',
+    B = 'buttonB',
+    X = 'buttonX',
+    Y = 'buttonY',
+    Start = 'buttonStart',
+    Back = 'buttonBack',
+    LeftStick = 'buttonLeftStick',
+    RightStick = 'buttonRightStick',
+    LB = 'buttonLB',
+    RB = 'buttonRB',
+    LT = 'leftTrigger',
+    RT = 'rightTrigger',
+    DPadUp = 'buttonDPadUp',
+    DPadDown = 'buttonDPadDown',
+    DPadLeft = 'buttonDPadLeft',
+    DPadRight = 'buttonDPadRight',
 }

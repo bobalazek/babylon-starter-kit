@@ -20,8 +20,8 @@ export class MeshManager {
             this._loading[path].push(callback);
         } else {
             let meshTask = this._level.getAssetsManager().addMeshTask(
-                "meshTask_" + path,
-                "",
+                'meshTask_' + path,
+                '',
                 url,
                 name
             );

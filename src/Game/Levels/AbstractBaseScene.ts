@@ -1,54 +1,67 @@
 import 'babylonjs-materials';
+import * as Colyseus from "colyseus.js";
 
+import {
+    GAME_SERVER_PORT,
+    GAME_SERVER_HOST
+} from '../Config';
 import { GameManager } from "../../Framework/Core/GameManager";
 import { AbstractLevel } from '../../Framework/Level/AbstractLevel';
 
 export class AbstractBaseScene extends AbstractLevel {
 
-    public skybox: BABYLON.Mesh;
+    // General
+    protected _skybox: BABYLON.Mesh;
 
-    public worldSize: number = 4096;
-    public spawnPoint: BABYLON.Vector3 = new BABYLON.Vector3(0, 36, 0);
-    public oceanDepth: number = 32;
+    // Network
+    protected _serverEnable: boolean = false;
+    protected _serverHost: string = GAME_SERVER_HOST + ':' + GAME_SERVER_PORT;
+    protected _serverRoom: Colyseus.Room;
+    protected _serverRoomName: string;
+
+    // Other
+    protected _worldSize: number = 4096;
+    protected _oceanDepth: number = 32;
 
     public start() {
 
-        // Collisions
         this.getScene().collisionsEnabled = true;
-
-        // Physics
         this.getScene().enablePhysics();
 
-        // Skybox
-        this.prepareSkybox(this.worldSize);
-
-        // Ocean
-        this.prepareOcean(this.worldSize);
-
-        // Ground
-        this.prepareGround(this.worldSize / 16);
-
-        // Lights
-        this.prepareLights();
+        this._prepareNetwork();
+        this._prepareSkybox(this._worldSize);
+        this._prepareOcean(this._worldSize);
+        this._prepareGround(this._worldSize / 16);
+        this._prepareLights();
 
     }
 
-    public prepareSkybox(size: number) {
+    protected _prepareNetwork() {
+        if (
+            this._serverEnable &&
+            this._serverRoomName !== undefined
+        ) {
+            const client = new Colyseus.Client('ws://' + this._serverHost);
+            this._serverRoom = client.join(this._serverRoomName);
+        }
+    }
 
-        this.skybox = BABYLON.Mesh.CreateBox("skybox", size, this.getScene());
-        this.skybox.infiniteDistance = true;
+    protected _prepareSkybox(size: number) {
 
-        let skyboxMaterial = new BABYLON.SkyMaterial("skyboxMaterial", this.getScene());
+        this._skybox = BABYLON.Mesh.CreateBox('skybox', size, this.getScene());
+        this._skybox.infiniteDistance = true;
+
+        let skyboxMaterial = new BABYLON.SkyMaterial('skyboxMaterial', this.getScene());
         skyboxMaterial.backFaceCulling = false;
         skyboxMaterial.inclination = 0;
         skyboxMaterial.luminance = 1;
         skyboxMaterial.turbidity = 20;
 
-        this.skybox.material = skyboxMaterial;
+        this._skybox.material = skyboxMaterial;
 
     }
 
-    public prepareOcean(size: number) {
+    protected _prepareOcean(size: number) {
 
         // Underwater ground
         let underwaterGround = BABYLON.Mesh.CreateGround(
@@ -60,10 +73,10 @@ export class AbstractBaseScene extends AbstractLevel {
             false
         );
 
-        underwaterGround.position.y = -this.oceanDepth;
+        underwaterGround.position.y = -this._oceanDepth;
 
-        let underwaterGroundMaterial = new BABYLON.StandardMaterial("underwaterGroundMaterial", this.getScene());
-        let underwaterGroundTexture = new BABYLON.Texture("static/textures/underwater_ground_diffuse.jpg", this.getScene());
+        let underwaterGroundMaterial = new BABYLON.StandardMaterial('underwaterGroundMaterial', this.getScene());
+        let underwaterGroundTexture = new BABYLON.Texture('static/textures/underwater_ground_diffuse.jpg', this.getScene());
 
         underwaterGroundTexture.uScale = underwaterGroundTexture.vScale = size / 64;
 
@@ -82,15 +95,15 @@ export class AbstractBaseScene extends AbstractLevel {
 
         // Water
         let water = BABYLON.Mesh.CreateGround(
-            "water",
+            'water',
             size,
             size,
             size / 16,
             this.getScene(),
             false
         );
-        let waterMaterial = new BABYLON.WaterMaterial("waterMaterial", this.getScene());
-        let waterBumpTexture = new BABYLON.Texture("static/textures/water_bump.jpg", this.getScene());
+        let waterMaterial = new BABYLON.WaterMaterial('waterMaterial', this.getScene());
+        let waterBumpTexture = new BABYLON.Texture('static/textures/water_bump.jpg', this.getScene());
 
         waterMaterial.bumpTexture = waterBumpTexture;
         waterMaterial.backFaceCulling = true;
@@ -101,14 +114,14 @@ export class AbstractBaseScene extends AbstractLevel {
         waterMaterial.windDirection = new BABYLON.Vector2(-1, 1);
         waterMaterial.waterColor = new BABYLON.Color3(0, 0, 221 / 255);
         waterMaterial.colorBlendFactor = 0.1;
-        waterMaterial.addToRenderList(this.skybox);
+        waterMaterial.addToRenderList(this._skybox);
         waterMaterial.addToRenderList(underwaterGround);
 
         water.material = waterMaterial;
 
     }
 
-    public prepareGround(size: number) {
+    protected _prepareGround(size: number) {
 
         let ground = BABYLON.Mesh.CreateGround(
             "ground",
@@ -119,8 +132,8 @@ export class AbstractBaseScene extends AbstractLevel {
         );
         ground.position.y = 1;
 
-        let groundMaterial = new BABYLON.StandardMaterial("groundMaterial", this.getScene());
-        let groundTexture = new BABYLON.Texture("static/textures/ground_diffuse.jpg", this.getScene());
+        let groundMaterial = new BABYLON.StandardMaterial('groundMaterial', this.getScene());
+        let groundTexture = new BABYLON.Texture('static/textures/ground_diffuse.jpg', this.getScene());
 
         groundTexture.uScale = groundTexture.vScale = size / 8;
 
@@ -139,10 +152,10 @@ export class AbstractBaseScene extends AbstractLevel {
 
     }
 
-    public prepareLights() {
+    protected _prepareLights() {
 
         let hemiLight = new BABYLON.HemisphericLight(
-            "hemiLight",
+            'hemiLight',
             new BABYLON.Vector3(0, 0, 0),
             this.getScene()
         );

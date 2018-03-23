@@ -24,7 +24,7 @@ export class GameManager {
 
         this.debug = config.debug;
 
-        this.canvas = document.getElementById("game") as HTMLCanvasElement;
+        this.canvas = document.getElementById('game') as HTMLCanvasElement;
         this.engine = new BABYLON.Engine(this.canvas, true);
 
         const inputBindings = new (<any>config.inputBindings)();
@@ -42,7 +42,7 @@ export class GameManager {
             });
         });
 
-        window.addEventListener("resize", () => {
+        window.addEventListener('resize', () => {
             this.engine.resize();
         });
 

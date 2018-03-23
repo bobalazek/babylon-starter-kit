@@ -1,5 +1,5 @@
-import * as React from "react";
-import * as ReactDOM from "react-dom";
+import * as React from 'react';
+import * as ReactDOM from 'react-dom';
 
 export class PreloaderComponent extends React.Component<PreloaderComponentProps, PreloaderComponentState> {
 

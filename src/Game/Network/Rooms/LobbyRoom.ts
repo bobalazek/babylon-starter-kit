@@ -1,10 +1,10 @@
-import { Room } from "colyseus";
-import * as uuid from "uuid";
+import { Room } from 'colyseus';
+import * as uuid from 'uuid';
 
 export class LobbyRoom extends Room {
 
     onInit (options) {
-        console.log("Lobby created.");
+        console.log('Lobby created.');
         console.log(options);
 
         this.setState({
@@ -53,7 +53,7 @@ export class LobbyRoom extends Room {
     }
 
     onDispose () {
-        console.log("Lobby disposed.");
+        console.log('Lobby disposed.');
     }
 
     /********** Actions **********/
