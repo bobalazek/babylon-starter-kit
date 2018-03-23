@@ -152,10 +152,10 @@ interface ChatMessage { id: string, sender: string, text: string }
 
 interface ChatComponentProps {}
 interface ChatComponentState {
-    messages: Array<ChatMessage>,
-    inputValue: string,
-    showMessages: boolean,
-    showInput: boolean
+    messages: Array<ChatMessage>;
+    inputValue: string;
+    showMessages: boolean;
+    showInput: boolean;
 }
 
 interface ChatMessageProps {}

@@ -12,8 +12,10 @@ import {
 import { GameManager } from "../../Framework/Core/GameManager";
 import { AbstractBaseScene } from './AbstractBaseScene';
 import { PossessableEntity } from "../../Framework/Gameplay/PossessableEntity";
+
 import { ChatComponent } from '../UI/ChatComponent';
 import { DebugComponent } from '../UI/DebugComponent';
+import { PreloaderComponent } from '../UI/PreloaderComponent';
 
 export class HelloWorldLevel extends AbstractBaseScene {
 
@@ -67,6 +69,10 @@ export class HelloWorldLevel extends AbstractBaseScene {
         /***** Debug *****/
         this._prepareUIDebug();
 
+    }
+
+    public onReady() {
+        window.dispatchEvent(new Event('preloader:hide'));
     }
 
     private _prepareNetwork() {
@@ -140,8 +146,11 @@ export class HelloWorldLevel extends AbstractBaseScene {
                 {
                     id: 'ui-inner',
                 },
+                React.createElement(PreloaderComponent, {
+                    text: 'Level is loading ...',
+                }),
                 React.createElement(ChatComponent),
-                React.createElement(DebugComponent),
+                React.createElement(DebugComponent)
             ),
             document.getElementById('ui')
         );
@@ -150,7 +159,7 @@ export class HelloWorldLevel extends AbstractBaseScene {
     private _prepareUIDebug() {
         let ping: number = 0;
         setInterval(() => {
-            let requestStart = (new Date()).getTime();
+            const requestStart = (new Date()).getTime();
             axios.get('http://' + this._serverHost + '/ping?start=' + requestStart)
                 .then((res) => {
                     const requestEnd = (new Date()).getTime();

@@ -5,6 +5,7 @@ import { PlayerController } from "./Framework/Gameplay/Controller/PlayerControll
 import { HelloWorldLevel } from "./Game/Levels/HelloWorldLevel";
 
 // CSS
+import "../node_modules/font-awesome/css/font-awesome.min.css";
 import "./static/stylesheets/main.css";
 
 // Boot up the game!

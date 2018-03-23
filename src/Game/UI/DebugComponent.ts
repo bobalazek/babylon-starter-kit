@@ -3,9 +3,6 @@ import * as ReactDOM from "react-dom";
 
 export class DebugComponent extends React.Component<DebugComponentProps, DebugComponentState> {
 
-    ping: number;
-    fps: number;
-
     constructor(props) {
         super(props);
 
@@ -45,7 +42,7 @@ export class DebugComponent extends React.Component<DebugComponentProps, DebugCo
                 {
                     id: 'ping-counter',
                 },
-                'Ping: ' + ((this.state.ping >= 0) ? this.state.ping : '999+'),
+                'Ping: ' + ((this.state.ping >= 0) ? this.state.ping : 'unknown'),
             ),
             React.createElement(
                 'div',
@@ -63,6 +60,6 @@ export class DebugComponent extends React.Component<DebugComponentProps, DebugCo
 
 interface DebugComponentProps {}
 interface DebugComponentState {
-    ping: number,
-    fps: boolean
+    ping: number;
+    fps: boolean;
 }

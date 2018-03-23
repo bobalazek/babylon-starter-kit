@@ -20,6 +20,14 @@ export class AbstractLevel {
         this._assetsManager = new BABYLON.AssetsManager(this._scene);
         this._meshManager = new MeshManager(this);
 
+        // Check when scene is actually ready
+        let sceneReadyInterval = setInterval(() => {
+            if (this._scene.isReady()) {
+                clearInterval(sceneReadyInterval);
+                this.onReady();
+            }
+        }, this._onLevelReadyIntervalTime);
+
     }
 
     /********** User overwritable methods **********/
@@ -36,6 +44,13 @@ export class AbstractLevel {
      */
     public onPreStart(callback: () => void) {
         callback();
+    }
+
+    /**
+     * When the scene is fully ready, meaning: geometry ready, textures applied, shaders loaded, ...
+     */
+    public onReady() {
+        // Your scene is ready ...
     }
 
     /**
@@ -58,7 +73,8 @@ export class AbstractLevel {
     /********** Helpers **********/
 
     /**
-     * When the level is ready.
+     * When the level is loaded. Here we can finally start rendering stuff, listening to input, ...
+     * Used only in the GameManager.
      */
     public onPostLoad(callback: () => void) {
 
