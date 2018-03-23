@@ -10,17 +10,17 @@ export class Entity {
 
     public syncWithServer(
         serverRoom: Room,
-        serverPlayerTransformUpdateTolerance: number,
+        serverTransformUpdateTolerance: number,
         serverUpdateInterval: number
     ) {
         let lastMeshTransform = null;
         setInterval(() => {
-            // only update the player if something has really changed
+            // only update the entity if something has really changed
             if (
                 lastMeshTransform === null ||
                 !this.isMeshTransformSameAs(
                     lastMeshTransform,
-                    serverPlayerTransformUpdateTolerance
+                    serverTransformUpdateTolerance
                 )
             ) {
                 const meshTransform = this.getMeshTransform();

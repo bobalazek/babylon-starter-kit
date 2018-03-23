@@ -44,7 +44,15 @@ export class AbstractBaseScene extends AbstractLevel {
         ) {
             this._serverClient = new Client('ws://' + this._serverHost);
             this._serverRoom = this._serverClient.join(this._serverRoomName);
+
+            this._prepareNetworkSync();
         }
+    }
+
+    protected _prepareNetworkSync() {
+        this._serverRoom.listen('entities', (change) => {
+            console.log(change)
+        });
     }
 
     protected _prepareSkybox(size: number) {

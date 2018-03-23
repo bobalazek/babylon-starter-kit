@@ -93,6 +93,7 @@ export class HelloWorldLevel extends AbstractBaseScene {
                     e.keyCode === this.hideChatInputKeyCode
                 )
             ) {
+                GameManager.inputManager.exitPointerLock();
                 window.dispatchEvent(new Event('chat:input:toggle'));
                 chatInputShown = !chatInputShown;
             }
