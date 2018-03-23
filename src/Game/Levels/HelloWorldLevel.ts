@@ -17,38 +17,67 @@ import { DebugComponent } from '../UI/DebugComponent';
 
 export class HelloWorldLevel extends AbstractBaseScene {
 
-    public showChatInputKeyCode = KeyboardKey.T;
-    public hideChatInputKeyCode = KeyboardKey.Escape;
+    private _serverHost: string = GAME_SERVER_HOST + ':' + GAME_SERVER_PORT;
+    private _serverRoom: Colyseus.Room;
 
-    public serverHost: string = GAME_SERVER_HOST + ':' + GAME_SERVER_PORT;
+    protected _player: PossessableEntity;
+
+    /**
+     * What key do we need to press to open the chat input?
+     */
+    public showChatInputKeyCode = KeyboardKey.T;
+
+    /**
+     * What key do we need to press to close the chat input?
+     */
+    public hideChatInputKeyCode = KeyboardKey.Escape;
 
     /**
      * What is the still acceptable tolerance for position/rotation to send the update to the server?
      */
     public serverPlayerTransformUpdateTolerance: number = 0.001;
 
+    public onPreStart(callback: () => void) {
+        this._prepareUI();
+
+        callback();
+    }
+
     public start() {
 
         super.start();
 
-        /********** Spectator camera **********/
+        /********** Camera **********/
+        // A temporary camera until the player has loaded and ready
         let camera = new BABYLON.UniversalCamera(
             "spectatorCamera",
             new BABYLON.Vector3(0, 4, -8),
             this.getScene()
         );
 
-        /********** Player ************/
-        this._player = new PossessableEntity(this._getPlayerMesh());
-
         /********** Network **********/
-        let client = new Colyseus.Client('ws://' + this.serverHost);
-        let lobbyRoom = client.join('lobby');
+        this._prepareNetwork();
 
         /***** Chat *****/
+        this._prepareChat();
+
+        /********** Player ************/
+        this._preparePlayer();
+
+        /***** Debug *****/
+        this._prepareUIDebug();
+
+    }
+
+    private _prepareNetwork() {
+        const client = new Colyseus.Client('ws://' + this._serverHost);
+        this._serverRoom = client.join('lobby');
+    }
+
+    private _prepareChat() {
         let chatInputShown = false;
 
-        lobbyRoom.listen('chatMessages/:id', (change) => {
+        this._serverRoom.listen('chatMessages/:id', (change) => {
             window.dispatchEvent(new CustomEvent('chat:messages:update', {
                 detail: {
                     messages: change.value,
@@ -57,7 +86,7 @@ export class HelloWorldLevel extends AbstractBaseScene {
         });
 
         window.addEventListener('chat:messages:new', (event: CustomEvent) => {
-            lobbyRoom.send({
+            this._serverRoom.send({
                 action: 'chat:messages:new',
                 detail: {
                     text: event.detail.text,
@@ -79,27 +108,11 @@ export class HelloWorldLevel extends AbstractBaseScene {
                 chatInputShown = !chatInputShown;
             }
         }, false);
+    }
 
-        /***** Debug *****/
-        let ping: number = 0;
-        setInterval(() => {
-            let requestStart = (new Date()).getTime();
-            axios.get('http://' + this.serverHost + '/ping?start=' + requestStart)
-                .then((res) => {
-                    const requestEnd = (new Date()).getTime();
-                    ping = Math.round(requestEnd - requestStart);
-                }).catch(() => {
-                    ping = -1;
-                });
-            window.dispatchEvent(new CustomEvent('debug:update', {
-                detail: {
-                    ping: ping,
-                    fps: Math.round(this.getScene().getEngine().getFps()),
-                },
-            }));
-        }, 1000);
+    private _preparePlayer() {
+        this._player = new PossessableEntity(this._getPlayerMesh());
 
-        /***** Player updates *****/
         let lastPlayerUpdateDetail = null;
         setInterval(() => {
             // only update the player if something has really changed
@@ -111,15 +124,16 @@ export class HelloWorldLevel extends AbstractBaseScene {
                 )
             ) {
                 const playerUpdateDetail = this._player.getMeshTransform();
-                lobbyRoom.send({
+                this._serverRoom.send({
                     action: 'player:transform:update',
                     detail: playerUpdateDetail,
                 });
                 lastPlayerUpdateDetail = playerUpdateDetail;
             }
         }, 1000 / GAME_SERVER_UPDATE_RATE);
+    }
 
-        /********** UI **********/
+    private _prepareUI() {
         ReactDOM.render(
             React.createElement(
                 'div',
@@ -127,11 +141,30 @@ export class HelloWorldLevel extends AbstractBaseScene {
                     id: 'ui-inner',
                 },
                 React.createElement(ChatComponent),
-                React.createElement(DebugComponent)
+                React.createElement(DebugComponent),
             ),
             document.getElementById('ui')
         );
+    }
 
+    private _prepareUIDebug() {
+        let ping: number = 0;
+        setInterval(() => {
+            let requestStart = (new Date()).getTime();
+            axios.get('http://' + this._serverHost + '/ping?start=' + requestStart)
+                .then((res) => {
+                    const requestEnd = (new Date()).getTime();
+                    ping = Math.round(requestEnd - requestStart);
+                }).catch(() => {
+                    ping = -1;
+                });
+            window.dispatchEvent(new CustomEvent('debug:update', {
+                detail: {
+                    ping: ping,
+                    fps: Math.round(GameManager.engine.getFps()),
+                },
+            }));
+        }, 1000);
     }
 
     private _getPlayerMesh(): BABYLON.AbstractMesh {
