@@ -16,6 +16,16 @@ import { DebugComponent } from '../UI/DebugComponent';
 
 export class HelloWorldLevel extends AbstractBaseScene {
 
+    public showChatInputKeyCode = KeyboardKey.T;
+    public hideChatInputKeyCode = KeyboardKey.Escape;
+
+    public serverHost: string = window.location.hostname + ':' + GAME_SERVER_PORT;
+
+    /**
+     * What is the still acceptable tolerance for position/rotation to send the update to the server?
+     */
+    public serverPlayerTransformUpdateTolerance: number = 0.001;
+
     public start() {
 
         super.start();
@@ -31,7 +41,7 @@ export class HelloWorldLevel extends AbstractBaseScene {
         this._player = new PossessableEntity(this._getPlayerMesh());
 
         /********** Network **********/
-        let client = new Colyseus.Client('ws://' + window.location.hostname + ':' + GAME_SERVER_PORT);
+        let client = new Colyseus.Client('ws://' + this.serverHost);
         let lobbyRoom = client.join('lobby');
 
         /***** Chat *****/
@@ -58,10 +68,10 @@ export class HelloWorldLevel extends AbstractBaseScene {
             if (
                 (
                     !chatInputShown &&
-                    e.keyCode === KeyboardKey.T
+                    e.keyCode === this.showChatInputKeyCode
                 ) || (
                     chatInputShown &&
-                    e.keyCode === KeyboardKey.Escape
+                    e.keyCode === this.hideChatInputKeyCode
                 )
             ) {
                 window.dispatchEvent(new Event('chat:input:toggle'));
@@ -70,11 +80,10 @@ export class HelloWorldLevel extends AbstractBaseScene {
         }, false);
 
         /***** Debug *****/
-        const pingUrl = 'http://' + window.location.hostname + ':' + GAME_SERVER_PORT + '/ping';
         let ping: number = 0;
         setInterval(() => {
             let requestStart = (new Date()).getTime();
-            axios.get(pingUrl + '?start=' + requestStart)
+            axios.get('http://' + this.serverHost + '/ping?start=' + requestStart)
                 .then((res) => {
                     const requestEnd = (new Date()).getTime();
                     ping = Math.round(requestEnd - requestStart);
@@ -95,7 +104,10 @@ export class HelloWorldLevel extends AbstractBaseScene {
             // only update the player if something has really changed
             if (
                 lastPlayerUpdateDetail === null ||
-                !this._player.isMeshTransformSameAs(lastPlayerUpdateDetail, 0.001)
+                !this._player.isMeshTransformSameAs(
+                    lastPlayerUpdateDetail,
+                    this.serverPlayerTransformUpdateTolerance
+                )
             ) {
                 const playerUpdateDetail = this._player.getMeshTransform();
                 lobbyRoom.send({
@@ -122,7 +134,7 @@ export class HelloWorldLevel extends AbstractBaseScene {
     }
 
     private _getPlayerMesh(): BABYLON.AbstractMesh {
-        let player = BABYLON.MeshBuilder.CreateSphere("player", {
+        let player = BABYLON.MeshBuilder.CreateSphere('player', {
             diameterX: 1,
             diameterY: 2,
             diameterZ: 0.5,

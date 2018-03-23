@@ -73,7 +73,6 @@ export class PlayerController extends AbstractController {
         );
 
         this._camera.checkCollisions = true;
-        this._camera.collisionRadius = new BABYLON.Vector3(0.5, 0.5, 0.5);
         
         this._camera.lockedTarget = this._mesh;
 
