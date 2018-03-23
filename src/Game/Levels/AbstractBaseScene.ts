@@ -1,5 +1,5 @@
 import 'babylonjs-materials';
-import * as Colyseus from "colyseus.js";
+import { Client, Room } from "colyseus.js";
 
 import {
     GAME_SERVER_PORT,
@@ -16,7 +16,8 @@ export class AbstractBaseScene extends AbstractLevel {
     // Network
     protected _serverEnable: boolean = false;
     protected _serverHost: string = GAME_SERVER_HOST + ':' + GAME_SERVER_PORT;
-    protected _serverRoom: Colyseus.Room;
+    protected _serverClient: Client;
+    protected _serverRoom: Room;
     protected _serverRoomName: string;
 
     // Other
@@ -41,8 +42,8 @@ export class AbstractBaseScene extends AbstractLevel {
             this._serverEnable &&
             this._serverRoomName !== undefined
         ) {
-            const client = new Colyseus.Client('ws://' + this._serverHost);
-            this._serverRoom = client.join(this._serverRoomName);
+            this._serverClient = new Client('ws://' + this._serverHost);
+            this._serverRoom = this._serverClient.join(this._serverRoomName);
         }
     }
 

@@ -11,6 +11,7 @@ export class LobbyRoom extends Room {
             chatMessages: [],
             actionLogs: [],
             players: {},
+            entities: {},
         });
     }
 
@@ -19,11 +20,6 @@ export class LobbyRoom extends Room {
         this.state.players[client.id] = {
             name: playerName,
             client: client,
-            transform: {
-                position: { x: 0, y: 0, z: 0 },
-                rotation: { x: 0, y: 0, z: 0 },
-                // scale: { x: 0, y: 0, z: 0 },
-            },
         };
         this.state.actionLogs.push({
             client: client,

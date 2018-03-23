@@ -1,9 +1,39 @@
+import { Room } from 'colyseus.js';
+
 export class Entity {
 
     constructor (private _mesh: BABYLON.AbstractMesh) {}
 
     public getMesh(): BABYLON.AbstractMesh {
         return this._mesh;
+    }
+
+    public syncWithServer(
+        serverRoom: Room,
+        serverPlayerTransformUpdateTolerance: number,
+        serverUpdateInterval: number
+    ) {
+        let lastMeshTransform = null;
+        setInterval(() => {
+            // only update the player if something has really changed
+            if (
+                lastMeshTransform === null ||
+                !this.isMeshTransformSameAs(
+                    lastMeshTransform,
+                    serverPlayerTransformUpdateTolerance
+                )
+            ) {
+                const meshTransform = this.getMeshTransform();
+                serverRoom.send({
+                    action: 'entity:transform:update',
+                    detail: {
+                        id: this.getMesh().id,
+                        transform: meshTransform,
+                    },
+                });
+                lastMeshTransform = meshTransform;
+            }
+        }, serverUpdateInterval);
     }
 
     public getMeshTransform() {

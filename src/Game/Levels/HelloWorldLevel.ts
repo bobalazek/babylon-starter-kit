@@ -101,25 +101,11 @@ export class HelloWorldLevel extends AbstractBaseScene {
 
     private _preparePlayer() {
         this._player = new PossessableEntity(this._getPlayerMesh());
-
-        let lastPlayerUpdateDetail = null;
-        setInterval(() => {
-            // only update the player if something has really changed
-            if (
-                lastPlayerUpdateDetail === null ||
-                !this._player.isMeshTransformSameAs(
-                    lastPlayerUpdateDetail,
-                    this.serverPlayerTransformUpdateTolerance
-                )
-            ) {
-                const playerUpdateDetail = this._player.getMeshTransform();
-                this._serverRoom.send({
-                    action: 'player:transform:update',
-                    detail: playerUpdateDetail,
-                });
-                lastPlayerUpdateDetail = playerUpdateDetail;
-            }
-        }, 1000 / GAME_SERVER_UPDATE_RATE);
+        this._player.syncWithServer(
+            this._serverRoom,
+            this.serverPlayerTransformUpdateTolerance,
+            1000 / GAME_SERVER_UPDATE_RATE
+        );
     }
 
     private _prepareUI() {
@@ -160,14 +146,15 @@ export class HelloWorldLevel extends AbstractBaseScene {
     }
 
     private _getPlayerMesh(): BABYLON.AbstractMesh {
-        let player = BABYLON.MeshBuilder.CreateSphere('player', {
+        const playerId = 'player_' + this._serverClient.id;
+        let player = BABYLON.MeshBuilder.CreateSphere(playerId, {
             diameterX: 1,
             diameterY: 2,
             diameterZ: 0.5,
         }, this.getScene());
 
         player.position = new BABYLON.Vector3(0, 2, 8);
-        player.material = new BABYLON.StandardMaterial('playerMaterial', this.getScene());
+        player.material = new BABYLON.StandardMaterial(playerId + '_playerMaterial', this.getScene());
         player.material.alpha = 0.8;
         player.physicsImpostor = new BABYLON.PhysicsImpostor(
             player,
