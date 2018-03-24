@@ -1,11 +1,11 @@
 import 'babylonjs-materials';
-import { Client, Room } from "colyseus.js";
+import { Client, Room } from 'colyseus.js';
 
 import {
     GAME_SERVER_PORT,
     GAME_SERVER_HOST
 } from '../Config';
-import { GameManager } from "../../Framework/Core/GameManager";
+import { GameManager } from '../../Framework/Core/GameManager';
 import { AbstractLevel } from '../../Framework/Level/AbstractLevel';
 
 export class AbstractBaseScene extends AbstractLevel {
@@ -44,15 +44,7 @@ export class AbstractBaseScene extends AbstractLevel {
         ) {
             this._serverClient = new Client('ws://' + this._serverHost);
             this._serverRoom = this._serverClient.join(this._serverRoomName);
-
-            this._prepareNetworkSync();
         }
-    }
-
-    protected _prepareNetworkSync() {
-        this._serverRoom.listen('entities', (change) => {
-            console.log(change)
-        });
     }
 
     protected _prepareSkybox(size: number) {

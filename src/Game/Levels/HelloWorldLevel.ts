@@ -1,6 +1,7 @@
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 import axios from 'axios';
+import { DataChange } from 'delta-listener';
 import { Key as KeyboardKey } from 'ts-keycode-enum';
 
 import {
@@ -56,6 +57,7 @@ export class HelloWorldLevel extends AbstractBaseScene {
         this._prepareChat();
         this._preparePlayer();
         this._prepareUIDebug();
+        this._prepareNetworkSync();
 
     }
 
@@ -101,12 +103,15 @@ export class HelloWorldLevel extends AbstractBaseScene {
     }
 
     private _preparePlayer() {
-        this._player = new PossessableEntity(this._getPlayerMesh());
-        this._player.syncWithServer(
-            this._serverRoom,
-            this.serverPlayerTransformUpdateTolerance,
-            1000 / GAME_SERVER_UPDATE_RATE
-        );
+        const playerId = 'player_' + this._serverClient.id;
+        this._player = new PossessableEntity(this._getPlayerMesh(playerId));
+        this._serverClient.onOpen.add(() => {
+            this._player.syncWithServer(
+                this._serverRoom,
+                this.serverPlayerTransformUpdateTolerance,
+                1000 / GAME_SERVER_UPDATE_RATE
+            );
+        });
     }
 
     private _prepareUI() {
@@ -146,8 +151,44 @@ export class HelloWorldLevel extends AbstractBaseScene {
         }, 1000);
     }
 
-    private _getPlayerMesh(): BABYLON.AbstractMesh {
-        const playerId = 'player_' + this._serverClient.id;
+    protected _prepareNetworkSync() {
+        // TODO: figure out why it doesn't work if it's an array
+        this._serverRoom.listen('entities/:id/transformMatrix', (change: DataChange) => {
+            const entityId = change.path.id;
+            const entityIdSplit = entityId.split('_');
+            const type = entityIdSplit[0];
+            const id = entityIdSplit[1];
+
+            if (
+                type === 'player' &&
+                id !== this._serverClient.id
+            ) {
+                const transformMatrixSplit = change.value.split('|');
+                let playerMesh = change.operation === 'add'
+                    ? this._getPlayerMesh(entityId)
+                    : this.getScene().getMeshByID(entityId);
+
+                if (change.operation === 'remove') {
+                    playerMesh.dispose();
+                    return;
+                }
+
+                playerMesh.position = new BABYLON.Vector3(
+                    transformMatrixSplit[0],
+                    transformMatrixSplit[1],
+                    transformMatrixSplit[2]
+                );
+                playerMesh.rotationQuaternion = new BABYLON.Quaternion(
+                    transformMatrixSplit[3],
+                    transformMatrixSplit[4],
+                    transformMatrixSplit[5],
+                    transformMatrixSplit[6]
+                );
+            }
+        });
+    }
+
+    private _getPlayerMesh(playerId: string): BABYLON.AbstractMesh {
         let player = BABYLON.MeshBuilder.CreateSphere(playerId, {
             diameterX: 1,
             diameterY: 2,

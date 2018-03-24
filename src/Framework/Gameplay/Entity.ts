@@ -28,7 +28,15 @@ export class Entity {
                     action: 'entity:transform:update',
                     detail: {
                         id: this.getMesh().id,
-                        transform: meshTransform,
+                        transformMatrix: [ // TODO: figure out why it needs to be a string
+                            meshTransform.position.x,
+                            meshTransform.position.y,
+                            meshTransform.position.z,
+                            meshTransform.rotation.x,
+                            meshTransform.rotation.y,
+                            meshTransform.rotation.z,
+                            meshTransform.rotation.w,
+                        ].join('|'),
                     },
                 });
                 lastMeshTransform = meshTransform;

@@ -7,7 +7,7 @@ export class LobbyRoom extends Room<LobbyRoomState> {
 
     public showLogs: boolean = DEBUG;
 
-    public maxClients: number = 32;
+    public maxClients: number = 16;
     public patchRate: number = 1000 / GAME_SERVER_UPDATE_RATE;
 
     public onInit (options) {
@@ -67,6 +67,7 @@ export class LobbyRoomState {
         this.actionLogs.push(
             new LobbyRoomActionLog(client, 'leave', `${ client.sessionId } left.`)
         );
+        // TODO: remove all the entities of that player
     }
 
     public addChatMessage(client, detail) {
@@ -79,9 +80,9 @@ export class LobbyRoomState {
 
     public updateEntityTransform(client, detail) {
         if (typeof this.entities[detail.id] === 'undefined') {
-            this.entities[detail.id] = new LobbyRoomEntity(client, detail.id, detail.transform);
+            this.entities[detail.id] = new LobbyRoomEntity(client, detail.id, detail.transformMatrix);
         } else {
-            this.entities[detail.id].transform = detail.transform;
+            this.entities[detail.id].transformMatrix = detail.transformMatrix;
         }
     }
 }
@@ -123,11 +124,11 @@ export class LobbyRoomPlayer {
 export class LobbyRoomEntity {
     public client: any;
     public id: string;
-    public transform: any;
+    public transformMatrix: string;
 
-    constructor(client: any, id: string, transform: any) {
+    constructor(client: any, id: string, transformMatrix: string) {
         this.client = client;
         this.id = id;
-        this.transform = transform;
+        this.transformMatrix = transformMatrix;
     }
 }
