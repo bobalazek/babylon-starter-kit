@@ -67,7 +67,11 @@ export class LobbyRoomState {
         this.actionLogs.push(
             new LobbyRoomActionLog(client, 'leave', `${ client.sessionId } left.`)
         );
-        // TODO: remove all the entities of that player
+        for (let entityKey in this.entities) {
+            if (this.entities[entityKey].client.sessionId === client.sessionId) {
+                delete this.entities[entityKey];
+            }
+        }
     }
 
     public addChatMessage(client, detail) {
