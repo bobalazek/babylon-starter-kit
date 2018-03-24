@@ -104,7 +104,20 @@ export class HelloWorldLevel extends AbstractBaseScene {
 
     private _preparePlayer() {
         const playerId = 'player_' + this._serverClient.id;
+        const min = -50;
+        const max = 50;
+        const randomX = Math.floor(Math.random() * (max - min) + min);
+        const randomZ = Math.floor(Math.random() * (max - min) + min);
+
         this._player = new PossessableEntity(this._getPlayerMesh(playerId));
+        this._player.getMesh().position.addInPlace(
+            new BABYLON.Vector3(
+                randomX,
+                0,
+                randomZ
+            )
+        );
+
         this._serverClient.onOpen.add(() => {
             this._player.syncWithServer(
                 this._serverRoom,
@@ -152,16 +165,19 @@ export class HelloWorldLevel extends AbstractBaseScene {
     }
 
     protected _prepareNetworkSync() {
+        const patchRate = 1000 / GAME_SERVER_UPDATE_RATE;
+
         // TODO: figure out why it doesn't work if it's an array
         this._serverRoom.listen('entities/:id/transformMatrix', (change: DataChange) => {
             const entityId = change.path.id;
             const entityIdSplit = entityId.split('_');
             const type = entityIdSplit[0];
             const id = entityIdSplit[1];
+            const isLocalEntity = id === this._serverClient.id;
 
             if (
-                type === 'player' &&
-                id !== this._serverClient.id
+                !isLocalEntity &&
+                type === 'player'
             ) {
                 const transformMatrixSplit = change.value.split('|');
                 let playerMesh = change.operation === 'add'
@@ -173,17 +189,34 @@ export class HelloWorldLevel extends AbstractBaseScene {
                     return;
                 }
 
-                playerMesh.position = new BABYLON.Vector3(
+                const playerMeshPosition = new BABYLON.Vector3(
                     transformMatrixSplit[0],
                     transformMatrixSplit[1],
                     transformMatrixSplit[2]
                 );
-                playerMesh.rotationQuaternion = new BABYLON.Quaternion(
+                const playerMeshRotation = new BABYLON.Quaternion(
                     transformMatrixSplit[3],
                     transformMatrixSplit[4],
                     transformMatrixSplit[5],
                     transformMatrixSplit[6]
                 );
+
+                if (change.operation === 'add') {
+                    playerMesh.position = playerMeshPosition;
+                    playerMesh.rotationQuaternion = playerMeshRotation;
+                } else {
+                    // TODO: fix interpolation
+                    playerMesh.position = BABYLON.Vector3.Lerp(
+                        playerMesh.position,
+                        playerMeshPosition,
+                        0.5
+                    );
+                    playerMesh.rotationQuaternion = BABYLON.Quaternion.Slerp(
+                        playerMesh.rotationQuaternion,
+                        playerMeshRotation,
+                        0.5
+                    );
+                }
             }
         });
     }
@@ -195,7 +228,7 @@ export class HelloWorldLevel extends AbstractBaseScene {
             diameterZ: 0.5,
         }, this.getScene());
 
-        player.position = new BABYLON.Vector3(0, 2, 8);
+        player.position = new BABYLON.Vector3(0, 2, 0);
         player.material = new BABYLON.StandardMaterial(playerId + '_playerMaterial', this.getScene());
         player.material.alpha = 0.8;
         player.physicsImpostor = new BABYLON.PhysicsImpostor(
