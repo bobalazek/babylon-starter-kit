@@ -26,12 +26,12 @@ export class HelloWorldLevel extends AbstractBaseLevel {
     /**
      * What key do we need to press to open the chat input?
      */
-    public showChatInputKeyCode = KeyboardKey.T;
+    public showChatInputKeyCode: KeyboardKey = KeyboardKey.T;
 
     /**
      * What key do we need to press to close the chat input?
      */
-    public hideChatInputKeyCode = KeyboardKey.Escape;
+    public hideChatInputKeyCode: KeyboardKey = KeyboardKey.Escape;
 
     /**
      * What is the still acceptable tolerance for position/rotation to send the update to the server?
