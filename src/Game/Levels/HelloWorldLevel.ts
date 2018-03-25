@@ -19,8 +19,9 @@ import { PreloaderComponent } from '../UI/PreloaderComponent';
 
 export class HelloWorldLevel extends AbstractBaseLevel {
 
-    protected _serverEnable: boolean = true;
+    protected _serverEnabled: boolean = true;
     protected _serverRoomName: string = 'lobby';
+    protected _serverHost: string = GAME_SERVER_HOST + ':' + GAME_SERVER_PORT;
 
     /**
      * What key do we need to press to open the chat input?

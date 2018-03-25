@@ -1,6 +1,6 @@
 import 'babylonjs-materials';
 
-import { AbstractNetworkLevel } from './AbstractNetworkLevel';
+import { AbstractNetworkLevel } from '../../Framework/Level/AbstractNetworkLevel';
 
 export class AbstractBaseLevel extends AbstractNetworkLevel {
 

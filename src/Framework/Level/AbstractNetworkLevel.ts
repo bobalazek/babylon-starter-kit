@@ -1,10 +1,6 @@
 import 'babylonjs-materials';
 import { Client, Room } from 'colyseus.js';
 
-import {
-    GAME_SERVER_PORT,
-    GAME_SERVER_HOST
-} from '../Config';
 import { GameManager } from '../../Framework/Core/GameManager';
 import { AbstractLevel } from '../../Framework/Level/AbstractLevel';
 
@@ -12,10 +8,10 @@ export class AbstractNetworkLevel extends AbstractLevel {
 
     // Network
     /** Is the networking enabled? */
-    protected _serverEnable: boolean = false;
+    protected _serverEnabled: boolean = false;
 
     /** What is the server host, that we want to connect to? */
-    protected _serverHost: string = GAME_SERVER_HOST + ':' + GAME_SERVER_PORT;
+    protected _serverHost: string;
 
     /** The connection client for the server. */
     protected _serverClient: Client;
@@ -40,7 +36,8 @@ export class AbstractNetworkLevel extends AbstractLevel {
 
     protected _prepareNetwork() {
         if (
-            this._serverEnable &&
+            this._serverEnabled &&
+            this._serverHost !== undefined &&
             this._serverRoomName !== undefined
         ) {
             this._serverClient = new Client('ws://' + this._serverHost);
@@ -55,7 +52,7 @@ export class AbstractNetworkLevel extends AbstractLevel {
                         mesh.metadata.serverReplicated === true &&
                         now - mesh.metadata.serverLastUpdate < this._serverInterpolationLastUpdateTolerance
                     ) {
-                        mesh.metadata.clientLastUpdate = (new Date()).getTime();
+                        mesh.metadata.clientLastUpdate = now;
                         mesh.position = BABYLON.Vector3.Lerp(
                             mesh.position,
                             mesh.metadata.serverPosition,
