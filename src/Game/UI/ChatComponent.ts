@@ -5,6 +5,7 @@ export class ChatComponent extends React.Component<ChatComponentProps, ChatCompo
 
     hideMessagesTimeout; // holds the timeout callback
     hideMessagesDelay: number = 10000; // how long should the messages stay visible after we update the messages?
+    maxMessages: number = 5;
     
     constructor(props) {
         super(props);
@@ -34,11 +35,14 @@ export class ChatComponent extends React.Component<ChatComponentProps, ChatCompo
 
     onMessagesUpdate(event) {
         this.setState((prevState) => {
+            let messages = [
+                ...prevState.messages,
+                event.detail.messages
+            ];
+            messages = messages.slice(Math.max(messages.length - this.maxMessages, 0));
+
             return {
-                messages: [
-                    ...prevState.messages,
-                    event.detail.messages
-                ],
+                messages: messages,
             };
         });
 
