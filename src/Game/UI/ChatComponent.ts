@@ -14,6 +14,7 @@ export class ChatComponent extends React.Component<ChatComponentProps, ChatCompo
             inputValue: props.inputValue || '',
             showMessages: props.showMessages || false,
             showInput: props.showInput || false,
+            preventMessagesInput: props.preventMessagesInput || false,
         };
 
         this.onMessagesUpdate = this.onMessagesUpdate.bind(this);
@@ -53,6 +54,18 @@ export class ChatComponent extends React.Component<ChatComponentProps, ChatCompo
     onInputToggle(event) {
         this.setState({ showInput: !this.state.showInput });
         this.setState({ showMessages: this.state.showInput });
+
+        if (this.state.showInput) {
+            document.getElementById('chat-input').focus();
+
+            // Prevent the first keypress being already shown in the chat input (the "t" key default).
+            this.setState({ preventMessagesInput: true });
+            setTimeout(() => {
+                this.setState({ preventMessagesInput: false });
+            });
+        } else {
+            this.setState({ inputValue: '' });
+        }
     }
 
     onHandleKeyPress(event) {
@@ -97,7 +110,9 @@ export class ChatComponent extends React.Component<ChatComponentProps, ChatCompo
                     id: 'chat-input',
                     value: this.state.inputValue,
                     onChange: (event) => {
-                        this.setState({ inputValue: event.target.value });
+                        if (!this.state.preventMessagesInput) {
+                            this.setState({ inputValue: event.target.value });
+                        }
                     },
                     onKeyPress: this.onHandleKeyPress,
                 })
@@ -156,6 +171,7 @@ interface ChatComponentState {
     inputValue: string;
     showMessages: boolean;
     showInput: boolean;
+    preventMessagesInput: boolean;
 }
 
 interface ChatMessageProps {}
