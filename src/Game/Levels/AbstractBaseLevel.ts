@@ -1,24 +1,11 @@
 import 'babylonjs-materials';
-import { Client, Room } from 'colyseus.js';
 
-import {
-    GAME_SERVER_PORT,
-    GAME_SERVER_HOST
-} from '../Config';
-import { GameManager } from '../../Framework/Core/GameManager';
-import { AbstractLevel } from '../../Framework/Level/AbstractLevel';
+import { AbstractNetworkLevel } from './AbstractNetworkLevel';
 
-export class AbstractBaseScene extends AbstractLevel {
+export class AbstractBaseLevel extends AbstractNetworkLevel {
 
     // General
     protected _skybox: BABYLON.Mesh;
-
-    // Network
-    protected _serverEnable: boolean = false;
-    protected _serverHost: string = GAME_SERVER_HOST + ':' + GAME_SERVER_PORT;
-    protected _serverClient: Client;
-    protected _serverRoom: Room;
-    protected _serverRoomName: string;
 
     // Other
     protected _worldSize: number = 4096;
@@ -26,25 +13,16 @@ export class AbstractBaseScene extends AbstractLevel {
 
     public start() {
 
+        super.start();
+
         this.getScene().collisionsEnabled = true;
         this.getScene().enablePhysics();
 
-        this._prepareNetwork();
         this._prepareSkybox(this._worldSize);
         this._prepareOcean(this._worldSize);
         this._prepareGround(this._worldSize / 16);
         this._prepareLights();
 
-    }
-
-    protected _prepareNetwork() {
-        if (
-            this._serverEnable &&
-            this._serverRoomName !== undefined
-        ) {
-            this._serverClient = new Client('ws://' + this._serverHost);
-            this._serverRoom = this._serverClient.join(this._serverRoomName);
-        }
     }
 
     protected _prepareSkybox(size: number) {

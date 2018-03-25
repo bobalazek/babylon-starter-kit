@@ -10,14 +10,14 @@ import {
     GAME_SERVER_UPDATE_RATE
 } from '../Config';
 import { GameManager } from "../../Framework/Core/GameManager";
-import { AbstractBaseScene } from './AbstractBaseScene';
+import { AbstractBaseLevel } from './AbstractBaseLevel';
 import { PossessableEntity } from "../../Framework/Gameplay/PossessableEntity";
 
 import { ChatComponent } from '../UI/ChatComponent';
 import { DebugComponent } from '../UI/DebugComponent';
 import { PreloaderComponent } from '../UI/PreloaderComponent';
 
-export class HelloWorldLevel extends AbstractBaseScene {
+export class HelloWorldLevel extends AbstractBaseLevel {
 
     protected _serverEnable: boolean = true;
     protected _serverRoomName: string = 'lobby';
@@ -36,11 +36,6 @@ export class HelloWorldLevel extends AbstractBaseScene {
      * What is the still acceptable tolerance for position/rotation to send the update to the server?
      */
     public serverPlayerTransformUpdateTolerance: number = 0.001;
-
-    /**
-     * The interpolation smoothing for the server. Should be a value between 0 and 1,
-     */
-    public serverInterpolationSmoothing: number = 0.2;
 
     public onPreStart(callback: () => void) {
         this._prepareUI();
@@ -154,7 +149,6 @@ export class HelloWorldLevel extends AbstractBaseScene {
         let ping: number = 0;
         setInterval(() => {
             ping = this._serverRoom.ping;
-
             /* const requestStart = (new Date()).getTime();
             axios.get('http://' + this._serverHost + '/ping?start=' + requestStart)
                 .then((res) => {
@@ -231,29 +225,6 @@ export class HelloWorldLevel extends AbstractBaseScene {
                 let entityMesh = this.getScene().getMeshByID(entityId);
                 entityMesh.dispose();
             }
-        });
-
-        // Interpolation
-        this.getScene().onBeforeRenderObservable.add(() => {
-            const now = (new Date()).getTime();
-            this.getScene().meshes.forEach((mesh: BABYLON.AbstractMesh) => {
-                if (
-                    mesh.metadata !== null &&
-                    mesh.metadata.serverReplicated === true &&
-                    now - mesh.metadata.serverLastUpdate < 1000
-                ) {
-                    mesh.position = BABYLON.Vector3.Lerp(
-                        mesh.position,
-                        mesh.metadata.serverPosition,
-                        this.serverInterpolationSmoothing
-                    );
-                    mesh.rotationQuaternion = BABYLON.Quaternion.Slerp(
-                        mesh.rotationQuaternion,
-                        mesh.metadata.serverRotation,
-                        this.serverInterpolationSmoothing
-                    )
-                }
-            });
         });
     }
 
