@@ -13,7 +13,7 @@ export class PlayerController extends AbstractController {
     /**
      * How far back on the forward axis, the camera should be behind the target character.
      */
-    private cameraRadius: number = 8;
+    private cameraRadius: number = 6;
 
     /**
      * This is the speed of the mesh for the forward/right direction.
@@ -74,10 +74,8 @@ export class PlayerController extends AbstractController {
 
         this._camera.lowerRadiusLimit = this.cameraRadius;
         this._camera.upperRadiusLimit = this.cameraRadius;
-
-        this._camera.checkCollisions = true;
-        
         this._camera.lockedTarget = this._mesh;
+        this._camera.checkCollisions = true;
 
     }
 
@@ -129,14 +127,6 @@ export class PlayerController extends AbstractController {
 
         const possessableEntity = this.getPossessableEntity()
         if (possessableEntity) {
-            const cameraDirection = this._camera.getForwardRay().direction;
-
-            // TODO: mesh.forward, when new version of babylon is released
-            const meshForward = BABYLON.Vector3.Normalize(BABYLON.Vector3.TransformNormal(
-                new BABYLON.Vector3(0, 0, 1),
-                this._mesh.getWorldMatrix()
-            ));
-            
             if (this._inputRotation.x !== 0) {
                 this._mesh.addRotation(
                     0,
@@ -184,6 +174,11 @@ export class PlayerController extends AbstractController {
         ) {
             this._camera.alpha += this._inputLocation.x * this.moveRotationMultiplier * -1;
         }
+
+        // TODO: must be able to look upwards
+        // const forwardRay = this._camera.getForwardRay(this.cameraRadius);
+        // const hits = forwardRay.intersectsMeshes(this._camera.getScene().meshes);
+        // console.log(hits)
 
     }
 
