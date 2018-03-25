@@ -15,7 +15,6 @@ export class Entity {
     ) {
         let lastMeshTransform = null;
         setInterval(() => {
-            // only update the entity if something has really changed
             if (
                 lastMeshTransform === null ||
                 !this.isMeshTransformSameAs(
@@ -28,7 +27,7 @@ export class Entity {
                     action: 'entity:transform:update',
                     detail: {
                         id: this.getMesh().id,
-                        transformMatrix: [ // TODO: figure out why it needs to be a string
+                        transformMatrix: [
                             meshTransform.position.x,
                             meshTransform.position.y,
                             meshTransform.position.z,

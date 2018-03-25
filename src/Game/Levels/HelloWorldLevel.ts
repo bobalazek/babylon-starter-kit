@@ -40,8 +40,7 @@ export class HelloWorldLevel extends AbstractBaseScene {
     /**
      * The interpolation smoothing for the server. Should be a value between 0 and 1,
      */
-    public serverInterpolationSmoothing: number = 0.1;
-
+    public serverInterpolationSmoothing: number = 0.2;
 
     public onPreStart(callback: () => void) {
         this._prepareUI();
@@ -109,7 +108,8 @@ export class HelloWorldLevel extends AbstractBaseScene {
     }
 
     private _preparePlayer() {
-        const playerId = 'player_' + this._serverClient.id;
+        const serverClientId = this._serverClient.id; // TODO: sometimes it happens, that it's not set. Not yet sure why.
+        const playerId = 'player_' + serverClientId;
         const min = -50;
         const max = 50;
         const randomX = Math.floor(Math.random() * (max - min) + min);
@@ -171,16 +171,13 @@ export class HelloWorldLevel extends AbstractBaseScene {
     }
 
     protected _prepareNetworkSync() {
-        const patchRate = 1000 / GAME_SERVER_UPDATE_RATE;
-
-        // TODO: figure out why it doesn't work if it's an array
+        // Add & update the entities
         this._serverRoom.listen('entities/:id/transformMatrix', (change: DataChange) => {
             const entityId = change.path.id;
             const entityIdSplit = entityId.split('_');
             const type = entityIdSplit[0];
             const id = entityIdSplit[1];
             const isLocalEntity = id === this._serverClient.id;
-
             if (
                 !isLocalEntity &&
                 type === 'player'
@@ -191,7 +188,7 @@ export class HelloWorldLevel extends AbstractBaseScene {
                  if (change.operation === 'add') {
                      playerMesh = this._getPlayerMesh(entityId);
                      playerMesh.metadata = {
-                         serverReplicatable: true,
+                         serverReplicated: true,
                      };
                  } else {
                      playerMesh = this.getScene().getMeshByID(entityId);
@@ -225,13 +222,22 @@ export class HelloWorldLevel extends AbstractBaseScene {
             }
         });
 
+        // Remove entities
+        this._serverRoom.listen('entities/:id', (change: DataChange) => {
+            if (change.operation === 'remove') {
+                const entityId = change.path.id;
+                let entityMesh = this.getScene().getMeshByID(entityId);
+                entityMesh.dispose();
+            }
+        });
+
         // Interpolation
         this.getScene().onBeforeRenderObservable.add(() => {
             const now = (new Date()).getTime();
             this.getScene().meshes.forEach((mesh: BABYLON.AbstractMesh) => {
                 if (
                     mesh.metadata !== null &&
-                    mesh.metadata.serverReplicatable === true &&
+                    mesh.metadata.serverReplicated === true &&
                     now - mesh.metadata.serverLastUpdate < 1000
                 ) {
                     mesh.position = BABYLON.Vector3.Lerp(
