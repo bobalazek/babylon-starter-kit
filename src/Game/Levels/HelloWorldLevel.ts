@@ -149,15 +149,14 @@ export class HelloWorldLevel extends AbstractBaseLevel {
     private _prepareUIDebug() {
         let ping: number = 0;
         setInterval(() => {
-            ping = this._serverRoom.ping;
-            /* const requestStart = (new Date()).getTime();
+            const requestStart = (new Date()).getTime();
             axios.get('http://' + this._serverHost + '/ping?start=' + requestStart)
                 .then((res) => {
                     const requestEnd = (new Date()).getTime();
                     ping = Math.round(requestEnd - requestStart);
                 }).catch(() => {
                     ping = -1;
-                }); */
+                });
             window.dispatchEvent(new CustomEvent('debug:update', {
                 detail: {
                     ping: ping,
