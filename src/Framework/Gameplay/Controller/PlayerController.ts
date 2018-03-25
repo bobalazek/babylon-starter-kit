@@ -72,6 +72,9 @@ export class PlayerController extends AbstractController {
             scene
         );
 
+        this._camera.lowerRadiusLimit = this.cameraRadius;
+        this._camera.upperRadiusLimit = this.cameraRadius;
+
         this._camera.checkCollisions = true;
         
         this._camera.lockedTarget = this._mesh;

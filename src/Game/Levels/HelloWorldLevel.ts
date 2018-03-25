@@ -37,6 +37,12 @@ export class HelloWorldLevel extends AbstractBaseScene {
      */
     public serverPlayerTransformUpdateTolerance: number = 0.001;
 
+    /**
+     * The interpolation smoothing for the server. Should be a value between 0 and 1,
+     */
+    public serverInterpolationSmoothing: number = 0.1;
+
+
     public onPreStart(callback: () => void) {
         this._prepareUI();
 
@@ -180,9 +186,16 @@ export class HelloWorldLevel extends AbstractBaseScene {
                 type === 'player'
             ) {
                 const transformMatrixSplit = change.value.split('|');
-                let playerMesh = change.operation === 'add'
-                    ? this._getPlayerMesh(entityId)
-                    : this.getScene().getMeshByID(entityId);
+                let playerMesh: BABYLON.AbstractMesh;
+
+                 if (change.operation === 'add') {
+                     playerMesh = this._getPlayerMesh(entityId);
+                     playerMesh.metadata = {
+                         serverReplicatable: true,
+                     };
+                 } else {
+                     playerMesh = this.getScene().getMeshByID(entityId);
+                 }
 
                 if (change.operation === 'remove') {
                     playerMesh.dispose();
@@ -205,19 +218,34 @@ export class HelloWorldLevel extends AbstractBaseScene {
                     playerMesh.position = playerMeshPosition;
                     playerMesh.rotationQuaternion = playerMeshRotation;
                 } else {
-                    // TODO: fix interpolation
-                    playerMesh.position = BABYLON.Vector3.Lerp(
-                        playerMesh.position,
-                        playerMeshPosition,
-                        0.5
-                    );
-                    playerMesh.rotationQuaternion = BABYLON.Quaternion.Slerp(
-                        playerMesh.rotationQuaternion,
-                        playerMeshRotation,
-                        0.5
-                    );
+                    playerMesh.metadata.serverLastUpdate = (new Date()).getTime();
+                    playerMesh.metadata.serverPosition = playerMeshPosition;
+                    playerMesh.metadata.serverRotation = playerMeshRotation;
                 }
             }
+        });
+
+        // Interpolation
+        this.getScene().onBeforeRenderObservable.add(() => {
+            const now = (new Date()).getTime();
+            this.getScene().meshes.forEach((mesh: BABYLON.AbstractMesh) => {
+                if (
+                    mesh.metadata !== null &&
+                    mesh.metadata.serverReplicatable === true &&
+                    now - mesh.metadata.serverLastUpdate < 1000
+                ) {
+                    mesh.position = BABYLON.Vector3.Lerp(
+                        mesh.position,
+                        mesh.metadata.serverPosition,
+                        this.serverInterpolationSmoothing
+                    );
+                    mesh.rotationQuaternion = BABYLON.Quaternion.Slerp(
+                        mesh.rotationQuaternion,
+                        mesh.metadata.serverRotation,
+                        this.serverInterpolationSmoothing
+                    )
+                }
+            });
         });
     }
 
