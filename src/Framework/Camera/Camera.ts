@@ -8,45 +8,55 @@
 
 export class Camera extends BABYLON.Camera {
 
+    // General
     public alpha: number;
     public beta: number;
     public radius: number;
-    public cameraDirection = new BABYLON.Vector3(0, 0, 0);
-    public cameraRotation = new BABYLON.Vector2(0, 0);
-    public rotation = new BABYLON.Vector3(0, 0, 0);
-    public rotationQuaternion: BABYLON.Quaternion;
     public speed = 2.0;
+    public rotation: BABYLON.Vector3 = new BABYLON.Vector3(0, 0, 0);
+    public rotationQuaternion: BABYLON.Quaternion;
+    public inertialAlphaOffset: number = 0;
+    public inertialBetaOffset: number = 0;
+    public inertialRadiusOffset: number = 0;
+    public targetScreenOffset: BABYLON.Vector2 = BABYLON.Vector2.Zero();
+
+    // Target
     public lockedTarget: any = null;
-    public inertialAlphaOffset = 0;
-    public inertialBetaOffset = 0;
-    public inertialRadiusOffset = 0;
+    public get target(): BABYLON.Vector3 {
+        return this._target;
+    }
+    public set target(value: BABYLON.Vector3) {
+        this.setTarget(value);
+    }
+
+    // Limits
+    public allowUpsideDown: boolean = true;
     public lowerAlphaLimit: BABYLON.Nullable<number> = null;
     public upperAlphaLimit: BABYLON.Nullable<number> = null;
-    public lowerBetaLimit = 0.01;
-    public upperBetaLimit = Math.PI;
+    public lowerBetaLimit: number = 0.01;
+    public upperBetaLimit: number = Math.PI;
     public lowerRadiusLimit: BABYLON.Nullable<number> = null;
     public upperRadiusLimit: BABYLON.Nullable<number> = null;
+
+    // Panning
+    public panningAxis: BABYLON.Vector3 = new BABYLON.Vector3(1, 1, 0);
     public inertialPanningX: number = 0;
     public inertialPanningY: number = 0;
-    public pinchToPanMaxDistance: number = 20;
     public panningDistanceLimit: BABYLON.Nullable<number> = null;
     public panningOriginTarget: BABYLON.Vector3 = BABYLON.Vector3.Zero();
-    public panningInertia = 0.9;
-    public zoomOnFactor = 1;
-    public targetScreenOffset = BABYLON.Vector2.Zero();
-    public allowUpsideDown = true;
-    public panningAxis: BABYLON.Vector3 = new BABYLON.Vector3(1, 1, 0);
-    public onCollide: (collidedMesh: BABYLON.AbstractMesh) => void;
-    public checkCollisions = false;
-    public collisionRadius = new BABYLON.Vector3(0.5, 0.5, 0.5);
+    public panningInertia: number = 0.9;
 
-    private _currentTarget = BABYLON.Vector3.Zero();
-    private _viewMatrix = BABYLON.Matrix.Zero();
-    private _camMatrix = BABYLON.Matrix.Zero();
-    private _cameraTransformMatrix = BABYLON.Matrix.Zero();
-    private _cameraRotationMatrix = BABYLON.Matrix.Zero();
-    private _currentUpVector = new BABYLON.Vector3(0, 1, 0);
-    private _target: BABYLON.Vector3;
+    // Collisions
+    public onCollide: (collidedMesh: BABYLON.AbstractMesh) => void;
+    public checkCollisions: boolean = false;
+    public collisionRadius: BABYLON.Vector3 = new BABYLON.Vector3(0.5, 0.5, 0.5);
+
+    // Private
+    private _currentTarget: BABYLON.Vector3 = BABYLON.Vector3.Zero();
+    private _viewMatrix: BABYLON.Matrix = BABYLON.Matrix.Zero();
+    private _cameraTransformMatrix: BABYLON.Matrix = BABYLON.Matrix.Zero();
+    private _cameraRotationMatrix: BABYLON.Matrix = BABYLON.Matrix.Zero();
+    private _target: BABYLON.Vector3 = BABYLON.Vector3.Zero();
     private _targetHost: BABYLON.Nullable<BABYLON.AbstractMesh>;
     private _localDirection: BABYLON.Vector3;
     private _transformedDirection: BABYLON.Vector3;
@@ -54,9 +64,6 @@ export class Camera extends BABYLON.Camera {
     private _previousPosition = BABYLON.Vector3.Zero();
     private _collisionVelocity = BABYLON.Vector3.Zero();
     private _newPosition = BABYLON.Vector3.Zero();
-    private _previousAlpha: number;
-    private _previousBeta: number;
-    private _previousRadius: number;
     private _targetBoundingCenter: BABYLON.Nullable<BABYLON.Vector3>;
     private _computationVector: BABYLON.Vector3 = BABYLON.Vector3.Zero();
     private _storedPosition: BABYLON.Vector3;
@@ -69,16 +76,6 @@ export class Camera extends BABYLON.Camera {
 
     constructor(name: string, position: BABYLON.Vector3, scene: BABYLON.Scene) {
         super(name, position, scene);
-
-        this._target = BABYLON.Vector3.Zero();
-    }
-
-    public get target(): BABYLON.Vector3 {
-        return this._target;
-    }
-
-    public set target(value: BABYLON.Vector3) {
-        this.setTarget(value);
     }
 
     /**
@@ -130,9 +127,6 @@ export class Camera extends BABYLON.Camera {
             this.rotationQuaternion = this._storedRotationQuaternion.clone();
         }
 
-        this.cameraDirection.copyFromFloats(0, 0, 0);
-        this.cameraRotation.copyFromFloats(0, 0);
-
         this.alpha = this._storedAlpha;
         this.beta = this._storedBeta;
         this.radius = this._storedRadius;
@@ -150,10 +144,27 @@ export class Camera extends BABYLON.Camera {
     // Cache
     public _initCache() {
         super._initCache();
-        this._cache.lockedTarget = new BABYLON.Vector3(Number.MAX_VALUE, Number.MAX_VALUE, Number.MAX_VALUE);
-        this._cache.rotation = new BABYLON.Vector3(Number.MAX_VALUE, Number.MAX_VALUE, Number.MAX_VALUE);
-        this._cache.rotationQuaternion = new BABYLON.Quaternion(Number.MAX_VALUE, Number.MAX_VALUE, Number.MAX_VALUE, Number.MAX_VALUE);
-        this._cache._target = new BABYLON.Vector3(Number.MAX_VALUE, Number.MAX_VALUE, Number.MAX_VALUE);
+        this._cache.lockedTarget = new BABYLON.Vector3(
+            Number.MAX_VALUE,
+            Number.MAX_VALUE,
+            Number.MAX_VALUE
+        );
+        this._cache.rotation = new BABYLON.Vector3(
+            Number.MAX_VALUE,
+            Number.MAX_VALUE,
+            Number.MAX_VALUE
+        );
+        this._cache.rotationQuaternion = new BABYLON.Quaternion(
+            Number.MAX_VALUE,
+            Number.MAX_VALUE,
+            Number.MAX_VALUE,
+            Number.MAX_VALUE
+        );
+        this._cache._target = new BABYLON.Vector3(
+            Number.MAX_VALUE,
+            Number.MAX_VALUE,
+            Number.MAX_VALUE
+        );
         this._cache.alpha = undefined;
         this._cache.beta = undefined;
         this._cache.radius = undefined;
@@ -188,41 +199,37 @@ export class Camera extends BABYLON.Camera {
         this._cache.targetScreenOffset.copyFrom(this.targetScreenOffset);
     }
 
-    protected _updateCameraRotationMatrix() {
-        if (this.rotationQuaternion) {
-            this.rotationQuaternion.toRotationMatrix(this._cameraRotationMatrix);
-        } else {
-            BABYLON.Matrix.RotationYawPitchRollToRef(this.rotation.y, this.rotation.x, this.rotation.z, this._cameraRotationMatrix);
-        }
-
-        // Update the up vector!
-        BABYLON.Vector3.TransformNormalToRef(this.upVector, this._cameraRotationMatrix, this._currentUpVector);
-    }
-
     public _getViewMatrix(): BABYLON.Matrix {
-        const cosa = Math.cos(this.alpha);
-        const sina = Math.sin(this.alpha);
-        const cosb = Math.cos(this.beta);
-        let sinb = Math.sin(this.beta);
+        const cosA = Math.cos(this.alpha);
+        const sinA = Math.sin(this.alpha);
+        const cosB = Math.cos(this.beta);
+        let sinB = Math.sin(this.beta);
 
-        if (sinb === 0) {
-            sinb = 0.0001;
+        if (sinB === 0) {
+            sinB = 0.0001;
         }
 
         const target = this._getTargetPosition();
         this._computationVector.copyFromFloats(
-            this.radius * cosa * sinb,
-            this.radius * cosb,
-            this.radius * sina * sinb
+            this.radius * cosA * sinB,
+            this.radius * cosB,
+            this.radius * sinA * sinB
         );
-        target.addToRef(this._computationVector, this._newPosition);
+        target.addToRef(
+            this._computationVector,
+            this._newPosition
+        );
+
         if (this.getScene().collisionsEnabled && this.checkCollisions) {
             if (!this._collider) {
                 this._collider = new BABYLON.Collider();
             }
 
             this._collider._radius = this.collisionRadius;
-            this._newPosition.subtractToRef(this.position, this._collisionVelocity);
+            this._newPosition.subtractToRef(
+                this.position,
+                this._collisionVelocity
+            );
             this.getScene().collisionCoordinator.getNewPosition(
                 this.position,
                 this._collisionVelocity,
@@ -236,7 +243,7 @@ export class Camera extends BABYLON.Camera {
             this.position.copyFrom(this._newPosition);
 
             let up = this.upVector;
-            if (this.allowUpsideDown && sinb < 0) {
+            if (this.allowUpsideDown && sinB < 0) {
                 up = up.clone();
                 up = up.negate();
             }
@@ -246,6 +253,7 @@ export class Camera extends BABYLON.Camera {
             } else {
                 BABYLON.Matrix.LookAtLHToRef(this.position, target, up, this._viewMatrix);
             }
+
             this._viewMatrix.m[12] += this.targetScreenOffset.x;
             this._viewMatrix.m[13] += this.targetScreenOffset.y;
         }
@@ -320,7 +328,11 @@ export class Camera extends BABYLON.Camera {
                 this._transformedDirection = BABYLON.Vector3.Zero();
             }
 
-            this._localDirection.copyFromFloats(this.inertialPanningX, this.inertialPanningY, this.inertialPanningY);
+            this._localDirection.copyFromFloats(
+                this.inertialPanningX,
+                this.inertialPanningY,
+                this.inertialPanningY
+            );
             this._localDirection.multiplyInPlace(this.panningAxis);
             this._viewMatrix.invertToRef(this._cameraTransformMatrix);
             BABYLON.Vector3.TransformNormalToRef(
@@ -336,7 +348,10 @@ export class Camera extends BABYLON.Camera {
             if (!this._targetHost) {
                 if (this.panningDistanceLimit) {
                     this._transformedDirection.addInPlace(this._target);
-                    const distanceSquared = BABYLON.Vector3.DistanceSquared(this._transformedDirection, this.panningOriginTarget);
+                    const distanceSquared = BABYLON.Vector3.DistanceSquared(
+                        this._transformedDirection,
+                        this.panningOriginTarget
+                    );
                     if (distanceSquared <= (this.panningDistanceLimit * this.panningDistanceLimit)) {
                         this._target.copyFrom(this._transformedDirection);
                     }
@@ -348,10 +363,13 @@ export class Camera extends BABYLON.Camera {
             this.inertialPanningX *= this.panningInertia;
             this.inertialPanningY *= this.panningInertia;
 
-            if (Math.abs(this.inertialPanningX) < this.speed * BABYLON.Epsilon)
+            if (Math.abs(this.inertialPanningX) < this.speed * BABYLON.Epsilon) {
                 this.inertialPanningX = 0;
-            if (Math.abs(this.inertialPanningY) < this.speed * BABYLON.Epsilon)
+            }
+
+            if (Math.abs(this.inertialPanningY) < this.speed * BABYLON.Epsilon) {
                 this.inertialPanningY = 0;
+            }
         }
 
         // Limits
@@ -408,7 +426,12 @@ export class Camera extends BABYLON.Camera {
         }
 
         // Alpha
-        this.alpha = Math.acos(this._computationVector.x / Math.sqrt(Math.pow(this._computationVector.x, 2) + Math.pow(this._computationVector.z, 2)));
+        this.alpha = Math.acos(
+            this._computationVector.x / Math.sqrt(
+                Math.pow(this._computationVector.x, 2) +
+                Math.pow(this._computationVector.z, 2)
+            )
+        );
 
         if (this._computationVector.z < 0) {
             this.alpha = 2 * Math.PI - this.alpha;
@@ -429,13 +452,18 @@ export class Camera extends BABYLON.Camera {
         this.rebuildAnglesAndRadius();
     }
 
-    public setTarget(target: BABYLON.AbstractMesh | BABYLON.Vector3, toBoundingCenter = false, allowSamePosition = false): void {
+    public setTarget(
+        target: BABYLON.AbstractMesh | BABYLON.Vector3,
+        toBoundingCenter = false,
+        allowSamePosition = false
+    ): void {
         if ((<any>target).getBoundingInfo) {
             if (toBoundingCenter) {
                 this._targetBoundingCenter = (<any>target).getBoundingInfo().boundingBox.centerWorld.clone();
             } else {
                 this._targetBoundingCenter = null;
             }
+
             this._targetHost = <BABYLON.AbstractMesh>target;
             this._target = this._getTargetPosition();
         } else {
@@ -452,7 +480,11 @@ export class Camera extends BABYLON.Camera {
         this.rebuildAnglesAndRadius();
     }
 
-    private _onCollisionPositionChange = (collisionId: number, newPosition: BABYLON.Vector3, collidedMesh: BABYLON.Nullable<BABYLON.AbstractMesh> = null) => {
+    private _onCollisionPositionChange = (
+        collisionId: number,
+        newPosition: BABYLON.Vector3,
+        collidedMesh: BABYLON.Nullable<BABYLON.AbstractMesh> = null
+    ) => {
         if (this.getScene().workerCollisions && this.checkCollisions) {
             newPosition.multiplyInPlace(this._collider._radius);
         }
@@ -468,22 +500,25 @@ export class Camera extends BABYLON.Camera {
         }
 
         // Recompute because of constraints
-        const cosa = Math.cos(this.alpha);
-        const sina = Math.sin(this.alpha);
-        const cosb = Math.cos(this.beta);
-        let sinb = Math.sin(this.beta);
+        const cosA = Math.cos(this.alpha);
+        const sinA = Math.sin(this.alpha);
+        const cosB = Math.cos(this.beta);
+        let sinB = Math.sin(this.beta);
 
-        if (sinb === 0) {
-            sinb = 0.0001;
+        if (sinB === 0) {
+            sinB = 0.0001;
         }
 
         const target = this._getTargetPosition();
         this._computationVector.copyFromFloats(
-            this.radius * cosa * sinb,
-            this.radius * cosb,
-            this.radius * sina * sinb
+            this.radius * cosA * sinB,
+            this.radius * cosB,
+            this.radius * sinA * sinB
         );
-        target.addToRef(this._computationVector, this._newPosition);
+        target.addToRef(
+            this._computationVector,
+            this._newPosition
+        );
         this.position.copyFrom(this._newPosition);
 
         let up = this.upVector;
@@ -492,7 +527,13 @@ export class Camera extends BABYLON.Camera {
             up = up.negate();
         }
 
-        BABYLON.Matrix.LookAtLHToRef(this.position, target, up, this._viewMatrix);
+        BABYLON.Matrix.LookAtLHToRef(
+            this.position,
+            target,
+            up,
+            this._viewMatrix
+        );
+
         this._viewMatrix.m[12] += this.targetScreenOffset.x;
         this._viewMatrix.m[13] += this.targetScreenOffset.y;
     }
