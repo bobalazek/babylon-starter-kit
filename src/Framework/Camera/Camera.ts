@@ -165,7 +165,7 @@ export class Camera extends BABYLON.Camera {
             super._updateCache();
         }
 
-        var lockedTargetPosition = this._getLockedTargetPosition();
+        const lockedTargetPosition = this._getLockedTargetPosition();
         if (!lockedTargetPosition) {
             this._cache.lockedTarget = null;
         } else {
@@ -200,29 +200,42 @@ export class Camera extends BABYLON.Camera {
     }
 
     public _getViewMatrix(): BABYLON.Matrix {
-        var cosa = Math.cos(this.alpha);
-        var sina = Math.sin(this.alpha);
-        var cosb = Math.cos(this.beta);
-        var sinb = Math.sin(this.beta);
+        const cosa = Math.cos(this.alpha);
+        const sina = Math.sin(this.alpha);
+        const cosb = Math.cos(this.beta);
+        let sinb = Math.sin(this.beta);
 
         if (sinb === 0) {
             sinb = 0.0001;
         }
 
-        var target = this._getTargetPosition();
-        this._computationVector.copyFromFloats(this.radius * cosa * sinb, this.radius * cosb, this.radius * sina * sinb);
+        const target = this._getTargetPosition();
+        this._computationVector.copyFromFloats(
+            this.radius * cosa * sinb,
+            this.radius * cosb,
+            this.radius * sina * sinb
+        );
         target.addToRef(this._computationVector, this._newPosition);
         if (this.getScene().collisionsEnabled && this.checkCollisions) {
             if (!this._collider) {
                 this._collider = new BABYLON.Collider();
             }
+
             this._collider._radius = this.collisionRadius;
             this._newPosition.subtractToRef(this.position, this._collisionVelocity);
-            this.getScene().collisionCoordinator.getNewPosition(this.position, this._collisionVelocity, this._collider, 3, null, this._onCollisionPositionChange, this.uniqueId);
+            this.getScene().collisionCoordinator.getNewPosition(
+                this.position,
+                this._collisionVelocity,
+                this._collider,
+                3,
+                null,
+                this._onCollisionPositionChange,
+                this.uniqueId
+            );
         } else {
             this.position.copyFrom(this._newPosition);
 
-            var up = this.upVector;
+            let up = this.upVector;
             if (this.allowUpsideDown && sinb < 0) {
                 up = up.clone();
                 up = up.negate();
@@ -243,7 +256,7 @@ export class Camera extends BABYLON.Camera {
 
     private _getTargetPosition(): BABYLON.Vector3 {
         if (this._targetHost && this._targetHost.getAbsolutePosition) {
-            var pos: BABYLON.Vector3 = this._targetHost.getAbsolutePosition();
+            let pos: BABYLON.Vector3 = this._targetHost.getAbsolutePosition();
             if (this._targetBoundingCenter) {
                 pos.addToRef(this._targetBoundingCenter, this._target);
             } else {
@@ -251,7 +264,7 @@ export class Camera extends BABYLON.Camera {
             }
         }
 
-        var lockedTargetPosition = this._getLockedTargetPosition();
+        const lockedTargetPosition = this._getLockedTargetPosition();
         if (lockedTargetPosition) {
             return lockedTargetPosition;
         }
@@ -264,17 +277,16 @@ export class Camera extends BABYLON.Camera {
             return false;
         }
 
-        return this._cache._target.equals(this._getTargetPosition())
-            && this._cache.alpha === this.alpha
-            && this._cache.beta === this.beta
-            && this._cache.radius === this.radius
-            && this._cache.targetScreenOffset.equals(this.targetScreenOffset);
+        return this._cache._target.equals(this._getTargetPosition()) &&
+            this._cache.alpha === this.alpha &&
+            this._cache.beta === this.beta &&
+            this._cache.radius === this.radius &&
+            this._cache.targetScreenOffset.equals(this.targetScreenOffset);
     }
 
     public _checkInputs(): void {
         // Inertia
         if (this.inertialAlphaOffset !== 0 || this.inertialBetaOffset !== 0 || this.inertialRadiusOffset !== 0) {
-
             if (this.getScene().useRightHandedSystem) {
                 this.alpha -= this.beta <= 0 ? -this.inertialAlphaOffset : this.inertialAlphaOffset;
             } else {
@@ -311,7 +323,11 @@ export class Camera extends BABYLON.Camera {
             this._localDirection.copyFromFloats(this.inertialPanningX, this.inertialPanningY, this.inertialPanningY);
             this._localDirection.multiplyInPlace(this.panningAxis);
             this._viewMatrix.invertToRef(this._cameraTransformMatrix);
-            BABYLON.Vector3.TransformNormalToRef(this._localDirection, this._cameraTransformMatrix, this._transformedDirection);
+            BABYLON.Vector3.TransformNormalToRef(
+                this._localDirection,
+                this._cameraTransformMatrix,
+                this._transformedDirection
+            );
             // Eliminate y if map panning is enabled (panningAxis == 1,0,1)
             if (!this.panningAxis.y) {
                 this._transformedDirection.y = 0;
@@ -320,7 +336,7 @@ export class Camera extends BABYLON.Camera {
             if (!this._targetHost) {
                 if (this.panningDistanceLimit) {
                     this._transformedDirection.addInPlace(this._target);
-                    var distanceSquared = BABYLON.Vector3.DistanceSquared(this._transformedDirection, this.panningOriginTarget);
+                    const distanceSquared = BABYLON.Vector3.DistanceSquared(this._transformedDirection, this.panningOriginTarget);
                     if (distanceSquared <= (this.panningDistanceLimit * this.panningDistanceLimit)) {
                         this._target.copyFrom(this._transformedDirection);
                     }
@@ -369,6 +385,7 @@ export class Camera extends BABYLON.Camera {
         if (this.lowerAlphaLimit && this.alpha < this.lowerAlphaLimit) {
             this.alpha = this.lowerAlphaLimit;
         }
+
         if (this.upperAlphaLimit && this.alpha > this.upperAlphaLimit) {
             this.alpha = this.upperAlphaLimit;
         }
@@ -376,6 +393,7 @@ export class Camera extends BABYLON.Camera {
         if (this.lowerRadiusLimit && this.radius < this.lowerRadiusLimit) {
             this.radius = this.lowerRadiusLimit;
         }
+
         if (this.upperRadiusLimit && this.radius > this.upperRadiusLimit) {
             this.radius = this.upperRadiusLimit;
         }
@@ -421,8 +439,8 @@ export class Camera extends BABYLON.Camera {
             this._targetHost = <BABYLON.AbstractMesh>target;
             this._target = this._getTargetPosition();
         } else {
-            var newTarget = <BABYLON.Vector3>target;
-            var currentTarget = this._getTargetPosition();
+            const newTarget = <BABYLON.Vector3>target;
+            const currentTarget = this._getTargetPosition();
             if (currentTarget && !allowSamePosition && currentTarget.equals(newTarget)) {
                 return;
             }
@@ -450,21 +468,25 @@ export class Camera extends BABYLON.Camera {
         }
 
         // Recompute because of constraints
-        var cosa = Math.cos(this.alpha);
-        var sina = Math.sin(this.alpha);
-        var cosb = Math.cos(this.beta);
-        var sinb = Math.sin(this.beta);
+        const cosa = Math.cos(this.alpha);
+        const sina = Math.sin(this.alpha);
+        const cosb = Math.cos(this.beta);
+        let sinb = Math.sin(this.beta);
 
         if (sinb === 0) {
             sinb = 0.0001;
         }
 
-        var target = this._getTargetPosition();
-        this._computationVector.copyFromFloats(this.radius * cosa * sinb, this.radius * cosb, this.radius * sina * sinb);
+        const target = this._getTargetPosition();
+        this._computationVector.copyFromFloats(
+            this.radius * cosa * sinb,
+            this.radius * cosb,
+            this.radius * sina * sinb
+        );
         target.addToRef(this._computationVector, this._newPosition);
         this.position.copyFrom(this._newPosition);
 
-        var up = this.upVector;
+        let up = this.upVector;
         if (this.allowUpsideDown && this.beta < 0) {
             up = up.clone();
             up = up.negate();

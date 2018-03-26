@@ -5,7 +5,6 @@ import { Camera } from '../../Camera/Camera';
 export class PlayerController extends AbstractController {
 
     private _mesh: BABYLON.AbstractMesh;
-    // private _camera: BABYLON.ArcRotateCamera;
     private _camera: Camera;
 
     private _inputLocation: BABYLON.Vector2 = BABYLON.Vector2.Zero();
