@@ -1,11 +1,12 @@
 import { GameManager } from "../../../Framework/Core/GameManager";
 import { AbstractController } from './AbstractController';
-import { ThirdPersonCamera } from '../../Camera/ThirdPersonCamera';
+import { Camera } from '../../Camera/Camera';
 
 export class PlayerController extends AbstractController {
 
     private _mesh: BABYLON.AbstractMesh;
-    private _camera: BABYLON.ArcRotateCamera;
+    // private _camera: BABYLON.ArcRotateCamera;
+    private _camera: Camera;
 
     private _inputLocation: BABYLON.Vector2 = BABYLON.Vector2.Zero();
     private _inputRotation: BABYLON.Vector2 = BABYLON.Vector2.Zero();
@@ -63,17 +64,15 @@ export class PlayerController extends AbstractController {
         let scene = GameManager.activeLevel.getScene();
 
         this._mesh = this.getPossessableEntity().getMesh();
-        scene.activeCamera = this._camera = new ThirdPersonCamera(
-            'thirdPersonCamera',
-            -Math.PI / 2,
-            Math.PI / 2,
-            this.cameraRadius,
+
+        scene.activeCamera = this._camera = new Camera(
+            'camera',
             this._mesh.position,
             scene
         );
-
-        this._camera.lowerRadiusLimit = this.cameraRadius;
-        this._camera.upperRadiusLimit = this.cameraRadius;
+        this._camera.alpha = -Math.PI / 2;
+        this._camera.beta = Math.PI / 2;
+        this._camera.radius = this.cameraRadius;
         this._camera.lockedTarget = this._mesh;
         this._camera.checkCollisions = true;
 

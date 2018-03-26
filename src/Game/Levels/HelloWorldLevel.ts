@@ -48,13 +48,6 @@ export class HelloWorldLevel extends AbstractBaseLevel {
 
         super.start();
 
-        // A temporary camera until the player has loaded and ready
-        let camera = new BABYLON.UniversalCamera(
-            "spectatorCamera",
-            new BABYLON.Vector3(0, 4, -8),
-            this.getScene()
-        );
-
         this._prepareChat();
         this._preparePlayer();
         this._prepareUIDebug();
