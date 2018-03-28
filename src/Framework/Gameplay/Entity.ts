@@ -23,22 +23,22 @@ export class Entity {
                 )
             ) {
                 const meshTransform = this.getMeshTransform();
-                const meshId = this.getMesh().id;
+                const meshId = this._mesh.id;
+
+                let detail: any = {
+                    transformMatrix: Entity.serializeMeshTransformMatrix(meshTransform),
+                };
+                if (
+                    this._mesh.metadata === null ||
+                    !this._mesh.metadata.serverReplicated
+                ) {
+                    detail.id = meshId;
+                    detail.mesh = meshId.split('_')[0];
+                }
+                
                 serverRoom.send({
                     action: 'entity:transform:update',
-                    detail: {
-                        id: meshId,
-                        mesh: meshId.split('_')[0],
-                        transformMatrix: [
-                            meshTransform.position.x,
-                            meshTransform.position.y,
-                            meshTransform.position.z,
-                            meshTransform.rotation.x,
-                            meshTransform.rotation.y,
-                            meshTransform.rotation.z,
-                            meshTransform.rotation.w,
-                        ].join('|'),
-                    },
+                    detail: detail,
                 });
                 lastMeshTransform = meshTransform;
             }
@@ -116,6 +116,35 @@ export class Entity {
         }
 
         return false;
+    }
+
+    public static serializeMeshTransformMatrix(meshTransform: any): string {
+        return [
+            meshTransform.position.x,
+            meshTransform.position.y,
+            meshTransform.position.z,
+            meshTransform.rotation.x,
+            meshTransform.rotation.y,
+            meshTransform.rotation.z,
+            meshTransform.rotation.w,
+        ].join('|');
+    }
+
+    public static deserializeMeshTransformMatrix(serializedMeshTransformMatrix: string): any {
+        const serializedMeshTransformMatrixSplit = serializedMeshTransformMatrix.split('|');
+        return {
+            position: {
+                x: serializedMeshTransformMatrixSplit[0],
+                y: serializedMeshTransformMatrixSplit[1],
+                z: serializedMeshTransformMatrixSplit[2],
+            },
+            rotation: {
+                x: serializedMeshTransformMatrixSplit[3],
+                y: serializedMeshTransformMatrixSplit[4],
+                z: serializedMeshTransformMatrixSplit[5],
+                w: serializedMeshTransformMatrixSplit[6],
+            },
+        };
     }
 
 }

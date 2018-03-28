@@ -1,5 +1,5 @@
-import * as React from "react";
-import * as ReactDOM from "react-dom";
+import * as React from 'react';
+import * as ReactDOM from 'react-dom';
 import axios from 'axios';
 import { DataChange } from 'delta-listener';
 import { Key as KeyboardKey } from 'ts-keycode-enum';
@@ -9,9 +9,10 @@ import {
     GAME_SERVER_HOST,
     GAME_SERVER_UPDATE_RATE
 } from '../Config';
-import { GameManager } from "../../Framework/Core/GameManager";
+import { GameManager } from '../../Framework/Core/GameManager';
+import { Entity } from '../../Framework/Gameplay/Entity';
 import { AbstractBaseLevel } from './AbstractBaseLevel';
-import { PossessableEntity } from "../../Framework/Gameplay/PossessableEntity";
+import { PossessableEntity } from '../../Framework/Gameplay/PossessableEntity';
 
 import { ChatComponent } from '../UI/ChatComponent';
 import { DebugComponent } from '../UI/DebugComponent';
@@ -204,17 +205,17 @@ export class HelloWorldLevel extends AbstractBaseLevel {
                     clientSessionId: change.value.client.sessionId,
                 };
 
-                const transformMatrixSplit = change.value.transformMatrix.split('|');
+                const transformMatrix = Entity.deserializeMeshTransformMatrix(change.value.transformMatrix);
                 const entityMeshPosition = new BABYLON.Vector3(
-                    transformMatrixSplit[0],
-                    transformMatrixSplit[1],
-                    transformMatrixSplit[2]
+                    transformMatrix.position.x,
+                    transformMatrix.position.y,
+                    transformMatrix.position.z
                 );
                 const entityMeshRotation = new BABYLON.Quaternion(
-                    transformMatrixSplit[3],
-                    transformMatrixSplit[4],
-                    transformMatrixSplit[5],
-                    transformMatrixSplit[6]
+                    transformMatrix.rotation.x,
+                    transformMatrix.rotation.y,
+                    transformMatrix.rotation.z,
+                    transformMatrix.rotation.w
                 );
                 entityMesh.position = entityMeshPosition;
                 entityMesh.rotationQuaternion = entityMeshRotation;
