@@ -23,10 +23,12 @@ export class Entity {
                 )
             ) {
                 const meshTransform = this.getMeshTransform();
+                const meshId = this.getMesh().id;
                 serverRoom.send({
                     action: 'entity:transform:update',
                     detail: {
-                        id: this.getMesh().id,
+                        id: meshId,
+                        mesh: meshId.split('_')[0],
                         transformMatrix: [
                             meshTransform.position.x,
                             meshTransform.position.y,

@@ -160,62 +160,68 @@ export class HelloWorldLevel extends AbstractBaseLevel {
     }
 
     protected _prepareNetworkSync() {
-        // Add & update the entities
         this._serverRoom.listen('entities/:id/transformMatrix', (change: DataChange) => {
-            const entityId = change.path.id;
-            const entityIdSplit = entityId.split('_');
-            const type = entityIdSplit[0];
-            const id = entityIdSplit[1];
-            const isLocalEntity = id === this._serverClient.id;
+            let entityMesh = this.getScene().getMeshByID(change.path.id);
             if (
-                !isLocalEntity &&
-                type === 'player'
+                entityMesh !== null &&
+                entityMesh.metadata !== null &&
+                change.operation === 'replace'
             ) {
-                const transformMatrixSplit = change.value.split('|');
-                let playerMesh: BABYLON.AbstractMesh;
-
-                 if (change.operation === 'add') {
-                     playerMesh = this._getPlayerMesh(entityId);
-                     playerMesh.metadata = {
-                         serverReplicated: true,
-                     };
-                 } else {
-                     playerMesh = this.getScene().getMeshByID(entityId);
-                 }
-
-                if (change.operation === 'remove') {
-                    playerMesh.dispose();
+                const isLocalEntity = entityMesh.metadata.clientSessionId === this._serverClient.id;
+                if (isLocalEntity) {
                     return;
                 }
-
-                const playerMeshPosition = new BABYLON.Vector3(
+                
+                const transformMatrixSplit = change.value.split('|');
+                const entityMeshPosition = new BABYLON.Vector3(
                     transformMatrixSplit[0],
                     transformMatrixSplit[1],
                     transformMatrixSplit[2]
                 );
-                const playerMeshRotation = new BABYLON.Quaternion(
+                const entityMeshRotation = new BABYLON.Quaternion(
                     transformMatrixSplit[3],
                     transformMatrixSplit[4],
                     transformMatrixSplit[5],
                     transformMatrixSplit[6]
                 );
-
-                if (change.operation === 'add') {
-                    playerMesh.position = playerMeshPosition;
-                    playerMesh.rotationQuaternion = playerMeshRotation;
-                } else {
-                    playerMesh.metadata.serverLastUpdate = (new Date()).getTime();
-                    playerMesh.metadata.serverPosition = playerMeshPosition;
-                    playerMesh.metadata.serverRotation = playerMeshRotation;
-                }
+                entityMesh.metadata.serverLastUpdate = (new Date()).getTime();
+                entityMesh.metadata.serverPosition = entityMeshPosition;
+                entityMesh.metadata.serverRotation = entityMeshRotation;
             }
         });
 
-        // Remove entities
         this._serverRoom.listen('entities/:id', (change: DataChange) => {
-            if (change.operation === 'remove') {
-                const entityId = change.path.id;
-                let entityMesh = this.getScene().getMeshByID(entityId);
+            const entityId = change.path.id;
+            let entityMesh = this.getScene().getMeshByID(entityId);
+            if (
+                entityMesh === null &&
+                change.operation === 'add'
+            ) {
+                entityMesh = this._getPlayerMesh(entityId);
+                entityMesh.metadata = {
+                    serverReplicated: true,
+                    clientLastUpdate: (new Date()).getTime(),
+                    clientSessionId: change.value.client.sessionId,
+                };
+
+                const transformMatrixSplit = change.value.transformMatrix.split('|');
+                const entityMeshPosition = new BABYLON.Vector3(
+                    transformMatrixSplit[0],
+                    transformMatrixSplit[1],
+                    transformMatrixSplit[2]
+                );
+                const entityMeshRotation = new BABYLON.Quaternion(
+                    transformMatrixSplit[3],
+                    transformMatrixSplit[4],
+                    transformMatrixSplit[5],
+                    transformMatrixSplit[6]
+                );
+                entityMesh.position = entityMeshPosition;
+                entityMesh.rotationQuaternion = entityMeshRotation;
+            } else if (
+                entityMesh !== null &&
+                change.operation === 'remove'
+            ) {
                 entityMesh.dispose();
             }
         });
