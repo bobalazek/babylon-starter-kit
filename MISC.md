@@ -19,10 +19,12 @@
 ### Particles
 
 ### Environment
-#### Weather
-#### Terrain
-##### Foliage
 
+#### Weather
+##### Fog
+
+#### Terrain/Landscape
+##### Foliage
 
 ----------------
 
@@ -31,6 +33,12 @@
 ### Animations
 
 ### Entities
+
+#### Types
+* Climbable
+* Pickable
+* Possessable
+* Usable
 
 #### Volumes
 ##### Trigger volume

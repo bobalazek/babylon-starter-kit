@@ -4,16 +4,34 @@ import { Camera } from '../../Camera/Camera';
 
 export class PlayerController extends AbstractController {
 
-    private _mesh: BABYLON.AbstractMesh;
-    private _camera: Camera;
-
+    // Input
     private _inputLocation: BABYLON.Vector2 = BABYLON.Vector2.Zero();
     private _inputRotation: BABYLON.Vector2 = BABYLON.Vector2.Zero();
 
     /**
+     * Is the input currently enabled?
+     */
+    private _inputEnabled: boolean = true;
+
+    /**
+     * What are we controlling?
+     */
+    private _targetMesh: BABYLON.AbstractMesh;
+
+    /**
+     * With which camera?
+     */
+    private _camera: Camera;
+
+    /**
+     * In which mode are we in?
+     */
+    private _mode: PlayerControllerModeEnum = PlayerControllerModeEnum.Character;
+
+    /**
      * How far back on the forward axis, the camera should be behind the target character.
      */
-    private cameraRadius: number = 6;
+    public cameraRadius: number = 6;
 
     /**
      * This is the speed of the mesh for the forward/right direction.
@@ -62,24 +80,29 @@ export class PlayerController extends AbstractController {
 
         let scene = GameManager.activeLevel.getScene();
 
-        this._mesh = this.getPossessableEntity().getMesh();
+        this._targetMesh = this.getPossessableEntity().getMesh();
 
         scene.activeCamera = this._camera = new Camera(
             'camera',
-            this._mesh.position,
+            this._targetMesh.position,
             scene
         );
         this._camera.alpha = -Math.PI / 2;
         this._camera.beta = Math.PI / 2;
         this._camera.radius = this.cameraRadius;
-        this._camera.lockedTarget = this._mesh;
+        this._camera.lockedTarget = this._targetMesh;
         this._camera.checkCollisions = true;
 
     }
 
+    /********** Update methods **********/
+
     public update () {
 
-        this.updateInput();
+        if (this._inputEnabled) {
+            this.updateInput();
+        }
+        
         this.updateMesh();
         this.updateCamera();
 
@@ -126,7 +149,7 @@ export class PlayerController extends AbstractController {
         const possessableEntity = this.getPossessableEntity()
         if (possessableEntity) {
             if (this._inputRotation.x !== 0) {
-                this._mesh.addRotation(
+                this._targetMesh.addRotation(
                     0,
                     this._inputRotation.x * this.rotationMultiplier,
                     0
@@ -137,7 +160,7 @@ export class PlayerController extends AbstractController {
                 !this.moveMeshYawAsStrafing &&
                 this._inputLocation.x !== 0
             ) {
-                this._mesh.addRotation(
+                this._targetMesh.addRotation(
                     0,
                     this._inputLocation.x * this.moveRotationMultiplier,
                     0
@@ -151,7 +174,7 @@ export class PlayerController extends AbstractController {
                     this._inputLocation.y
                 ).normalize().scaleInPlace(this.locationMultiplier);
 
-                this._mesh.translate(
+                this._targetMesh.translate(
                     direction,
                     0.1,
                     BABYLON.Space.LOCAL
@@ -180,4 +203,48 @@ export class PlayerController extends AbstractController {
 
     }
 
+    /********** Target mesh **********/
+    public getTargetMesh(): BABYLON.AbstractMesh {
+        return this._targetMesh;
+    }
+
+    public setTargetMesh(targetMesh: BABYLON.AbstractMesh) {
+        this._targetMesh = targetMesh;
+    }
+
+    /********** Mode **********/
+    public getMode(): PlayerControllerModeEnum {
+        return this._mode;
+    }
+
+    public setMode(mode: PlayerControllerModeEnum) {
+        this._mode = mode;
+    }
+
+    /********** Input **********/
+    public enableInput(preventReset?: boolean) {
+        this._inputEnabled = true;
+        if (preventReset !== true) {
+            this.resetInput();
+        }
+    }
+
+    public disableInput(preventReset?: boolean) {
+        this._inputEnabled = false;
+        if (preventReset !== true) {
+            this.resetInput();
+        }
+    }
+
+    public resetInput() {
+        this._inputLocation = BABYLON.Vector2.Zero()
+        this._inputRotation = BABYLON.Vector2.Zero()
+    }
+
+}
+
+export enum PlayerControllerModeEnum {
+    Character,
+    Vehicle,
+    Spectator
 }
