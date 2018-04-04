@@ -357,7 +357,7 @@ export class InputManager {
     public handleMouseDownAndUpEvent(e: MouseEvent) {
 
         const isPressed = e.type === 'mousedown' || e.type === 'pointerdown';
-        // TODO: make sure those bindings are correct
+        // TODO: make sure those bindings are correct, especially in IE
         const button = e.which === 3
             ? InputMouseButtonEnum.Right
             : (e.which === 2

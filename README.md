@@ -64,6 +64,11 @@ An extended version of the assets manager, but it automatically handles & reuses
     * `src/Game/` - all of your game logic belongs here.
     * `src/Framework/` - all of your generic engine stuff will belong here. Think of it as a collection of classes, helpers, managers, ... that you'll be able to reuse in your next game.
 
+## TODO
+
+* InputManager - trigger custom events per key and action (press & hold)
+* PlayerController - jumping
+
 
 ## Credits
 

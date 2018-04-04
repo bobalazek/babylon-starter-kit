@@ -123,7 +123,7 @@ export class InputGamepad {
 
     public get leftStickX(): number {
         return this._leftStickX;
-    };
+    }
 
     public set leftStickX(value: number) {
         if (this._leftStickX !== value) {
@@ -135,13 +135,13 @@ export class InputGamepad {
                 this.onLeftStickXChanged(value);
             }
         }
-    };
+    }
 
     public get leftStickY(): number {
         return this._leftStickYInvert
             ? -this._leftStickY
             : this._leftStickY;
-    };
+    }
 
     public set leftStickY(value: number) {
         if (this._leftStickY !== value) {
@@ -153,7 +153,7 @@ export class InputGamepad {
                 this.onLeftStickYChanged(value);
             }
         }
-    };
+    }
 
     public get leftStick(): InputEnumStickValues {
         return {
@@ -166,7 +166,7 @@ export class InputGamepad {
 
     public get rightStickX(): number {
         return this._rightStickX;
-    };
+    }
 
     public set rightStickX(value: number) {
         if (this._rightStickX !== value) {
@@ -178,13 +178,13 @@ export class InputGamepad {
                 this.onRightStickXChanged(value);
             }
         }
-    };
+    }
 
     public get rightStickY(): number {
         return this._rightStickYInvert
             ? -this._rightStickY
             : this._rightStickY;
-    };
+    }
 
     public set rightStickY(value: number) {
         if (this._rightStickY !== value) {
@@ -196,14 +196,14 @@ export class InputGamepad {
                 this.onRightStickYChanged(value);
             }
         }
-    };
+    }
 
     public get rightStick(): InputEnumStickValues {
         return {
             x: this.rightStickX,
             y: this.rightStickY,
         };
-    };
+    }
 
     /***** Triggers *****/
 
@@ -211,7 +211,7 @@ export class InputGamepad {
 
     public get leftTrigger(): number {
         return this._leftTrigger;
-    };
+    }
 
     public set leftTrigger(value: number) {
         if (this._leftTrigger !== value) {
@@ -223,13 +223,13 @@ export class InputGamepad {
                 this.onLeftTriggerChanged(value);
             }
         }
-    };
+    }
 
     /*** Right ***/
 
     public get rightTrigger(): number {
         return this._rightTrigger;
-    };
+    }
 
     public set rightTrigger(value: number) {
         if (this._rightTrigger !== value) {
@@ -241,7 +241,7 @@ export class InputGamepad {
                 this.onLeftTriggerChanged(value);
             }
         }
-    };
+    }
 
     /*** Both ***/
 
@@ -264,13 +264,13 @@ export class InputGamepad {
         }
 
         return 0;
-    };
+    }
 
     /********** Buttons **********/
 
     public get buttonA(): boolean {
         return this._buttonA;
-    };
+    }
 
     public set buttonA(state: boolean) {
         if (state !== this._buttonA) {
@@ -280,11 +280,11 @@ export class InputGamepad {
                 this.onButtonChanged(InputGamepadButtonEnum.A, state);
             }
         }
-    };
+    }
 
     public get buttonB(): boolean {
         return this._buttonB;
-    };
+    }
 
     public set buttonB(state: boolean) {
         if (state !== this._buttonB) {
@@ -294,11 +294,11 @@ export class InputGamepad {
                 this.onButtonChanged(InputGamepadButtonEnum.B, state);
             }
         }
-    };
+    }
 
     public get buttonX(): boolean {
         return this._buttonX;
-    };
+    }
 
     public set buttonX(state: boolean) {
         if (state !== this._buttonX) {
@@ -308,11 +308,11 @@ export class InputGamepad {
                 this.onButtonChanged(InputGamepadButtonEnum.X, state);
             }
         }
-    };
+    }
 
     public get buttonY(): boolean {
         return this._buttonY;
-    };
+    }
 
     public set buttonY(state: boolean) {
         if (state !== this._buttonY) {
@@ -322,11 +322,11 @@ export class InputGamepad {
                 this.onButtonChanged(InputGamepadButtonEnum.Y, state);
             }
         }
-    };
+    }
 
     public get buttonStart(): boolean {
         return this._buttonStart;
-    };
+    }
 
     public set buttonStart(state: boolean) {
         if (state !== this._buttonStart) {
@@ -336,11 +336,11 @@ export class InputGamepad {
                 this.onButtonChanged(InputGamepadButtonEnum.Start, state);
             }
         }
-    };
+    }
 
     public get buttonBack(): boolean {
         return this._buttonBack;
-    };
+    }
 
     public set buttonBack(state: boolean) {
         if (state !== this._buttonBack) {
@@ -350,13 +350,13 @@ export class InputGamepad {
                 this.onButtonChanged(InputGamepadButtonEnum.Back, state);
             }
         }
-    };
+    }
 
     /*** Sticks ***/
 
     public get buttonLeftStick(): boolean {
         return this._buttonLeftStick;
-    };
+    }
 
     public set buttonLeftStick(state: boolean) {
         if (state !== this._buttonLeftStick) {
@@ -366,11 +366,11 @@ export class InputGamepad {
                 this.onButtonChanged(InputGamepadButtonEnum.LeftStick, state);
             }
         }
-    };
+    }
 
     public get buttonRightStick(): boolean {
         return this._buttonRightStick;
-    };
+    }
 
     public set buttonRightStick(state: boolean) {
         if (state !== this._buttonRightStick) {
@@ -380,13 +380,13 @@ export class InputGamepad {
                 this.onButtonChanged(InputGamepadButtonEnum.RightStick, state);
             }
         }
-    };
+    }
 
     /*** Bottoms ***/
 
     public get buttonLB(): boolean {
         return this._buttonLB;
-    };
+    }
 
     public set buttonLB(state: boolean) {
         if (state !== this._buttonLB) {
@@ -396,11 +396,11 @@ export class InputGamepad {
                 this.onButtonChanged(InputGamepadButtonEnum.LB, state);
             }
         }
-    };
+    }
 
     public get buttonRB(): boolean {
         return this._buttonRB;
-    };
+    }
 
     public set buttonRB(state: boolean) {
         if (state !== this._buttonRB) {
@@ -410,13 +410,13 @@ export class InputGamepad {
                 this.onButtonChanged(InputGamepadButtonEnum.RB, state);
             }
         }
-    };
+    }
 
     /*** Triggers ***/
 
     public get buttonLT(): boolean {
         return this._buttonLT;
-    };
+    }
 
     public set buttonLT(state: boolean) {
         if (state !== this._buttonLT) {
@@ -426,11 +426,11 @@ export class InputGamepad {
                 this.onButtonChanged(InputGamepadButtonEnum.LT, state);
             }
         }
-    };
+    }
 
     public get buttonRT(): boolean {
         return this._buttonRT;
-    };
+    }
 
     public set buttonRT(state: boolean) {
         if (state !== this._buttonRT) {
@@ -440,13 +440,13 @@ export class InputGamepad {
                 this.onButtonChanged(InputGamepadButtonEnum.RT, state);
             }
         }
-    };
+    }
 
     /*** DPad ***/
 
     public get buttonDPadUp(): boolean {
         return this._buttonDPadUp;
-    };
+    }
 
     public set buttonDPadUp(state: boolean) {
         if (state !== this._buttonDPadUp) {
@@ -456,11 +456,11 @@ export class InputGamepad {
                 this.onButtonChanged(InputGamepadButtonEnum.DPadUp, state);
             }
         }
-    };
+    }
 
     public get buttonDPadDown(): boolean {
         return this._buttonDPadDown;
-    };
+    }
 
     public set buttonDPadDown(state: boolean) {
         if (state !== this._buttonDPadDown) {
@@ -470,11 +470,11 @@ export class InputGamepad {
                 this.onButtonChanged(InputGamepadButtonEnum.DPadDown, state);
             }
         }
-    };
+    }
 
     public get buttonDPadLeft(): boolean {
         return this._buttonDPadLeft;
-    };
+    }
 
     public set buttonDPadLeft(state: boolean) {
         if (state !== this._buttonDPadLeft) {
@@ -484,11 +484,11 @@ export class InputGamepad {
                 this.onButtonChanged(InputGamepadButtonEnum.DPadLeft, state);
             }
         }
-    };
+    }
 
     public get buttonDPadRight(): boolean {
         return this._buttonDPadRight;
-    };
+    }
 
     public set buttonDPadRight(state: boolean) {
         if (state !== this._buttonDPadRight) {
@@ -498,7 +498,7 @@ export class InputGamepad {
                 this.onButtonChanged(InputGamepadButtonEnum.DPadRight, state);
             }
         }
-    };
+    }
 
 }
 

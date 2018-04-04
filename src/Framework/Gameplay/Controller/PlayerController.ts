@@ -241,6 +241,11 @@ export class PlayerController extends AbstractController {
         this._inputRotation = BABYLON.Vector2.Zero()
     }
 
+    /********** Jump **********/
+    public doJump() {
+        // TODO
+    }
+
 }
 
 export enum PlayerControllerModeEnum {

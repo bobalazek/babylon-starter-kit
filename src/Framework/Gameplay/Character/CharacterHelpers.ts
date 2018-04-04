@@ -8,6 +8,7 @@ export enum CharacterStatusEnum {
     Swimming,
     Jumping,
     Falling,
+    Sliding,
     Standing,
     Aiming,
     Shooting,
