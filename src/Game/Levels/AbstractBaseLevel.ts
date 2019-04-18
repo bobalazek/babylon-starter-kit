@@ -16,7 +16,9 @@ export class AbstractBaseLevel extends AbstractNetworkLevel {
         super.start();
 
         this.getScene().collisionsEnabled = true;
-        this.getScene().enablePhysics();
+        this.getScene().enablePhysics(
+            new BABYLON.Vector3(0, -9.81, 0)
+        );
 
         this._prepareSkybox(this._worldSize);
         this._prepareOcean(this._worldSize);

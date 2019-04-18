@@ -42,6 +42,7 @@ export class AbstractNetworkLevel extends AbstractLevel {
         ) {
             this._serverClient = new Client('ws://' + this._serverHost);
             this._serverRoom = this._serverClient.join(this._serverRoomName);
+            console.log(this._serverRoom)
 
             // Interpolation
             this.getScene().onBeforeRenderObservable.add(() => {

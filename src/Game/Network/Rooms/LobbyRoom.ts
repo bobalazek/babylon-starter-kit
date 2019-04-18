@@ -1,16 +1,16 @@
-import { Room, EntityMap } from 'colyseus';
+import { Room } from 'colyseus';
 import * as uuid from 'uuid';
 
 import { DEBUG, GAME_SERVER_UPDATE_RATE } from '../../Config';
 
-export class LobbyRoom extends Room<LobbyRoomState> {
+export class LobbyRoom extends Room {
 
     public showLogs: boolean = DEBUG;
 
     public maxClients: number = 16;
     public patchRate: number = 1000 / GAME_SERVER_UPDATE_RATE;
 
-    public onInit (options) {
+    public onInit(options) {
         if (this.showLogs) {
             console.log('Lobby created.');
             console.log(options);
@@ -19,15 +19,15 @@ export class LobbyRoom extends Room<LobbyRoomState> {
         this.setState(new LobbyRoomState());
     }
 
-    public onJoin (client) {
+    public onJoin(client) {
         this.state.addPlayer(client);
     }
 
-    public onLeave (client) {
+    public onLeave(client) {
         this.state.removePlayer(client);
     }
 
-    public onMessage (client, data) {
+    public onMessage(client, data) {
         if (this.showLogs) {
             console.log(`LobbyRoom received message from ${ client.sessionId }:`);
             console.log(data);
@@ -40,7 +40,7 @@ export class LobbyRoom extends Room<LobbyRoomState> {
         }
     }
 
-    public onDispose () {
+    public onDispose() {
         if (this.showLogs) {
             console.log('Lobby disposed.');
         }
@@ -49,10 +49,10 @@ export class LobbyRoom extends Room<LobbyRoomState> {
 }
 
 export class LobbyRoomState {
-    public chatMessages: Array<LobbyRoomChatMessage> = [];
-    public actionLogs: Array<LobbyRoomActionLog> = [];
-    public players: EntityMap<LobbyRoomPlayer> = {};
-    public entities: EntityMap<LobbyRoomEntity> = {};
+    public chatMessages: LobbyRoomChatMessage[] = [];
+    public actionLogs: LobbyRoomActionLog[] = [];
+    public players: {[id: string]: LobbyRoomPlayer} = {};
+    public entities: {[id: string]: LobbyRoomEntity} = {};
 
     public addPlayer(client) {
         let playerName = 'Guest ' + client.sessionId; // TODO: lookup the player name inside a database or wherever
